@@ -1,12 +1,11 @@
 package com.dev.dungcony.modules.users.services.impl;
 
-import org.springframework.stereotype.Service;
-
-import com.dev.dungcony.services.BaseService;
 import com.dev.dungcony.modules.users.dtos.LoginReq;
 import com.dev.dungcony.modules.users.dtos.LoginRes;
 import com.dev.dungcony.modules.users.dtos.UserDTO;
 import com.dev.dungcony.modules.users.services.interfaces.UserServiceInterface;
+import com.dev.dungcony.services.BaseService;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService extends BaseService implements UserServiceInterface {
@@ -31,6 +30,7 @@ public class UserService extends BaseService implements UserServiceInterface {
             // TODO: handle exception
             throw new RuntimeException("có vấn đề xảy ra");
         }
+        return null;
     }
 
 }

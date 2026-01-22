@@ -1,0 +1,10 @@
+-- create table tbl_user_catalogues
+-- (
+--     id        int unsigned auto_increment primary key,
+--     name      varchar(50) not null,
+--     addr      varchar(255) default null,
+--     `desc`     varchar(255) default null,
+--     point int unsigned default 0,
+--     create_at timestamp default current_timestamp,
+--     update_at timestamp default current_timestamp on update current_timestamp
+-- );
