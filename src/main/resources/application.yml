@@ -1,0 +1,53 @@
+spring:
+
+  application:
+    name: dungcony
+
+  profiles:
+    active: dev
+
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migration: false
+    repair-on-validate-error: true
+    validate-on-migrate: true
+
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+    properties:
+      mail:
+        SMTP:
+          auth: true
+          STARTTLS:
+            enable: true
+    from: OTP Service <dungcony@dungcony.io.vn>
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+logging:
+  level:
+    root: info
+    com.dev.dungcony: debug
+  file:
+    name: logs/app.log
+
+jwt:
+  expiration: 3600000      # 1 giờ (ms)
+  refresh-expiration: 604800000 # 7 ngày (ms)
+

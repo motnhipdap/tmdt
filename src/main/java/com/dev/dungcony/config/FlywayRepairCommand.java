@@ -29,9 +29,9 @@ public class FlywayRepairCommand implements CommandLineRunner {
         try {
             Flyway flyway = Flyway.configure()
                     .dataSource(dataSource)
-                    .locations("classpath:db/migration")
+                    .locations("${spring.flyway.location}")
                     .load();
-            
+
             flyway.repair();
             logger.info("=== FLYWAY REPAIR COMPLETED SUCCESSFULLY ===");
         } catch (Exception e) {

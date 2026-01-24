@@ -1,14 +1,13 @@
 package com.dev.dungcony.modules.authorization.repositories;
 
-import java.util.Optional;
-
+import com.dev.dungcony.modules.authorization.entities.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.dev.dungcony.modules.authorization.entities.Account;
+import java.util.Optional;
 
 @Repository
-public interface AccRepository extends JpaRepository<Account, Integer> {
+public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     /**
      * Tìm account theo email

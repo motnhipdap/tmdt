@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.authorization.services.impl;
 
+import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,13 +9,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailServiceImpl {
+public class EmailServiceImpl implements EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:noreply@dungcony.com}")
+    @Value("${spring.mail.from}")
     private String fromEmail;
 
     public EmailServiceImpl(JavaMailSender mailSender) {
@@ -24,25 +25,23 @@ public class EmailServiceImpl {
     /**
      * Gửi email OTP
      */
-    public void sendOtpEmail(String toEmail, String otpCode) {
+    @Override
+    public void SendOtpEmail(String reciever, String OTP) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
-            message.setTo(toEmail);
+            message.setTo(reciever);
             message.setSubject("Mã xác thực OTP - DungCony");
-            message.setText(buildOtpEmailContent(otpCode));
+            message.setText(buildOtpEmailContent(OTP));
 
             mailSender.send(message);
-            logger.info("Đã gửi OTP email tới: {}", toEmail);
+            logger.info("Đã gửi OTP email tới: {}", reciever);
         } catch (Exception e) {
-            logger.error("Lỗi khi gửi email tới {}: {}", toEmail, e.getMessage());
+            logger.error("Lỗi khi gửi email tới {}: {}", reciever, e.getMessage());
             throw new RuntimeException("Không thể gửi email. Vui lòng thử lại sau.");
         }
     }
 
-    /**
-     * Xây dựng nội dung email OTP
-     */
     private String buildOtpEmailContent(String otpCode) {
         return """
                 Xin chào,
@@ -80,7 +79,7 @@ public class EmailServiceImpl {
     /**
      * Xây dựng nội dung email chào mừng
      */
-    private String buildWelcomeEmailContent(String username) {
+    public String buildWelcomeEmailContent(String username) {
         return """
                 Xin chào %s,
                 
@@ -94,4 +93,5 @@ public class EmailServiceImpl {
                 DungCony Team
                 """.formatted(username);
     }
+
 }

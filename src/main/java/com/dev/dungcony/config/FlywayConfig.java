@@ -20,16 +20,16 @@ public class FlywayConfig {
     @Autowired
     private DataSource dataSource;
 
-    @Value("${spring.flyway.locations:classpath:db/migration}")
+    @Value("${spring.flyway.locations}")
     private String[] locations;
 
-    @Value("${spring.flyway.baseline-on-migration:false}")
+    @Value("${spring.flyway.baseline-on-migration}")
     private boolean baselineOnMigrate;
 
-    @Value("${spring.flyway.validate-on-migrate:true}")
+    @Value("${spring.flyway.validate-on-migrate}")
     private boolean validateOnMigrate;
 
-    @Value("${flyway.repair-on-validate-error:false}")
+    @Value("${spring.flyway.repair-on-validate-error}")
     private boolean repairOnValidateError;
 
     @Bean

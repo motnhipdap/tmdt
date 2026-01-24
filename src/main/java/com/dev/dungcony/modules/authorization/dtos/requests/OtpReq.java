@@ -1,18 +1,14 @@
-package com.dev.dungcony.modules.authorization.dtos;
+package com.dev.dungcony.modules.authorization.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class SendOtpRequest {
-
+public class OtpReq {
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không đúng định dạng")
     private String email;
 
-    public SendOtpRequest() {
-    }
-
-    public SendOtpRequest(String email) {
+    public OtpReq(String email) {
         this.email = email;
     }
 
