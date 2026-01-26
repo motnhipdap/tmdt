@@ -1,7 +1,14 @@
 package com.dev.dungcony.modules.authorization.controllers;
 
-import java.time.LocalDateTime;
-
+import com.dev.dungcony.commons.dtos.ApiRes;
+import com.dev.dungcony.modules.authorization.dtos.AccountResult;
+import com.dev.dungcony.modules.authorization.dtos.requests.LoginReq;
+import com.dev.dungcony.modules.authorization.dtos.requests.RegisReq;
+import com.dev.dungcony.modules.authorization.dtos.responses.LoginRes;
+import com.dev.dungcony.modules.authorization.entities.Account;
+import com.dev.dungcony.modules.authorization.enums.AccountEnum;
+import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,16 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.dungcony.modules.authorization.dtos.requests.LoginReq;
-import com.dev.dungcony.modules.authorization.dtos.requests.RegisReq;
-import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
-import com.dev.dungcony.modules.authorization.dtos.responses.ApiRes;
-import com.dev.dungcony.modules.authorization.dtos.responses.LoginResult;
-import com.dev.dungcony.modules.authorization.entities.Account;
-import com.dev.dungcony.modules.authorization.enums.AccountEnum;
-import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
-
-import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("v1/api/auth")
@@ -33,36 +31,37 @@ public class AuthController {
         this.accountService = accountService;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<ApiRes> login(@Valid @RequestBody LoginReq loginReq) {
-        String username = loginReq.getUsername();
-        String password = loginReq.getPassword();
+    @PostMapping("/login")
+    public ResponseEntity<ApiRes<LoginRes>> login(@Valid @RequestBody LoginReq loginReq) {
+        String username = loginReq.username();
+        String password = loginReq.password();
 
         logger.info("username: {}, password: {}", username, password);
 
         try {
-            LoginResult ans = accountService.authenticate(username, password);
-            if (ans.getAccountEnum() == AccountEnum.NOT_FOUND
-                    || ans.getAccountEnum() == AccountEnum.INCORRECT_PASSWORD) {
+            AccountResult<LoginRes> ans = accountService.authenticate(username, password);
+            if (ans.aEnum() == AccountEnum.NOT_FOUND
+                    || ans.aEnum() == AccountEnum.INCORRECT_PASSWORD) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiRes.error("Username or password incorrect"));
             }
-            if (ans.getAccountEnum() == AccountEnum.FAILED) {
+            if (ans.aEnum() == AccountEnum.FAILED) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiRes.error("server error"));
             }
 
             return ResponseEntity.ok()
-                    .body(ApiRes.success("account login success", ans));
+                    .body(ApiRes.success("account login success", ans.data()));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiRes.error(e.getMessage()));
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiRes> register(@Valid @RequestBody RegisReq req) {
-        String email = req.getEmail().toLowerCase().trim();
-        String password = req.getPassword().trim();
-        String username = req.getUsername().trim();
+    public ResponseEntity<ApiRes<Void>> register(@Valid @RequestBody RegisReq req) {
+        String email = req.email().toLowerCase();
+        String password = req.password();
+        String username = req.username();
 
         try {
             Account account = new Account();
@@ -71,16 +70,16 @@ public class AuthController {
             account.setUsername(username);
             account.setCreatedAt(LocalDateTime.now());
 
-            AccountEnum accountEnum = accountService.createAccount(account);
+            AccountResult<Void> accResult = accountService.createAccount(account);
 
-            if (accountEnum == AccountEnum.EMAIL_EXISTS) {
+            if (accResult.aEnum() == AccountEnum.EMAIL_EXISTS) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiRes.error("Email đã tồn tại"));
             }
-            if (accountEnum == AccountEnum.USERNAME_EXISTS) {
+            if (accResult.aEnum() == AccountEnum.USERNAME_EXISTS) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiRes.error("Tên đăng nhập đã tồn tại"));
             }
 
-            if (accountEnum == AccountEnum.FAILED) {
+            if (accResult.aEnum() == AccountEnum.FAILED) {
                 logger.error("account created failed");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiRes.error("Có lỗi xảy ra"));
             }

@@ -1,4 +1,4 @@
-package com.dev.dungcony.config;
+package com.dev.dungcony.commons.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

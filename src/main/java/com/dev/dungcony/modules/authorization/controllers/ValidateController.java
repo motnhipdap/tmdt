@@ -1,14 +1,13 @@
 package com.dev.dungcony.modules.authorization.controllers;
 
+import com.dev.dungcony.commons.dtos.ApiRes;
+import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dev.dungcony.modules.authorization.dtos.responses.ApiRes;
-import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
 
 @RestController
 @RequestMapping("v1/api/auth")
@@ -21,7 +20,7 @@ public class ValidateController {
     }
 
     @GetMapping("/check-email")
-    public ResponseEntity<ApiRes> checkEmail(@RequestParam("email") String email) {
+    public ResponseEntity<ApiRes<Void>> checkEmail(@RequestParam("email") String email) {
         try {
 
             boolean exists = accountService.existsByEmail(email);
@@ -37,7 +36,7 @@ public class ValidateController {
     }
 
     @GetMapping("/check-username")
-    public ResponseEntity<ApiRes> checkUsername(@RequestParam("username") String username) {
+    public ResponseEntity<ApiRes<Void>> checkUsername(@RequestParam("username") String username) {
         try {
             boolean exists = accountService.existsByUsername(username);
             if (exists)

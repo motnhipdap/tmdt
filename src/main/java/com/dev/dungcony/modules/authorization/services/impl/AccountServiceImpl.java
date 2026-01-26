@@ -1,8 +1,9 @@
 package com.dev.dungcony.modules.authorization.services.impl;
 
 import com.dev.dungcony.modules.authorization.dtos.AccountResult;
-import com.dev.dungcony.modules.authorization.dtos.LoginResult;
 import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
+import com.dev.dungcony.modules.authorization.dtos.responses.AccountDetail;
+import com.dev.dungcony.modules.authorization.dtos.responses.LoginRes;
 import com.dev.dungcony.modules.authorization.entities.Account;
 import com.dev.dungcony.modules.authorization.enums.AccountEnum;
 import com.dev.dungcony.modules.authorization.repositories.AccountRepository;
@@ -10,7 +11,6 @@ import com.dev.dungcony.modules.authorization.services.interfaces.AccountService
 import com.dev.dungcony.modules.authorization.services.interfaces.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +19,18 @@ public class AccountServiceImpl implements AccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
-    @Autowired
-    private AccountRepository accRepo;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtService jwtService;
+    private final AccountRepository accRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public AccountServiceImpl(AccountRepository accRepo, PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.accRepo = accRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
 
     @Override
-    public LoginResult authenticate(String username, String password) {
+    public AccountResult<LoginRes> authenticate(String username, String password) {
 
         try {
 
@@ -36,10 +39,10 @@ public class AccountServiceImpl implements AccountService {
             logger.info("acc: {}", acc);
 
             if (acc == null)
-                return new LoginResult(AccountEnum.NOT_FOUND);
+                return AccountResult.error(AccountEnum.NOT_FOUND);
             logger.info("passwordEncoder: {}", passwordEncoder.encode(password));
             if (!passwordEncoder.matches(password, acc.getPassword()))
-                return new LoginResult(AccountEnum.INCORRECT_PASSWORD);
+                return AccountResult.error(AccountEnum.INCORRECT_PASSWORD);
 
             logger.info("password: {}", password);
             logger.info("acc.getPassword(): {}", acc.getPassword());
@@ -47,11 +50,11 @@ public class AccountServiceImpl implements AccountService {
             String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole());
             logger.info("token: {}", token);
 
-            return new LoginResult(token);
+            return AccountResult.success(new LoginRes(token));
 
         } catch (Exception e) {
             logger.error("error: {}", e.getMessage());
-            return new LoginResult(AccountEnum.FAILED);
+            return AccountResult.error(AccountEnum.FAILED);
         }
     }
 
@@ -68,50 +71,70 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResult createAccount(Account acc) {
+    public AccountResult<Void> createAccount(Account acc) {
         try {
 
             if (accRepo.existsByEmail(acc.getEmail()))
-                return new AccountResult(AccountEnum.EMAIL_EXISTS);
+                return AccountResult.error(AccountEnum.EMAIL_EXISTS);
             if (accRepo.existsByUsername(acc.getUsername()))
-                return new AccountResult(AccountEnum.USERNAME_EXISTS);
+                return AccountResult.error(AccountEnum.USERNAME_EXISTS);
 
             String hashPas = passwordEncoder.encode(acc.getPassword());
             acc.setPassword(hashPas);
 
             accRepo.save(acc);
 
-            return new AccountResult(AccountEnum.SUCCESS);
+            return AccountResult.success();
 
         } catch (Exception e) {
             logger.error("account created failed: {}", e.getMessage());
-            return new AccountResult(AccountEnum.FAILED);
+            return AccountResult.error(AccountEnum.FAILED);
         }
     }
 
     @Override
-    public AccountResult updatePassword(String username, UpdatePasswordReq req) {
+    public AccountResult<Void> updatePassword(String username, UpdatePasswordReq req) {
         try {
             Account acc = accRepo.findByUsername(username).orElse(null);
             if (acc == null)
-                return new AccountResult(AccountEnum.NOT_FOUND);
+                return AccountResult.error(AccountEnum.NOT_FOUND);
 
-            if (!passwordEncoder.matches(req.getOldPass(), acc.getPassword()))
-                return new AccountResult(AccountEnum.INCORRECT_PASSWORD);
+            if (!passwordEncoder.matches(req.oldPass(), acc.getPassword()))
+                return AccountResult.error(AccountEnum.INCORRECT_PASSWORD);
 
-            acc.setPassword(passwordEncoder.encode(req.getNewPass()));
+            acc.setPassword(passwordEncoder.encode(req.newPass()));
 
             accRepo.save(acc);
 
-            return new AccountResult(AccountEnum.SUCCESS);
+            return AccountResult.success();
 
         } catch (Exception e) {
-            return new AccountResult(AccountEnum.FAILED);
+            return AccountResult.error(AccountEnum.FAILED);
         }
     }
 
     @Override
-    public AccountResult updateAccount(Account acc) {
+    public AccountResult<AccountDetail> getProfileById(int id) {
+        try {
+            Account acc = accRepo.findById(id).orElse(null);
+            if (acc == null)
+                return AccountResult.error(AccountEnum.NOT_FOUND);
+            AccountDetail accD = new AccountDetail(
+                    acc.getEmail(),
+                    acc.getUsername(),
+                    acc.getPhone(),
+                    acc.getStatus(),
+                    acc.getCreatedAt());
+
+            return AccountResult.success(accD);
+        } catch (Exception e) {
+            logger.error("getProfileById failed: {}", e.getMessage());
+            return AccountResult.error(AccountEnum.FAILED);
+        }
+    }
+
+    @Override
+    public AccountResult<Void> updateAccount(Account acc) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateAccount'");
     }

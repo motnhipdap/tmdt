@@ -1,20 +1,24 @@
 package com.dev.dungcony.modules.authorization.services.interfaces;
 
+import com.dev.dungcony.modules.authorization.dtos.AccountResult;
 import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
-import com.dev.dungcony.modules.authorization.dtos.responses.AccountResult;
-import com.dev.dungcony.modules.authorization.dtos.responses.LoginResult;
+import com.dev.dungcony.modules.authorization.dtos.responses.AccountDetail;
+import com.dev.dungcony.modules.authorization.dtos.responses.LoginRes;
 import com.dev.dungcony.modules.authorization.entities.Account;
 
 public interface AccountService {
-    LoginResult authenticate(String username, String password);
+    AccountResult<LoginRes> authenticate(String username, String password);
 
     boolean existsByEmail(String email);
 
     boolean existsByUsername(String username);
 
-    AccountResult createAccount(Account acc);
+    AccountResult<Void> createAccount(Account acc);
 
-    AccountResult updateAccount(Account acc);
+    AccountResult<Void> updateAccount(Account acc);
 
-    AccountResult updatePassword(String username, UpdatePasswordReq req);
+    AccountResult<Void> updatePassword(String username, UpdatePasswordReq req);
+
+    AccountResult<AccountDetail> getProfileById(int id);
+
 }

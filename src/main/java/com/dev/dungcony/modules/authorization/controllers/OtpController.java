@@ -1,5 +1,11 @@
 package com.dev.dungcony.modules.authorization.controllers;
 
+import com.dev.dungcony.commons.dtos.ApiRes;
+import com.dev.dungcony.modules.authorization.dtos.requests.OtpReq;
+import com.dev.dungcony.modules.authorization.dtos.requests.OtpVerifyReq;
+import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
+import com.dev.dungcony.modules.authorization.services.interfaces.OTPService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -8,14 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dev.dungcony.modules.authorization.dtos.requests.OtpReq;
-import com.dev.dungcony.modules.authorization.dtos.requests.OtpVerifyReq;
-import com.dev.dungcony.modules.authorization.dtos.responses.ApiRes;
-import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
-import com.dev.dungcony.modules.authorization.services.interfaces.OTPService;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("v1/api/auth")
@@ -33,9 +31,9 @@ public class OtpController {
     }
 
     @PostMapping("/send-otp")
-    public ResponseEntity<ApiRes> sendOtp(@Valid @RequestBody OtpReq otpReq) {
+    public ResponseEntity<ApiRes<Void>> sendOtp(@Valid @RequestBody OtpReq otpReq) {
 
-        String email = otpReq.getEmail();
+        String email = otpReq.email();
         email = email.toLowerCase().trim();
         try {
             String otp = otpService.createOTP();
@@ -50,10 +48,10 @@ public class OtpController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<ApiRes> verifyOtp(@Valid @RequestBody OtpVerifyReq otpVerifyReq) {
+    public ResponseEntity<ApiRes<Void>> verifyOtp(@Valid @RequestBody OtpVerifyReq otpVerifyReq) {
 
-        String email = otpVerifyReq.getEmail();
-        String otp = otpVerifyReq.getOtp();
+        String email = otpVerifyReq.email();
+        String otp = otpVerifyReq.otp();
         email = email.toLowerCase().trim();
 
         logger.info("email: {}, otp: {}", email, otp);

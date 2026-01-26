@@ -1,4 +1,4 @@
-package com.dev.dungcony.config;
+package com.dev.dungcony.commons.config;
 
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
