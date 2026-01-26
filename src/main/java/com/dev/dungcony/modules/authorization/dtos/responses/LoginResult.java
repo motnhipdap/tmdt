@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.authorization.dtos;
+package com.dev.dungcony.modules.authorization.dtos.responses;
 
 import com.dev.dungcony.modules.authorization.enums.AccountEnum;
 import lombok.AllArgsConstructor;

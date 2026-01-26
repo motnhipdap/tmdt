@@ -1,6 +1,8 @@
 package com.dev.dungcony.modules.authorization.services.impl;
 
+import com.dev.dungcony.modules.authorization.dtos.AccountResult;
 import com.dev.dungcony.modules.authorization.dtos.LoginResult;
+import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
 import com.dev.dungcony.modules.authorization.entities.Account;
 import com.dev.dungcony.modules.authorization.enums.AccountEnum;
 import com.dev.dungcony.modules.authorization.repositories.AccountRepository;
@@ -66,39 +68,51 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountEnum createAccount(Account acc) {
+    public AccountResult createAccount(Account acc) {
         try {
 
             if (accRepo.existsByEmail(acc.getEmail()))
-                return AccountEnum.EMAIL_EXISTS;
+                return new AccountResult(AccountEnum.EMAIL_EXISTS);
             if (accRepo.existsByUsername(acc.getUsername()))
-                return AccountEnum.USERNAME_EXISTS;
+                return new AccountResult(AccountEnum.USERNAME_EXISTS);
 
             String hashPas = passwordEncoder.encode(acc.getPassword());
             acc.setPassword(hashPas);
 
             accRepo.save(acc);
 
-            return AccountEnum.SUCCESS;
+            return new AccountResult(AccountEnum.SUCCESS);
 
         } catch (Exception e) {
             logger.error("account created failed: {}", e.getMessage());
-            return AccountEnum.FAILED;
+            return new AccountResult(AccountEnum.FAILED);
         }
     }
 
     @Override
-    public AccountEnum updateAccount(Account acc) {
-        return null;
+    public AccountResult updatePassword(String username, UpdatePasswordReq req) {
+        try {
+            Account acc = accRepo.findByUsername(username).orElse(null);
+            if (acc == null)
+                return new AccountResult(AccountEnum.NOT_FOUND);
+
+            if (!passwordEncoder.matches(req.getOldPass(), acc.getPassword()))
+                return new AccountResult(AccountEnum.INCORRECT_PASSWORD);
+
+            acc.setPassword(passwordEncoder.encode(req.getNewPass()));
+
+            accRepo.save(acc);
+
+            return new AccountResult(AccountEnum.SUCCESS);
+
+        } catch (Exception e) {
+            return new AccountResult(AccountEnum.FAILED);
+        }
     }
 
     @Override
-    public Account getAccountByEmail(String email) {
-        return null;
-    }
-
-    @Override
-    public Account getAccountByUsername(String username) {
-        return null;
+    public AccountResult updateAccount(Account acc) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateAccount'");
     }
 }

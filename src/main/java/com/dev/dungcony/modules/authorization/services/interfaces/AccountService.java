@@ -1,8 +1,9 @@
 package com.dev.dungcony.modules.authorization.services.interfaces;
 
-import com.dev.dungcony.modules.authorization.dtos.LoginResult;
+import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
+import com.dev.dungcony.modules.authorization.dtos.responses.AccountResult;
+import com.dev.dungcony.modules.authorization.dtos.responses.LoginResult;
 import com.dev.dungcony.modules.authorization.entities.Account;
-import com.dev.dungcony.modules.authorization.enums.AccountEnum;
 
 public interface AccountService {
     LoginResult authenticate(String username, String password);
@@ -11,11 +12,9 @@ public interface AccountService {
 
     boolean existsByUsername(String username);
 
-    AccountEnum createAccount(Account acc);
+    AccountResult createAccount(Account acc);
 
-    AccountEnum updateAccount(Account acc);
+    AccountResult updateAccount(Account acc);
 
-    Account getAccountByEmail(String email);
-
-    Account getAccountByUsername(String username);
+    AccountResult updatePassword(String username, UpdatePasswordReq req);
 }
