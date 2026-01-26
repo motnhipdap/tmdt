@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class EmailExistException extends AuthException {
 
-    protected EmailExistException() {
+    public EmailExistException() {
         super(HttpStatus.CONFLICT, "Auth_conflict_email", "Email already exists");
     }
 }

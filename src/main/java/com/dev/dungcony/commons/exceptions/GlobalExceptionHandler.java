@@ -1,6 +1,7 @@
 package com.dev.dungcony.commons.exceptions;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,4 +23,12 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiRes.error("Server Error"));
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiRes<?>> handleDuplicateKey() {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiRes.error("Email hoặc username đã tồn tại"));
+    }
+
 }

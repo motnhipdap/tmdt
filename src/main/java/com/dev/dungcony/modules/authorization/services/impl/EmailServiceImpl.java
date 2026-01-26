@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.authorization.services.impl;
 
+import com.dev.dungcony.modules.authorization.exceptions.OtpSendException;
 import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class EmailServiceImpl implements EmailService {
             logger.info("Đã gửi OTP email tới: {}", reciever);
         } catch (Exception e) {
             logger.error("Lỗi khi gửi email tới {}: {}", reciever, e.getMessage());
-            throw new RuntimeException("Không thể gửi email. Vui lòng thử lại sau.");
+            throw new OtpSendException();
         }
     }
 
@@ -72,7 +73,6 @@ public class EmailServiceImpl implements EmailService {
             logger.info("Đã gửi email chào mừng tới: {}", toEmail);
         } catch (Exception e) {
             logger.error("Lỗi khi gửi email chào mừng tới {}: {}", toEmail, e.getMessage());
-            // Không throw exception vì đây không phải là critical error
         }
     }
 
