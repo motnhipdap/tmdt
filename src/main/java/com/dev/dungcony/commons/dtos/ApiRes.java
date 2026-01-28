@@ -18,4 +18,8 @@ public record ApiRes<T>(
         return new ApiRes<>(false, message, null);
     }
 
+    public static <T> ApiRes<T> error(String message, T data) {
+        return new ApiRes<>(false, message, data);
+    }
+
 }

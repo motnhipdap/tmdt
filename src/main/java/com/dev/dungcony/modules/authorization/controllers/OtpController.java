@@ -2,13 +2,13 @@ package com.dev.dungcony.modules.authorization.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.authorization.dtos.requests.OtpReq;
-import com.dev.dungcony.modules.authorization.dtos.requests.OtpVerifyReq;
+import com.dev.dungcony.modules.authorization.dtos.requests.VerifyOtpReq;
 import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
 import com.dev.dungcony.modules.authorization.services.interfaces.OTPService;
+import com.dev.dungcony.modules.authorization.services.interfaces.RedisService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,54 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class OtpController {
 
     private static final Logger logger = LoggerFactory.getLogger(OtpController.class);
-
     private final OTPService otpService;
-
     private final EmailService emailService;
+    private final RedisService redisService;
 
-    public OtpController(OTPService otpService, EmailService emailService) {
+    public OtpController(OTPService otpService, EmailService emailService, RedisService redisService) {
         this.otpService = otpService;
         this.emailService = emailService;
+        this.redisService = redisService;
     }
 
     @PostMapping("/send-otp")
-    public ResponseEntity<ApiRes<Void>> sendOtp(@Valid @RequestBody OtpReq otpReq) {
-
-        String email = otpReq.email();
-        email = email.toLowerCase().trim();
-        try {
-            String otp = otpService.createOTP();
-            otpService.cacheRedis(email, otp);
-            emailService.SendOtpEmail(email, otp);
-
-            return ResponseEntity.ok()
-                    .body(ApiRes.success("otp send success"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiRes.error(e.getMessage()));
-        }
+    public ResponseEntity<ApiRes<Void>> sendOtp(@Valid @RequestBody OtpReq req) {
+        otpService.sendOtp(req);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("send otp successfully"));
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<ApiRes<Void>> verifyOtp(@Valid @RequestBody OtpVerifyReq otpVerifyReq) {
-
-        String email = otpVerifyReq.email();
-        String otp = otpVerifyReq.otp();
-        email = email.toLowerCase().trim();
-
-        logger.info("email: {}, otp: {}", email, otp);
-
-        try {
-
-            boolean verify = otpService.verifyOTP(email, otp);
-
-            if (verify)
-                return ResponseEntity.ok()
-                        .body(ApiRes.success("otp verify success"));
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiRes.error("otp incorrect"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiRes.error(e.getMessage()));
-        }
+    public ResponseEntity<ApiRes<Boolean>> verifyOtp(@Valid @RequestBody VerifyOtpReq req) {
+        boolean verify = otpService.verifyOTP(req);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("otp verify res", verify));
     }
 }

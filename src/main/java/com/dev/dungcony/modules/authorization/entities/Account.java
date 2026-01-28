@@ -16,26 +16,27 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_accounts")
+@Table(name = "tbl_accounts", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "Tên đăng nhập không được để trống")
-    @Size(min = 3, max = 50, message = "Tên đăng nhập phải có ít nhất 3 ký tự và tối đa 50 ký tự")
+    @NotBlank(message = "username not blank")
+    @Size(min = 3, max = 50, message = "username is length from 3 to 50 character")
     @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
 
+    @NotBlank(message = "password not blank")
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Column(name = "role", nullable = false, length = 10)
     private String role = "customer";
 
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không đúng định dạng")
+    @NotBlank(message = "Email not blank")
+    @Email(message = "Email incorrect format")
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 

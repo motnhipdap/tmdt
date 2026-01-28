@@ -17,24 +17,35 @@ import java.util.Date;
 public class JwtServiceImpl implements JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
-    private final JwtConfig jwtConfig;
     private final Key key;
 
-    public JwtServiceImpl(JwtConfig jwtConfig) {
-        this.jwtConfig = jwtConfig;
-        // Dùng trực tiếp secret key để tạo HMAC key (không encode)
-        this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
+    public JwtServiceImpl() {
+        this.key = Keys.hmacShaKeyFor(JwtConfig.secret.getBytes());
     }
 
     @Override
     public String generateToken(int id, String username, String role) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration());
+        Date expiration = new Date(now.getTime() + JwtConfig.expiration);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
                 .claim("username", username)
                 .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(key, SignatureAlgorithm.HS512) // HS512 cho HMAC-SHA512
+                .compact();
+    }
+
+    @Override
+    public String generateToken(int id, String email) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + JwtConfig.expiration);
+
+        return Jwts.builder()
+                .setSubject(String.valueOf(id))
+                .claim("email", email)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(key, SignatureAlgorithm.HS512) // HS512 cho HMAC-SHA512
@@ -72,6 +83,17 @@ public class JwtServiceImpl implements JwtService {
             return claims.get("role", String.class);
         } catch (Exception e) {
             logger.error("Error extracting role from token: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public String extractEmail(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.get("email", String.class);
+        } catch (Exception e) {
+            logger.error("Error extracting email from token: {}", e.getMessage());
             return null;
         }
     }

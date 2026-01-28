@@ -9,13 +9,11 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 /**
  * JWT Authentication Filter
@@ -73,8 +71,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+            AccountDetails accountDetails =
+                    new AccountDetails(userId, username, role);
 
-            UsernamePasswordAuthenticationToken authentication = getUsernamePasswordAuthenticationToken(role, username, userId);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    accountDetails,
+                    null,
+                    accountDetails.getAuthorities()
+            );
 
             // SET VÀO SECURITY CONTEXT
             // Từ đây về sau, mọi nơi trong request này đều biết user đã login
@@ -87,26 +91,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 7. Continue filter chain
         filterChain.doFilter(request, response);
-    }
-
-    private static @NonNull UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(String role, String username, Integer userId) {
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.toUpperCase());
-
-        // UsernamePasswordAuthenticationToken có 3 tham số:
-        // - principal: username (ai đang login?)
-        // - credentials: password (null vì đã authenticate rồi)
-        // - authorities: quyền hạn (ROLE_CUSTOMER, ROLE_ADMIN, etc.)
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                username, // principal
-                null, // credentials (null vì dùng JWT, không cần password)
-                Collections.singletonList(authority) // authorities
-        );
-
-        // Add thêm details (userId) vào authentication
-        // Sau này có thể lấy: authentication.getDetails()
-        authentication.setDetails(userId);
-        return authentication;
     }
 
     /**

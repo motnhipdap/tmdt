@@ -1,23 +1,20 @@
 package com.dev.dungcony.modules.authorization.config;
 
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class JwtConfig {
 
     @Value("${jwt.secret}")
-    private String secret;
+    public static String secret;
     @Value("${jwt.expiration}")
-    private Long expiration;
+    public static Long expiration;
+    @Value("${jwt.refresh-expiration}")
+    public static Long refreshExpiration;
 
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public Long getExpiration() {
-        return expiration;
-    }
+    public static final String headerPrefix = "Bearer ";
 }

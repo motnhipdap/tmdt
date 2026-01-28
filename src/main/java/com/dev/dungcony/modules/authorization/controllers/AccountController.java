@@ -1,16 +1,16 @@
 package com.dev.dungcony.modules.authorization.controllers;
 
-import com.dev.dungcony.modules.authorization.dtos.responses.AccountDetail;
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.authorization.enums.AccountEnum;
+import com.dev.dungcony.modules.authorization.dtos.requests.UpdateEmailReq;
+import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
+import com.dev.dungcony.modules.authorization.dtos.responses.AccountRes;
+import com.dev.dungcony.modules.authorization.helpers.AccountDetails;
 import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("v1/api/account")
@@ -24,22 +24,47 @@ public class AccountController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiRes<AccountDetail>> getMe(Authentication authentication) {
-        String username = authentication.getName();
-        Integer userId = (Integer) authentication.getDetails();
-        if (userId == null)
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiRes.error("not logged in"));
+    public ResponseEntity<ApiRes<AccountRes>> getMe(
+            @AuthenticationPrincipal AccountDetails details
+    ) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("", accountService.getProfileById(details.getId())));
+    }
 
-        var ans = accountService.getProfileById(userId);
+    @GetMapping("/check_email")
+    public ResponseEntity<ApiRes<Boolean>> check_email(@Valid @RequestParam String email) {
+        return ResponseEntity.ok()
+                .body(ApiRes.error("Email already exists!", accountService.existsByEmail(email)));
+    }
 
-        if (ans == null)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiRes.error("server error"))
-        if (ans.aEnum() == AccountEnum.NOT_FOUND)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiRes.error("not found"));
-        if (ans.aEnum() == AccountEnum.FAILED)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiRes.error("server error"))
+    @GetMapping("/check_username")
+    public ResponseEntity<ApiRes<Boolean>> check_username(@Valid @RequestParam String username) {
+        return ResponseEntity.ok()
+                .body(ApiRes.error("Email already exists!", accountService.existsByUsername(username)));
+    }
 
-        return ResponseEntity.ok().body(ApiRes.success("Account retrieved", ans.data()));
+
+    @PutMapping("/update_password")
+    public ResponseEntity<ApiRes<Boolean>> updatePassword(
+            @AuthenticationPrincipal AccountDetails details,
+            @Valid @RequestBody UpdatePasswordReq req
+    ) {
+        boolean ok = accountService.updatePassword(details.getId(), req.oldPass(), req.newPass());
+
+        return ResponseEntity.ok()
+                .body(ApiRes.success("update_password res", ok));
+    }
+
+    @PutMapping("/update_email")
+    public ResponseEntity<ApiRes<Void>> updatePassword(
+            @AuthenticationPrincipal AccountDetails details,
+            @Valid @RequestBody UpdateEmailReq req
+    ) {
+
+        accountService.ChangeEmail(details.getId(), details.ge);
+
+        return ResponseEntity.ok()
+                .body(ApiRes.success("update_password email"));
     }
 
 }
