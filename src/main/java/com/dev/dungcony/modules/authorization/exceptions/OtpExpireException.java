@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class OtpExpireException extends AppException {
 
     public OtpExpireException() {
-        super(HttpStatus.BAD_GATEWAY, "422", "Otp đã hết hạn");
+        super(HttpStatus.GONE, "410", "Otp đã hết hạn");
     }
 }

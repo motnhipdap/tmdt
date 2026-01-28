@@ -7,7 +7,9 @@ import com.dev.dungcony.modules.authorization.dtos.responses.LoginResult;
 public interface AuthService {
     void register(RegisReq req);
 
-    LoginResult login(String username, String password);
+    LoginResult login(String username, String password, String deviceId);
+
+    void logout(String refreshToken, String deviceId);
 
     LoginRes refreshToken(String refreshToken);
 }

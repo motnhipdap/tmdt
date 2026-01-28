@@ -3,7 +3,6 @@ package com.dev.dungcony.modules.authorization.controllers;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.authorization.dtos.requests.SendOtpReq;
 import com.dev.dungcony.modules.authorization.dtos.requests.VerifyOtpReq;
-import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
 import com.dev.dungcony.modules.authorization.services.interfaces.OtpService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OtpController {
 
     private static final Logger logger = LoggerFactory.getLogger(OtpController.class);
-    private final EmailService emailService;
     private final OtpService otpService;
 
     @PostMapping("/send-regis-otp")
@@ -31,7 +29,7 @@ public class OtpController {
                 .body(ApiRes.success("send otp successfully"));
     }
 
-    @PostMapping("/send-regis-otp")
+    @PostMapping("/send-reset-password-otp")
     public ResponseEntity<ApiRes<Void>> sendResetPasswordOtp(@Valid @RequestBody SendOtpReq req) {
         otpService.send(req.email(), req.otpType());
         return ResponseEntity.ok()

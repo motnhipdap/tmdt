@@ -1,12 +1,8 @@
 package com.dev.dungcony.modules.authorization.dtos.requests;
 
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
 
 public record LoginReq(
-        String username,
-
-        @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username chỉ gồm chữ, số và dấu _")
-        String password
-) {
+                @NotBlank(message = "username not blank") String username,
+                @NotBlank(message = "password not blank") String password) {
 }
-

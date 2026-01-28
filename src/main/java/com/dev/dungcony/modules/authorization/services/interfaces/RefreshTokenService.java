@@ -1,14 +1,13 @@
 package com.dev.dungcony.modules.authorization.services.interfaces;
 
 import com.dev.dungcony.modules.authorization.dtos.responses.AccountRes;
-import com.dev.dungcony.modules.authorization.entities.Account;
 
 public interface RefreshTokenService {
-    String create(int id);
+    String create(int userId, String deviceId);
 
     AccountRes verify(String refreshToken);
 
-    void revoke(String refreshToken);
+    void revoke(String refreshToken, String deviceId);
 
-    void revokeAll(Account account);
+    void revokeAll(int userId);
 }

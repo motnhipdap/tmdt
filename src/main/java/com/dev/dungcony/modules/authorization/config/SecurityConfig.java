@@ -1,7 +1,9 @@
 package com.dev.dungcony.modules.authorization.config;
 
+import com.dev.dungcony.modules.authorization.helpers.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import com.dev.dungcony.modules.authorization.helpers.JwtAuthenticationFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,35 +39,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for API (JWT-based auth doesn't need CSRF)
-
-                // Session management - STATELESS vì dùng JWT
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints - không cần authentication
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/v1/api/auth/**", // Register, Login, OTP, check email/username
-                                "/", // Home page
-                                "/error" // Error page
+                                "/v1/api/auth/**",
+                                "/v1/api/test/**",
+                                "/",
+                                "/error"
                         ).permitAll()
-
-                        // Protected endpoints - CẦN authentication (JWT token)
                         .requestMatchers("/v1/api/user/**").authenticated()
-
-                        // Tất cả các requests khác cần authentication
-                        .anyRequest().authenticated())
-
-                // Thêm JWT filter trước UsernamePasswordAuthenticationFilter
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
-                .formLogin(AbstractHttpConfigurer::disable) // Disable default login form
-                .httpBasic(AbstractHttpConfigurer::disable); // Disable HTTP Basic auth
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -93,7 +87,6 @@ public class SecurityConfig {
 
         // Cache preflight request trong 1 giờ
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

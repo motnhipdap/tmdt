@@ -48,7 +48,7 @@ public class OtpServiceImpl implements OtpService {
 
         if (value == null)
             throw new OtpExpireException();
-        if (passwordEncoder.matches(req.otp(), value))
+        if (!passwordEncoder.matches(req.otp(), value))
             return false;
 
         logger.info("otp verify success");

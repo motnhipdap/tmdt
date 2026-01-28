@@ -18,15 +18,19 @@ public class JwtServiceImpl implements JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
     private final Key key;
+    private final JwtConfig jwtConfig;
 
-    public JwtServiceImpl() {
-        this.key = Keys.hmacShaKeyFor(JwtConfig.secret.getBytes());
+    public JwtServiceImpl(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+        this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
     }
 
     @Override
     public String generateToken(int id, String username, String role) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + JwtConfig.expiration);
+        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000);
+
+        logger.info(now.getTime() + " " + expiration.getTime() + " " + username + " " + role);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
@@ -41,7 +45,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateToken(int id, String email) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + JwtConfig.expiration);
+        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration());
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))

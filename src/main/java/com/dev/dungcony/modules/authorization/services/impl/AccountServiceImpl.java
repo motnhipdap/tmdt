@@ -5,8 +5,6 @@ import com.dev.dungcony.modules.authorization.entities.Account;
 import com.dev.dungcony.modules.authorization.exceptions.TokenValidException;
 import com.dev.dungcony.modules.authorization.repositories.AccountRepository;
 import com.dev.dungcony.modules.authorization.services.interfaces.AccountService;
-import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
-import com.dev.dungcony.modules.authorization.services.interfaces.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +20,6 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accRepo;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
-    private final JwtService jwtService;
 
     @Override
     public boolean existsByEmail(String email) {

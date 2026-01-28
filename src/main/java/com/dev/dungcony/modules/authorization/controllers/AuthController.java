@@ -7,16 +7,15 @@ import com.dev.dungcony.modules.authorization.dtos.responses.LoginRes;
 import com.dev.dungcony.modules.authorization.dtos.responses.LoginResult;
 import com.dev.dungcony.modules.authorization.services.interfaces.AuthService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("v1/api/auth")
 public class AuthController {
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
 
@@ -25,15 +24,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiRes<LoginRes>> login(@Valid @RequestBody LoginReq loginReq) {
+    public ResponseEntity<ApiRes<LoginRes>> login(
+            @Valid @RequestBody LoginReq loginReq,
+            @RequestHeader("X-Device-Id") String deviceId
+    ) {
+        log.info("Login req: {}", loginReq);
 
-        LoginResult res = authService.login(loginReq.username(), loginReq.password());
+        LoginResult res = authService.login(loginReq.username(), loginReq.password(), deviceId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, res.refreshToken())
                 .body(ApiRes.success(
                         "login success",
-                        new LoginRes(res.token())
-                ));
+                        new LoginRes(res.token(), res.expired())));
     }
 
     @PostMapping("/register")
@@ -45,9 +47,19 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiRes<LoginRes>> refresh(
-            @CookieValue("refresh_token") String token
-    ) {
+            @CookieValue("refresh_token") String token) {
         return ResponseEntity.ok()
                 .body(ApiRes.success("refresh_success", authService.refreshToken(token)));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiRes<Void>> logout(
+            @CookieValue("refresh_token") String token,
+            @RequestHeader("X-Device-Id") String deviceId
+    ) {
+        log.info("Logout token: {}", token);
+        authService.logout(token, deviceId);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("logout success"));
     }
 }

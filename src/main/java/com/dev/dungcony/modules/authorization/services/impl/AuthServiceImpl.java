@@ -27,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final AccountRepository accRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
     private final RefreshTokenService refreshTokenService;
 
     @Transactional
@@ -50,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResult login(String username, String password) {
+    public LoginResult login(String username, String password, String deviceId) {
 
         Account acc = accRepository.findByUsername(username).orElse(null);
 
@@ -58,17 +59,16 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidCredentialsException();
 
         String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole());
-        String refreshToken = refreshTokenService.create(acc.getId());
+        String refreshToken = refreshTokenService.create(acc.getId(), deviceId);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/refresh")
-                .maxAge(JwtConfig.refreshExpiration)
+                .path("/v1/api/auth/refresh")
+                .maxAge(jwtConfig.getRefreshExpiration())
                 .build();
 
-
-        return new LoginResult(token, JwtConfig.headerPrefix, JwtConfig.expiration, refreshCookie.toString());
+        return new LoginResult(token, JwtConfig.headerPrefix, jwtConfig.getExpiration(), refreshCookie.toString());
     }
 
     @Override
@@ -77,6 +77,11 @@ public class AuthServiceImpl implements AuthService {
         AccountRes acc = refreshTokenService.verify(refreshToken);
         String token = jwtService.generateToken(acc.id(), acc.username(), acc.role());
 
-        return new LoginRes(token);
+        return new LoginRes(token, jwtConfig.getExpiration());
+    }
+
+    @Override
+    public void logout(String refreshToken, String deviceId) {
+        refreshTokenService.revoke(refreshToken, deviceId);
     }
 }
