@@ -1,4 +1,6 @@
 package com.dev.dungcony.modules.authorization.dtos.requests;
 
-public record SendOtpReq(String email) {
+import com.dev.dungcony.modules.authorization.dtos.OtpType;
+
+public record SendOtpReq(String email, OtpType otpType) {
 }

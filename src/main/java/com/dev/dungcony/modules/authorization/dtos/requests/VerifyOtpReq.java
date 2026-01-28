@@ -10,5 +10,6 @@ public record VerifyOtpReq(
         String email,
         String otp,
         @NotBlank(message = "type not blank")
+        OtpType type
 ) {
 }

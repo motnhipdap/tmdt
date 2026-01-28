@@ -1,7 +1,6 @@
 package com.dev.dungcony.modules.authorization.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.authorization.dtos.requests.UpdateEmailReq;
 import com.dev.dungcony.modules.authorization.dtos.requests.UpdatePasswordReq;
 import com.dev.dungcony.modules.authorization.dtos.responses.AccountRes;
 import com.dev.dungcony.modules.authorization.helpers.AccountDetails;
@@ -53,18 +52,6 @@ public class AccountController {
 
         return ResponseEntity.ok()
                 .body(ApiRes.success("update_password res", ok));
-    }
-
-    @PutMapping("/update_email")
-    public ResponseEntity<ApiRes<Void>> updatePassword(
-            @AuthenticationPrincipal AccountDetails details,
-            @Valid @RequestBody UpdateEmailReq req
-    ) {
-
-        accountService.ChangeEmail(details.getId(), details.ge);
-
-        return ResponseEntity.ok()
-                .body(ApiRes.success("update_password email"));
     }
 
 }

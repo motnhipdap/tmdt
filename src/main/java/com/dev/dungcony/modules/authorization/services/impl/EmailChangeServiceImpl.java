@@ -1,10 +1,5 @@
 package com.dev.dungcony.modules.authorization.services.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.dev.dungcony.modules.authorization.config.Env;
 import com.dev.dungcony.modules.authorization.entities.Account;
 import com.dev.dungcony.modules.authorization.exceptions.TokenExpireException;
@@ -14,10 +9,12 @@ import com.dev.dungcony.modules.authorization.repositories.AccountRepository;
 import com.dev.dungcony.modules.authorization.repositories.EmailChangeRedisRepository;
 import com.dev.dungcony.modules.authorization.services.interfaces.EmailChangeService;
 import com.dev.dungcony.modules.authorization.services.interfaces.EmailService;
-import com.dev.dungcony.modules.authorization.services.interfaces.OtpRegisService;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +46,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
                 hash,
                 Env.expiration_change_email);
 
-        emailService.sendOtpEmail(acc.getEmail(), otp);
+        emailService.send(acc.getEmail(), "OTP yêu cầu thay đổi email - dungcony", otp);
         logger.info("Email change request sent to: {}", acc.getEmail());
     }
 
@@ -84,7 +81,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
         redisRepo.setField(userId, "new_verified", "false");
         redisRepo.setField(userId, "step", "VERIFY_NEW_EMAIL");
 
-        emailService.sendOtpEmail(newEmail, otp);
+        emailService.send(newEmail, "OTP xác nhận email mới - dungcony", otp);
 
     }
 

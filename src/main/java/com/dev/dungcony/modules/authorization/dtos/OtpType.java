@@ -9,12 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum OtpType {
     // OTP 6 số
     REGISTER("otp:register"),
-    FORGOT_PASSWORD("otp:forgot_password"),
-
-    // Email change tokens (JWT)
-    EMAIL_CHANGE_OLD("email_change:old"),
-    EMAIL_CHANGE_NEW("email_change:new");
-
+    FORGOT_PASSWORD("otp:forgot_password");
     @JsonValue
     private final String value;
 }
