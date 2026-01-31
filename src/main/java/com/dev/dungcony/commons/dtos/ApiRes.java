@@ -22,4 +22,7 @@ public record ApiRes<T>(
         return new ApiRes<>(false, message, data);
     }
 
+    public T getData() {
+        return data;
+    }
 }

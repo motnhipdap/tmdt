@@ -1,128 +1,55 @@
-// package com.dev.dungcony.modules.users.entities;
+package com.dev.dungcony.modules.users.entities;
 
-// import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// import com.dev.dungcony.modules.authorization.entities.Account;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-// import jakarta.persistence.Column;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.GenerationType;
-// import jakarta.persistence.Id;
-// import jakarta.persistence.JoinColumn;
-// import jakarta.persistence.OneToOne;
-// import jakarta.persistence.PrePersist;
-// import jakarta.persistence.PreUpdate;
-// import jakarta.persistence.Table;
+@Setter
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "tbl_users")
+public class User {
 
-// @Entity
-// @Table(name = "tbl_users")
-// public class User {
+    @Id
+    @GeneratedValue
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
-// @Id
-// @GeneratedValue(strategy = GenerationType.IDENTITY)
-// private Long id;
+    @NotBlank(message = "name not blank")
+    @Column(name = "f_name", nullable = false)
+    private String firstName;
 
-// @Column(name = "name")
-// private String name;
+    @NotBlank(message = "name not blank")
+    @Column(name = "l_name", nullable = false)
+    private String lastName;
+    
+    @Column(name = "img")
+    private String img;
 
-// @Column(name = "addr")
-// private String addr;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-// @Column(name = "point")
-// private int point;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-// @Column(name = "img")
-// private String img;
+    @Column(name = "acc_id")
+    private int accId;
 
-// @OneToOne
-// @JoinColumn(name = "acc_id")
-// private Account acc;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-// @Column(name = "created_at")
-// private LocalDateTime createdAt;
-// @Column(name = "catalog_id")
-// private Long catalogId;
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-// @Column(name = "updated_at")
-// private LocalDateTime updatedAt;
-
-// @PrePersist
-// protected void onCreate() {
-// this.createdAt = LocalDateTime.now();
-// this.updatedAt = LocalDateTime.now();
-// }
-
-// @PreUpdate
-// protected void onUpdate() {
-// this.updatedAt = LocalDateTime.now();
-// }
-
-// public Long getId() {
-// return id;
-// }
-
-// public String getName() {
-// return name;
-// }
-
-// public String getAddr() {
-// return addr;
-// }
-
-// public int getPoint() {
-// return point;
-// }
-
-// public String getImg() {
-// return img;
-// }
-
-// public LocalDateTime getCreatedAt() {
-// return createdAt;
-// }
-
-// public LocalDateTime getUpdatedAt() {
-// return updatedAt;
-// }
-
-// public Long getCatalogId() {
-// return catalogId;
-// }
-
-// public void setId(Long id) {
-// this.id = id;
-// }
-
-// public void setName(String name) {
-// this.name = name;
-// }
-
-// public void setAddr(String addr) {
-// this.addr = addr;
-// }
-
-// public void setPoint(int point) {
-// this.point = point;
-// }
-
-// public void setAcc(Account acc) {
-// this.acc = acc;
-// }
-
-// public void setImg(String img) {
-// this.img = img;
-// }
-
-// public void setCreatedAt(LocalDateTime createdAt) {
-// this.createdAt = createdAt;
-// }
-
-// public void setUpdatedAt(LocalDateTime updatedAt) {
-// this.updatedAt = updatedAt;
-// }
-
-// public void setCatalogId(Long catalogId) {
-// this.catalogId = catalogId;
-// }
-// }
+}

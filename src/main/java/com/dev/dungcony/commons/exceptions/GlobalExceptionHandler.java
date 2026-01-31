@@ -42,15 +42,6 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiRes<Void>> handleDuplicateKey() {
-        log.error("DB down");
-
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(ApiRes.error("Email hoặc username đã tồn tại"));
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiRes<Map<String, String>>> handleValidation(
             MethodArgumentNotValidException ex
@@ -73,6 +64,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiRes.error("Database error, please try again later"));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiRes<Void>> handleDuplicateKey() {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiRes.error("Có lỗi xảy ra"));
     }
 
     @ExceptionHandler(Exception.class)
