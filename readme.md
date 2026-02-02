@@ -289,7 +289,7 @@
 
 ---
 
-### 4. tbl_point
+**### 4. tbl_point
 
 | Trường      | Kiểu dữ liệu | Ràng buộc |
 |-------------|--------------|-----------|
@@ -437,7 +437,7 @@
 
 ---
 
-### 15. invoice_detail
+### 15. tbl_invoice_detail
 
 | Trường     | Kiểu dữ liệu | Ràng buộc        |
 |------------|--------------|------------------|
@@ -483,7 +483,7 @@
 | provider_id | INT          | FK → tbl_products(id) |
 | image_url   | VARCHAR(255) | NOT NULL              |
 | is_main     | BOOLEAN      | DEFAULT FALSE         |
-| created_at  | TIMESTAMP    |                       |
+| created_at  | TIMESTAMP    |                       |**
 
 ---
 
@@ -580,5 +580,14 @@
 - Thêm nhân viên
 - Tìm kiếm user theo thông tin
 - Xem danh sách người dùng
+
+### Products
+
+- danh sách sp
+- tìm kiếm
+- lọc
+- xem chi tiết
+- quản lý ảnh sp
+- quản lý tồn kho
 
 ---****
