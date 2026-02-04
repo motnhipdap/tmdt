@@ -2,10 +2,11 @@ package com.dev.dungcony.modules.products.services.impl;
 
 import com.dev.dungcony.modules.products.dtos.req.CategoryAddReq;
 import com.dev.dungcony.modules.products.entities.Category;
+import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.exceptions.CategoryCanNotCreateException;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
-import com.dev.dungcony.modules.products.repositories.ProductRepsitory;
+import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final ProductRepsitory productRepsitory;
+    private final ProductRepository productRepository;
 
     @Override
     public void addCategory(CategoryAddReq req) {
@@ -23,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category parent = categoryRepository.findById(req.parent_id())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if (productRepsitory.existsById(parent.getId()))
+        if (productRepository.existsById(parent.getId()))
             throw new CategoryCanNotCreateException("Cannot create sub-category under a category that already contains products");
 
 
@@ -38,7 +39,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void removeCategory(Integer id) {
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(CategoryNotFoundException::new);
+
+        category.setStatus(CategoryStatus.HIDDEN);
+        categoryRepository.save(category);
+
     }
 
 

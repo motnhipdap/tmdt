@@ -6,6 +6,7 @@ public record ProviderDto(
         Integer id,
         String name,
         String description,
+        String logo,
         String email,
         String phone
 ) {
@@ -16,11 +17,12 @@ public record ProviderDto(
         ans.setDescription(p.description());
         ans.setEmail(p.email());
         ans.setPhone(p.phone());
+        ans.setLogo(logo);
 
         return ans;
     }
 
     public ProviderDto(Provider p) {
-        this(p.getId(), p.getName(), p.getDescription(), p.getEmail(), p.getPhone());
+        this(p.getId(), p.getName(), p.getDescription(), p.getLogo(), p.getEmail(), p.getPhone());
     }
 }

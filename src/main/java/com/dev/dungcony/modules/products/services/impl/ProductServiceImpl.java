@@ -1,77 +1,38 @@
 package com.dev.dungcony.modules.products.services.impl;
 
-import com.dev.dungcony.modules.products.dtos.ProductDetailDto;
 import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProductBuyReq;
+import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductBasicDto;
-import com.dev.dungcony.modules.products.dtos.res.ProductImgDto;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
-import com.dev.dungcony.modules.products.entities.ProductImg;
 import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.products.exceptions.*;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductImgRepository;
-import com.dev.dungcony.modules.products.repositories.ProductRepsitory;
+import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final ProductImgRepository productImgRepository;
-    private final ProductRepsitory productRepository;
+
+    private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductImgRepository productImgRepository;
 
-    @Override
-    public ProductDetailDto getById(Integer id) {
-
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new ProductNotFoundException("product not found")
-        );
-
-        List<ProductImgDto> productImgDtos = new ArrayList<>();
-
-        for (ProductImg item : productImgRepository.findByProduct(product)) {
-            productImgDtos.add(new ProductImgDto(item.getId(), item.getImageUrl()));
-        }
-
-        return new ProductDetailDto(product, productImgDtos);
-    }
-
-    @Override
-    public Page<ProductBasicDto> getAll(Pageable pageable) {
-        return productRepository.findProductList(
-                ProductStatus.ACTIVE,
-                pageable
-        );
-    }
-
-    @Override
-    public List<ProductDetailDto> getAllByKeyword(String keyword) {
-        return List.of();
-    }
-
-    @Override
-    public List<ProductBasicDto> getAllByCategoryId(Integer categoryId) {
-        return List.of();
-    }
 
     @Transactional
     @Override
-    public void addProduct(ProductAddReq req) {
+    public void addNew(ProductAddReq req) {
 
         Category cate = categoryRepository.findById(req.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
@@ -114,16 +75,55 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(ProductDetailDto dto) {
-        Product product = productRepository.findById(dto.id())
+    public void addQuantity(int pId, int quantity) {
+        Product product = productRepository.findById(pId)
                 .orElseThrow(ProductNotFoundException::new);
 
-        product.setName(dto.name());
-        product.setDescription(dto.description());
-        product.setQuantity(dto.quantity());
-        product.setQuantitySold(dto.quantity_sold());
+        product.setQuantity(product.getQuantity() + quantity);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void delete(int pId) {
+        Product product = productRepository.findById(pId)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.setStatus(ProductStatus.DELETED);
 
         productRepository.save(product);
     }
 
+    @Transactional
+    @Override
+    public ProductBasicDto update(ProductUpdateReq req) {
+
+        Product product = productRepository.findById(req.productId())
+                .orElseThrow(ProductNotFoundException::new);
+
+        Category cate = categoryRepository.findById(req.categoryId())
+                .orElseThrow(CategoryNotFoundException::new);
+
+        if (product.getCategory() != null && !product.getCategory().getId().equals(req.categoryId()))
+            if (categoryRepository.existsByParent_Id(cate.getId()))
+                throw new ProductConfligException("category is not valid");
+
+        if (!product.getProvider().getId().equals(req.providerId()))
+            if (!providerRepository.existsById(req.providerId()))
+                throw new ProviderNotFoundException();
+
+        Provider provider = new Provider();
+        provider.setId(req.providerId());
+
+        product.setName(req.newName());
+        product.setDescription(req.newDesc());
+        product.setPrice(req.newPrice());
+        product.setStatus(req.newStatus());
+        product.setCategory(cate);
+        product.setProvider(provider);
+
+        productRepository.save(product);
+
+        return new ProductBasicDto(product, productRepository.findMainImage(product.getId()).orElse(null));
+        
+    }
 }

@@ -17,7 +17,11 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_categories", schema = "db1")
+@Table(name = "tbl_categories", schema = "db1",
+        indexes = {
+                @Index(name = "idx_category_name", columnList = "name")
+        }
+)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +41,7 @@ public class Category {
     @Column(name = "`desc`", length = 50)
     private String desc;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private CategoryStatus status = CategoryStatus.ACTIVE;
 
@@ -58,4 +63,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Product> tblProducts = new LinkedHashSet<>();
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

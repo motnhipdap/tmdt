@@ -14,7 +14,11 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_product_img", schema = "db1")
+@Table(name = "tbl_product_img", schema = "db1",
+        indexes = {
+                @Index(name = "idx_product_img_main", columnList = "is_main,product_id")
+        }
+)
 public class ProductImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +46,5 @@ public class ProductImg {
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "update_at")
     private Instant updateAt;
+
 }

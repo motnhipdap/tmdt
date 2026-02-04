@@ -15,7 +15,15 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_products", schema = "db1")
+@Table(name = "tbl_products", schema = "db1",
+        indexes = {
+                @Index(name = "idx_product_status", columnList = "status"),
+                @Index(name = "idx_product_category", columnList = "category_id"),
+                @Index(name = "idx_product_status_price", columnList = "status, price"),
+                @Index(name = "idx_product_status_rated", columnList = "status, rated"),
+                @Index(name = "idx_product_sold", columnList = "quantity_sold")
+        }
+)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +54,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     private ProductStatus status = ProductStatus.ACTIVE;
-    
+
     @Column(name = "rated")
     private Float rated;
 
@@ -73,4 +81,8 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

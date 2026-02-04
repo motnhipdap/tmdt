@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.products.entities;
 
-import com.dev.dungcony.modules.products.enums.ProductStatus;
+import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -37,9 +37,9 @@ public class Provider {
     @Column(name = "phone", length = 15)
     private String phone;
 
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
-    private ProductStatus status = ProductStatus.ACTIVE;
+    private ProviderStatus status = ProviderStatus.ACTIVE;
 
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "create_at")
@@ -48,4 +48,12 @@ public class Provider {
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "update_at")
     private Instant updateAt;
+
+    @Size(max = 255)
+    @Column(name = "logo")
+    private String logo;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.dtos.res;
+package com.dev.dungcony.commons.dtos;
 
 import org.springframework.data.domain.Page;
 
