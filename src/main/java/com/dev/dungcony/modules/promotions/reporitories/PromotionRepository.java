@@ -26,6 +26,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                     p.id,
                     p.type,
                     p.value,
+                    p.minPriceApply,
                     p.startAt,
                     p.endAt
                 )
@@ -33,5 +34,25 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
             """)
     Page<PromotionDto> getAll(
             Pageable pageable
+    );
+
+    @Query("""
+            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
+                p.id,
+                p.type,
+                p.value,
+                p.minPriceApply,
+                p.startAt,
+                p.endAt
+            )
+            FROM Promotion p
+            WHERE p.scope = 'GLOBAL'
+                AND p.status = :status
+                AND p.endAt > :now
+            ORDER BY p.priority DESC
+            """)
+    List<PromotionDto> findGlobalPromotions(
+            @org.springframework.data.repository.query.Param("now") Instant now,
+            @org.springframework.data.repository.query.Param("status") PromotionStatus status
     );
 }

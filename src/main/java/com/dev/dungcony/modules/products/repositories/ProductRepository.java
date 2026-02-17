@@ -1,7 +1,7 @@
 package com.dev.dungcony.modules.products.repositories;
 
 import com.dev.dungcony.modules.products.dtos.ProductBasicInterface;
-import com.dev.dungcony.modules.products.dtos.res.ProductBasicDto;
+import com.dev.dungcony.modules.products.dtos.res.ProductAddRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -10,42 +10,38 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
-
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductBasicDto(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductAddRes(
                     p.id,
                     p.name,
                     p.price,
+                    p.price,
                     p.rated,
-                    img.imageUrl
+                    p.img
                 )
                 FROM Product p
-                LEFT JOIN ProductImg img
-                    ON img.product = p AND img.isMain = true
                 WHERE p.status = :status
             """)
-    Page<ProductBasicDto> findProductList(
+    Page<ProductAddRes> findProductList(
             @Param("status") ProductStatus status,
             Pageable pageable
     );
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductBasicDto(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductAddRes(
                     p.id,
                     p.name,
                     p.price,
+                    p.price,
                     p.rated,
-                    img.imageUrl
+                    p.img
                 )
                 FROM Product p
-                LEFT JOIN ProductImg img
-                    ON img.product = p AND img.isMain = true
                 WHERE p.status = :status
             """)
-    Page<ProductBasicDto> getAllByKeyword(
+    Page<ProductAddRes> getAllByKeyword(
             @Param("status") ProductStatus status,
             @Param("key") String key,
             Pageable pageable
@@ -80,12 +76,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             Pageable pageable
     );
 
-    @Query("""
-                select img.imageUrl
-                from ProductImg img
-                where img.product.id = :productId
-                  and img.isMain = true
-            """)
-    Optional<String> findMainImage(@Param("productId") Integer productId);
-
+    boolean existsByCategoryId(Integer id);
 }

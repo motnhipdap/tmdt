@@ -1,29 +1,25 @@
 package com.dev.dungcony.modules.promotions.dtos.req;
 
-import com.dev.dungcony.modules.promotions.enums.PromotionScope;
+import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
-import java.util.List;
 
-public record PromoAddReq(
-        @NotNull(message = "Promotion type is required")
+public record PromoUpdateReq(
+        @NotNull(message = "Promotion ID is required")
+        Integer id,
+
         PromotionType type,
 
         @Min(value = 0, message = "Value must be non-negative")
         @Max(value = 100, message = "Percent value cannot exceed 100")
-        int value,
+        Integer value,
 
-        @NotNull(message = "Promotion scope is required")
-        PromotionScope scope,
-
-        @NotNull(message = "Start date is required")
         Instant startAt,
 
-        @NotNull(message = "End date is required")
         Instant endAt,
 
         @Min(value = 0, message = "Priority must be non-negative")
@@ -32,7 +28,7 @@ public record PromoAddReq(
         @Min(value = 0, message = "Price requirement must be non-negative")
         Integer priceRequire,
 
-        List<Integer> productIds,
-        List<Integer> categoryIds
+        PromotionStatus status
 ) {
 }
+

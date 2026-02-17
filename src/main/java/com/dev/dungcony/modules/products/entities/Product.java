@@ -9,8 +9,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -49,7 +47,7 @@ public class Product {
 
     @ColumnDefault("0")
     @Column(name = "price")
-    private int price;
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
@@ -66,14 +64,6 @@ public class Product {
     @Column(name = "update_at")
     private Instant updateAt;
 
-
-    @OneToMany(
-            mappedBy = "product",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<ProductImg> images = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -85,4 +75,8 @@ public class Product {
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
+    
+    @Size(max = 255)
+    @Column(name = "img")
+    private String img;
 }

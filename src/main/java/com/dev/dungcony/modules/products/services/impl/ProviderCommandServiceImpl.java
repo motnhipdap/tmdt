@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.products.services.impl;
 
-import com.dev.dungcony.modules.products.dtos.res.ProviderDto;
+import com.dev.dungcony.modules.products.dtos.res.ProviderAddRes;
 import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.ProductConfligException;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class ProviderServiceImpl implements ProviderService {
+public class ProviderCommandServiceImpl implements ProviderService {
 
     private final ProviderRepository providerRepository;
 
     @Override
-    public void addNew(ProviderDto dto) {
+    public void addNew(ProviderAddRes dto) {
         if (providerRepository.existsById(dto.id()))
             throw new ProductConfligException();
 
@@ -36,7 +36,7 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public void update(ProviderDto dto) {
+    public void update(ProviderAddRes dto) {
         if (!providerRepository.existsById(dto.id()))
             throw new ProviderNotFoundException();
 

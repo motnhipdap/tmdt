@@ -40,7 +40,7 @@ public class Category {
     @Size(max = 50)
     @Column(name = "`desc`", length = 50)
     private String desc;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private CategoryStatus status = CategoryStatus.ACTIVE;
@@ -67,4 +67,15 @@ public class Category {
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
+    @NotNull
+    @ColumnDefault("1")
+    @Column(name = "is_leaf", nullable = false)
+    private Boolean isLeaf;
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "level", nullable = false)
+    private Integer level = 0;
+    @Size(max = 255)
+    @Column(name = "path")
+    private String path;
 }

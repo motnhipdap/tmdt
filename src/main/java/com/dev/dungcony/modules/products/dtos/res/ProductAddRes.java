@@ -1,11 +1,11 @@
 package com.dev.dungcony.modules.products.dtos.res;
 
-public record ProductBasicDto(
+public record ProductAddRes(
         Integer id,
         String name,
-        int originalPrice,
-        int finalPrice,
-        float rated,
+        String description,
+        double price,
+        int quantity,
         String image
 ) {
 }

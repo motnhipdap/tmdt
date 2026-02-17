@@ -1,11 +1,11 @@
 package com.dev.dungcony.modules.products.dtos.req;
 
-public record ProductAddReq(
-        Integer categoryId,
+public record ProviderUpdateReq(
         Integer providerId,
         String name,
+        String email,
+        String phone,
         String description,
-        Double price,
-        Integer quantity
+        String img
 ) {
 }

@@ -1,11 +1,11 @@
 package com.dev.dungcony.modules.products.services.interfaces;
 
-import com.dev.dungcony.modules.products.dtos.res.ProviderDto;
+import com.dev.dungcony.modules.products.dtos.res.ProviderAddRes;
 
 public interface ProviderService {
-    void addNew(ProviderDto dto);
+    ProviderAddRes addNew(ProviderAddRes dto);
 
     void delete(int id);
 
-    void update(ProviderDto dto);
+    void update(ProviderAddRes dto);
 }

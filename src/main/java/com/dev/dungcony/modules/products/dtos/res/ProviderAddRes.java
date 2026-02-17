@@ -1,11 +1,12 @@
 package com.dev.dungcony.modules.products.dtos.res;
 
-public record ProductDetailDto(
+public record ProviderAddRes(
         Integer id,
         String name,
+        String email,
+        String phone,
         String description,
-        int price,
-        int quantity,
-        int quantity_sold
+        String logo
+
 ) {
 }

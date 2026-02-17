@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.promotions.controllers;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -30,7 +31,7 @@ public class AdminController {
 
     @PostMapping("/add-new")
     public ResponseEntity<Void> addNew(
-            @RequestBody PromoAddReq req
+            @Valid @RequestBody PromoAddReq req
     ) {
         URI uri = URI.create("/v1/api/promotions/" + promotionService.addNew(req));
 
@@ -38,7 +39,16 @@ public class AdminController {
                 .created(uri)
                 .build();
     }
-    
+
+    @PutMapping("/update")
+    public ResponseEntity<ApiRes<?>> update(
+            @Valid @RequestBody com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq req
+    ) {
+        promotionService.update(req);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Promotion updated successfully", null));
+    }
+
     @DeleteMapping("/delete-by-id")
     public ResponseEntity<ApiRes<?>> deleteById(
             @RequestBody Integer promotionId

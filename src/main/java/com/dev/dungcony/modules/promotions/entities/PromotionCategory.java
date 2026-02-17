@@ -19,10 +19,9 @@ public class PromotionCategory {
     private Integer categoryId;
 
     @NotNull
+    @MapsId("promotionId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "promotion_id", nullable = false)
     private Promotion promotion;
-
-
 }
