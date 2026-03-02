@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategory;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategoryId;
@@ -43,12 +43,12 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     }
 
     @Override
-    public List<PromotionDto> getPromotionByCategory(Integer categoryId) {
+    public List<PromotionSumaryRes> getPromotionByCategory(Integer categoryId) {
         return promotionCategoryRepository.findByCategoryId(categoryId, Instant.now(), PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<Integer, List<PromotionDto>> getPromotionsByCategories(List<Integer> categoryIds) {
+    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<Integer> categoryIds) {
         if (categoryIds == null || categoryIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -59,7 +59,7 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
         return rows.stream()
                 .collect(Collectors.groupingBy(
                         row -> (Integer) row[0],
-                        Collectors.mapping(row -> (PromotionDto) row[1], Collectors.toList())
+                        Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
                 ));
     }
 }

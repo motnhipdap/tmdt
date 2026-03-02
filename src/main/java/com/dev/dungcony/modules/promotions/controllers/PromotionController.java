@@ -1,7 +1,8 @@
 package com.dev.dungcony.modules.promotions.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionDetailRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -26,25 +27,25 @@ public class PromotionController {
     private final PromotionCategoryService promotionCategoryService;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ApiRes<List<PromotionDto>>> getPromotionsByProduct(
+    public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByProduct(
             @PathVariable Integer productId
     ) {
-        List<PromotionDto> promotions = promotionProductService.getPromotionByProduct(productId);
+        List<PromotionSumaryRes> promotions = promotionProductService.getPromotionByProduct(productId);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for product", promotions));
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<ApiRes<List<PromotionDto>>> getPromotionsByCategory(
+    public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByCategory(
             @PathVariable Integer categoryId
     ) {
-        List<PromotionDto> promotions = promotionCategoryService.getPromotionByCategory(categoryId);
+        List<PromotionSumaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryId);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for category", promotions));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(
+    public ResponseEntity<ApiRes<PromotionDetailRes>> getById(
             @PathVariable Integer id
     ) {
         return promotionService.getById(id)

@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.products.repositories;
 
 import com.dev.dungcony.modules.products.dtos.ProductBasicInterface;
 import com.dev.dungcony.modules.products.dtos.res.ProductAddRes;
+import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 FROM Product p
                 WHERE p.status = :status
             """)
-    Page<ProductAddRes> findProductList(
+    Page<ProductSumaryRes> findProductList(
             @Param("status") ProductStatus status,
             Pageable pageable
     );

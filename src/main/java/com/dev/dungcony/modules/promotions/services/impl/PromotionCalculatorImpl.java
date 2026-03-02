@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -39,9 +39,9 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
         Instant now = Instant.now();
 
         // Delegate sang service layer — single source of truth
-        List<PromotionDto> productPromotions = promotionProductService.getPromotionByProduct(productId);
-        List<PromotionDto> categoryPromotions = promotionCategoryService.getPromotionByCategory(categoryId);
-        List<PromotionDto> globalPromotions = promotionService.getGlobalPromotions(now);
+        List<PromotionSumaryRes> productPromotions = promotionProductService.getPromotionByProduct(productId);
+        List<PromotionSumaryRes> categoryPromotions = promotionCategoryService.getPromotionByCategory(categoryId);
+        List<PromotionSumaryRes> globalPromotions = promotionService.getGlobalPromotions(now);
 
         return findBestDiscount(price, now, productPromotions, categoryPromotions, globalPromotions);
     }
@@ -59,17 +59,17 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
         List<Integer> categoryIds = inputs.stream().map(ProductPriceInput::categoryId).distinct().toList();
 
         // Batch query qua service layer: 3 queries thay vì 3*N
-        Map<Integer, List<PromotionDto>> productPromotionMap =
+        Map<Integer, List<PromotionSumaryRes>> productPromotionMap =
                 promotionProductService.getPromotionsByProducts(productIds);
-        Map<Integer, List<PromotionDto>> categoryPromotionMap =
+        Map<Integer, List<PromotionSumaryRes>> categoryPromotionMap =
                 promotionCategoryService.getPromotionsByCategories(categoryIds);
-        List<PromotionDto> globalPromotions = promotionService.getGlobalPromotions(now);
+        List<PromotionSumaryRes> globalPromotions = promotionService.getGlobalPromotions(now);
 
         // Tính cho từng product
         Map<Integer, DiscountInfoDto> result = new HashMap<>();
         for (ProductPriceInput input : inputs) {
-            List<PromotionDto> prodPromos = productPromotionMap.getOrDefault(input.productId(), List.of());
-            List<PromotionDto> catePromos = categoryPromotionMap.getOrDefault(input.categoryId(), List.of());
+            List<PromotionSumaryRes> prodPromos = productPromotionMap.getOrDefault(input.productId(), List.of());
+            List<PromotionSumaryRes> catePromos = categoryPromotionMap.getOrDefault(input.categoryId(), List.of());
 
             DiscountInfoDto discount = findBestDiscount(input.price(), now, prodPromos, catePromos, globalPromotions);
             result.put(input.productId(), discount);
@@ -86,20 +86,20 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
     private DiscountInfoDto findBestDiscount(
             BigDecimal price,
             Instant now,
-            List<PromotionDto> productPromotions,
-            List<PromotionDto> categoryPromotions,
-            List<PromotionDto> globalPromotions
+            List<PromotionSumaryRes> productPromotions,
+            List<PromotionSumaryRes> categoryPromotions,
+            List<PromotionSumaryRes> globalPromotions
     ) {
         // (VD: product thuộc 1 category mà cả product lẫn category đều được map với cùng promotion)
-        Map<Integer, PromotionDto> dedupMap = new LinkedHashMap<>(
+        Map<Integer, PromotionSumaryRes> dedupMap = new LinkedHashMap<>(
                 productPromotions.size() + categoryPromotions.size() + globalPromotions.size()
         );
         productPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
         categoryPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
         globalPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
-        List<PromotionDto> allPromotions = new ArrayList<>(dedupMap.values());
+        List<PromotionSumaryRes> allPromotions = new ArrayList<>(dedupMap.values());
 
-        List<PromotionDto> applicablePromotions = allPromotions.stream()
+        List<PromotionSumaryRes> applicablePromotions = allPromotions.stream()
                 .filter(promo -> promo.isApplicable(price, now))
                 .toList();
 
@@ -108,7 +108,7 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
         }
 
         // Tìm promotion cho discount cao nhất
-        PromotionDto bestPromotion = applicablePromotions.stream()
+        PromotionSumaryRes bestPromotion = applicablePromotions.stream()
                 .max(Comparator.comparing(p -> p.calculateDiscount(price)))
                 .orElseThrow();
 

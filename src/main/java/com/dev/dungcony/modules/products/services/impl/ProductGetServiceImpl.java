@@ -4,7 +4,9 @@ import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.products.dtos.ProductBasicInterface;
 import com.dev.dungcony.modules.products.dtos.res.ProductAddRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailDto;
+import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductImgDto;
+import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.ProductImg;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
@@ -33,7 +35,7 @@ public class ProductGetServiceImpl implements ProductGetService {
     private final PromotionCalculator promotionCalculator;
 
     @Override
-    public ProductDetailDto getById(Integer id) {
+    public ProductDetailRes getById(Integer id) {
 
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new ProductNotFoundException("product not found")
@@ -55,8 +57,8 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public Page<ProductAddRes> getAll(Pageable pageable) {
-        Page<ProductAddRes> page = productRepository.findProductList(
+    public Page<ProductSumaryRes> getAll(Pageable pageable) {
+        Page<ProductSumaryRes> page = productRepository.findProductList(
                 ProductStatus.ACTIVE,
                 pageable
         );

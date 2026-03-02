@@ -5,7 +5,8 @@ import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionDetailRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionScope;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
@@ -17,8 +18,6 @@ import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategory
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -73,6 +72,9 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public void delete(Integer promotionId) {
         log.info("deleting promotion id={}", promotionId);
+        if (!promotionRepository.existsById(promotionId)) {
+            throw new PromotionNotFoundException(promotionId);
+        }
         promotionRepository.deleteById(promotionId);
     }
 
@@ -87,7 +89,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public Page<PromotionDto> getAll(Pageable pageable) {
+    public Page<PromotionSumaryRes> getAll(Pageable pageable) {
         return promotionRepository.getAll(pageable);
     }
 
@@ -108,7 +110,7 @@ public class PromotionServiceImpl implements PromotionService {
         Instant effectiveStart = req.startAt() != null ? req.startAt() : promotion.getStartAt();
         Instant effectiveEnd = req.endAt() != null ? req.endAt() : promotion.getEndAt();
 
-        if (effectiveEnd.isBefore(effectiveStart)) {
+        if (effectiveEnd != null && effectiveEnd.isBefore(effectiveStart)) {
             throw new InvalidPromotionException("End date must be after start date");
         }
 
@@ -134,19 +136,23 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public Optional<PromotionDto> getById(Integer id) {
+    public Optional<PromotionDetailRes> getById(Integer id) {
         return promotionRepository.findById(id)
-                .map(p -> new PromotionDto(
+                .map(p -> new PromotionDetailRes(
                         p.getId(),
                         p.getType(),
+                        p.getCode(),
                         p.getValue(),
-                        p.getMinPriceApply(),
+                        p.getScope(),
                         p.getStartAt(),
-                        p.getEndAt()));
+                        p.getEndAt(),
+                        p.getPriority(),
+                        p.getStatus(),
+                        p.getMinPriceApply().intValue()));
     }
 
     @Override
-    public List<PromotionDto> getGlobalPromotions(Instant now) {
+    public List<PromotionSumaryRes> getGlobalPromotions(Instant now) {
         return promotionRepository.findGlobalPromotions(now, PromotionStatus.ACTIVE);
     }
 
@@ -155,6 +161,10 @@ public class PromotionServiceImpl implements PromotionService {
     private void validateAddRequest(PromoAddReq req) {
         if (req.endAt().isBefore(req.startAt())) {
             throw new InvalidPromotionException("End date must be after start date");
+        }
+
+        if (req.type() == PromotionType.PERCENT && req.value() > 100) {
+            throw new InvalidPromotionException("Percent value must be between 0 and 100");
         }
 
         if (req.scope() == PromotionScope.PRODUCT) {
@@ -198,7 +208,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
 
-    private @NonNull Promotion getPromotion(PromoAddReq req, PromotionStatus initialStatus) {
+    private Promotion getPromotion(PromoAddReq req, PromotionStatus initialStatus) {
         Promotion promotion = new Promotion();
         promotion.setType(req.type());
         promotion.setCode(req.code());

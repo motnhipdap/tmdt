@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.promotions.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
+import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class AdminController {
 
     @PutMapping("/update")
     public ResponseEntity<ApiRes<?>> update(
-            @Valid @RequestBody com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq req
+            @Valid @RequestBody PromoUpdateReq req
     ) {
         promotionService.update(req);
         return ResponseEntity.ok()
@@ -55,6 +56,15 @@ public class AdminController {
     ) {
         promotionService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/soft-delete")
+    public ResponseEntity<ApiRes<?>> softDeleteById(
+            @PathVariable Integer id
+    ) {
+        promotionService.softDelete(id);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Promotion soft-deleted successfully", null));
     }
 
 }

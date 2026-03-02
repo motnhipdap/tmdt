@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionScope;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
@@ -256,7 +256,7 @@ class PromotionServiceImplTest {
         when(promotionRepository.findById(1)).thenReturn(Optional.of(promotion));
 
         // When
-        Optional<PromotionDto> result = promotionService.getById(1);
+        Optional<PromotionSumaryRes> result = promotionService.getById(1);
 
         // Then
         assertThat(result).isPresent();
@@ -271,7 +271,7 @@ class PromotionServiceImplTest {
         when(promotionRepository.findById(999)).thenReturn(Optional.empty());
 
         // When
-        Optional<PromotionDto> result = promotionService.getById(999);
+        Optional<PromotionSumaryRes> result = promotionService.getById(999);
 
         // Then
         assertThat(result).isEmpty();

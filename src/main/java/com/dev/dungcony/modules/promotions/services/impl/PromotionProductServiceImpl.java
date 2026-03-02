@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.entities.PromotionProduct;
 import com.dev.dungcony.modules.promotions.entities.PromotionProductId;
@@ -25,12 +25,12 @@ public class PromotionProductServiceImpl implements PromotionProductService {
     private final PromotionProductRepository promotionProductRepository;
 
     @Override
-    public List<PromotionDto> getPromotionByProduct(Integer productId) {
+    public List<PromotionSumaryRes> getPromotionByProduct(Integer productId) {
         return promotionProductRepository.findByProductId(productId, Instant.now(), PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<Integer, List<PromotionDto>> getPromotionsByProducts(List<Integer> productIds) {
+    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<Integer> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -41,7 +41,7 @@ public class PromotionProductServiceImpl implements PromotionProductService {
         return rows.stream()
                 .collect(Collectors.groupingBy(
                         row -> (Integer) row[0],
-                        Collectors.mapping(row -> (PromotionDto) row[1], Collectors.toList())
+                        Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
                 ));
     }
 

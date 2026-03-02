@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.promotions.reporitories;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
      * Lấy danh sách promotion (không bao gồm DELETED) cho admin.
      */
     @Query("""
-                SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
+                SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes(
                     p.id,
                     p.type,
                     p.value,
@@ -32,10 +32,10 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                 FROM Promotion p
                 WHERE p.status <> com.dev.dungcony.modules.promotions.enums.PromotionStatus.DELETED
             """)
-    Page<PromotionDto> getAll(Pageable pageable);
+    Page<PromotionSumaryRes> getAll(Pageable pageable);
 
     @Query("""
-            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
+            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes(
                 p.id,
                 p.type,
                 p.value,
@@ -49,7 +49,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                 AND p.endAt > :now
             ORDER BY p.priority DESC
             """)
-    List<PromotionDto> findGlobalPromotions(
+    List<PromotionSumaryRes> findGlobalPromotions(
             @Param("now") Instant now,
             @Param("status") PromotionStatus status
     );

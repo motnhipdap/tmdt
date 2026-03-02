@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.promotions.reporitories;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
 import com.dev.dungcony.modules.promotions.entities.PromotionProduct;
 import com.dev.dungcony.modules.promotions.entities.PromotionProductId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
@@ -14,7 +14,7 @@ import java.util.List;
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, PromotionProductId> {
 
     @Query("""
-            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
+            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes(
                              pp.promotion.id,
                              pp.promotion.type,
                              pp.promotion.value,
@@ -28,7 +28,7 @@ public interface PromotionProductRepository extends JpaRepository<PromotionProdu
                  AND pp.promotion.endAt > :now
             ORDER BY pp.promotion.priority DESC
             """)
-    List<PromotionDto> findByProductId(
+    List<PromotionSumaryRes> findByProductId(
             @Param("productId") Integer productId,
             @Param("now") Instant now,
             @Param("status") PromotionStatus status
@@ -40,7 +40,7 @@ public interface PromotionProductRepository extends JpaRepository<PromotionProdu
      */
     @Query("""
             SELECT pp.productId,
-                   new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
+                   new com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes(
                        pp.promotion.id,
                        pp.promotion.type,
                        pp.promotion.value,

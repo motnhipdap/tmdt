@@ -1,6 +1,8 @@
 package com.dev.dungcony.modules.products.services.impl;
 
+import com.dev.dungcony.modules.products.dtos.req.ProviderAddReq;
 import com.dev.dungcony.modules.products.dtos.res.ProviderAddRes;
+import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
 import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.ProductConfligException;
@@ -19,11 +21,11 @@ public class ProviderCommandServiceImpl implements ProviderService {
     private final ProviderRepository providerRepository;
 
     @Override
-    public void addNew(ProviderAddRes dto) {
+    public ProviderRes addNew(ProviderAddReq dto) {
         if (providerRepository.existsById(dto.id()))
             throw new ProductConfligException();
 
-        providerRepository.save(dto.getEntity(dto));
+        return providerRepository.save(dto.getEntity(dto));
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ProviderCommandServiceImpl implements ProviderService {
     }
 
     @Override
-    public void update(ProviderAddRes dto) {
+    public void update(ProviderRes dto) {
         if (!providerRepository.existsById(dto.id()))
             throw new ProviderNotFoundException();
 

@@ -6,9 +6,10 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 
 import java.time.Instant;
 
-public record PromotionDetailDto(
+public record PromotionDetailRes(
         Integer id,
         PromotionType type,
+        String code,
         int value,
         PromotionScope scope,
         Instant startAt,
