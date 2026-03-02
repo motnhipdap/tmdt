@@ -124,3 +124,18 @@ CREATE TABLE tbl_promotion_product
     CONSTRAINT fk_promotion_product_promotion FOREIGN KEY (promotion_id) REFERENCES tbl_promotions (id)
 );
 CREATE INDEX idx_promotion_product_promotion ON tbl_promotion_product (promotion_id);
+
+
+CREATE TABLE tbl_promotion_category
+(
+    promotion_id INT UNSIGNED NOT NULL,
+    category_id  INT UNSIGNED NOT NULL,
+    PRIMARY KEY (promotion_id, category_id),
+    CONSTRAINT fk_promotion_category_promotion
+        FOREIGN KEY (promotion_id) REFERENCES tbl_promotions (id) ON DELETE CASCADE,
+    CONSTRAINT fk_promotion_category_category
+        FOREIGN KEY (category_id) REFERENCES tbl_categories (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_promotion_category_category
+    ON tbl_promotion_category (category_id);

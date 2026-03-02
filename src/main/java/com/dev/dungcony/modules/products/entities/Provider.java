@@ -47,11 +47,11 @@ public class Provider {
     private ProviderStatus status = ProviderStatus.ACTIVE;
 
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "create_at")
+    @Column(name = "created_at")
     private Instant createAt;
 
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private Instant updateAt;
 
     @Size(max = 255)

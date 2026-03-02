@@ -55,4 +55,8 @@ public class Promotion {
     @Enumerated(EnumType.STRING)
     @Column(name = "scope", nullable = false, length = 20)
     private PromotionScope scope = PromotionScope.GLOBAL;
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "version", nullable = false)
+    private Long version;
 }
