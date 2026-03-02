@@ -90,13 +90,14 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
             List<PromotionDto> categoryPromotions,
             List<PromotionDto> globalPromotions
     ) {
-        // Gộp tất cả promotions và lọc applicable
-        List<PromotionDto> allPromotions = new ArrayList<>(
+        // (VD: product thuộc 1 category mà cả product lẫn category đều được map với cùng promotion)
+        Map<Integer, PromotionDto> dedupMap = new LinkedHashMap<>(
                 productPromotions.size() + categoryPromotions.size() + globalPromotions.size()
         );
-        allPromotions.addAll(productPromotions);
-        allPromotions.addAll(categoryPromotions);
-        allPromotions.addAll(globalPromotions);
+        productPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
+        categoryPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
+        globalPromotions.forEach(p -> dedupMap.put(p.promotionId(), p));
+        List<PromotionDto> allPromotions = new ArrayList<>(dedupMap.values());
 
         List<PromotionDto> applicablePromotions = allPromotions.stream()
                 .filter(promo -> promo.isApplicable(price, now))

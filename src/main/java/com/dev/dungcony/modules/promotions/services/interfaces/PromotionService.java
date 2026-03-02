@@ -14,9 +14,7 @@ public interface PromotionService {
     int addNew(PromoAddReq req);
 
     void update(PromoUpdateReq req);
-
-    void remove(Integer promotionId);
-
+    
     void delete(Integer promotionId);
 
     void softDelete(Integer promotionId);

@@ -16,11 +16,6 @@ import java.util.List;
 // PromotionRepository.java
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
-    // Tìm các khuyến mãi đang hoạt động nhưng đã hết hạn
-    List<Promotion> findByStatusAndEndAtBefore(PromotionStatus status, Instant now);
-
-    // Tìm các khuyến mãi sắp diễn ra và đã đến giờ bắt đầu
-    List<Promotion> findByStatusAndStartAtBefore(PromotionStatus status, Instant now);
 
     /**
      * Lấy danh sách promotion (không bao gồm DELETED) cho admin.

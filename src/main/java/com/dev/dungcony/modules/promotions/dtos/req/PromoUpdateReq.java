@@ -2,7 +2,6 @@ package com.dev.dungcony.modules.promotions.dtos.req;
 
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.enums.PromotionType;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,7 +14,6 @@ public record PromoUpdateReq(
         PromotionType type,
 
         @Min(value = 0, message = "Value must be non-negative")
-        @Max(value = 100, message = "Percent value cannot exceed 100")
         Integer value,
 
         Instant startAt,

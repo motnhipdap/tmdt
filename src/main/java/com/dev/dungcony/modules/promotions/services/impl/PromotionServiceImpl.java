@@ -17,6 +17,8 @@ import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategory
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,17 +55,7 @@ public class PromotionServiceImpl implements PromotionService {
         // Xác định status ban đầu dựa trên thời gian
         PromotionStatus initialStatus = determineInitialStatus(req.startAt(), req.endAt());
 
-        Promotion promotion = new Promotion();
-        promotion.setType(req.type());
-        promotion.setValue(req.value());
-        promotion.setScope(req.scope());
-        promotion.setStartAt(req.startAt());
-        promotion.setEndAt(req.endAt());
-        promotion.setPriority(req.priority());
-        promotion.setMinPriceApply(req.priceRequire() != null
-                ? BigDecimal.valueOf(req.priceRequire())
-                : BigDecimal.ZERO);
-        promotion.setStatus(initialStatus);
+        Promotion promotion = getPromotion(req, initialStatus);
 
         promotion = promotionRepository.save(promotion);
 
@@ -97,14 +89,6 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public Page<PromotionDto> getAll(Pageable pageable) {
         return promotionRepository.getAll(pageable);
-    }
-
-    @Override
-    public void remove(Integer promotionId) {
-        if (!promotionRepository.existsById(promotionId)) {
-            throw new PromotionNotFoundException(promotionId);
-        }
-        promotionRepository.deleteById(promotionId);
     }
 
     @Transactional
@@ -211,5 +195,22 @@ public class PromotionServiceImpl implements PromotionService {
             throw new InvalidPromotionException("Cannot create promotion that has already ended");
         }
         return startAt.isBefore(now) ? PromotionStatus.ACTIVE : PromotionStatus.SCHEDULED;
+    }
+
+
+    private @NonNull Promotion getPromotion(PromoAddReq req, PromotionStatus initialStatus) {
+        Promotion promotion = new Promotion();
+        promotion.setType(req.type());
+        promotion.setCode(req.code());
+        promotion.setValue(req.value());
+        promotion.setScope(req.scope());
+        promotion.setStartAt(req.startAt());
+        promotion.setEndAt(req.endAt());
+        promotion.setPriority(req.priority());
+        promotion.setMinPriceApply(req.priceRequire() != null
+                ? BigDecimal.valueOf(req.priceRequire())
+                : BigDecimal.ZERO);
+        promotion.setStatus(initialStatus);
+        return promotion;
     }
 }

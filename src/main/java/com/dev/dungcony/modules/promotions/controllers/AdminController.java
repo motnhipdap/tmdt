@@ -49,12 +49,12 @@ public class AdminController {
                 .body(ApiRes.success("Promotion updated successfully", null));
     }
 
-    @DeleteMapping("/delete-by-id")
-    public ResponseEntity<ApiRes<?>> deleteById(
-            @RequestBody Integer promotionId
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(
+            @PathVariable Integer id
     ) {
-        promotionService.delete(promotionId);
-        return ResponseEntity.ok().build();
+        promotionService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
