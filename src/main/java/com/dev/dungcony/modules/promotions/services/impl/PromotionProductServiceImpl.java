@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,11 +29,26 @@ public class PromotionProductServiceImpl implements PromotionProductService {
         return promotionProductRepository.findByProductId(productId, Instant.now(), PromotionStatus.ACTIVE);
     }
 
+    @Override
+    public Map<Integer, List<PromotionDto>> getPromotionsByProducts(List<Integer> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<Object[]> rows = promotionProductRepository
+                .findByProductIds(productIds, Instant.now(), PromotionStatus.ACTIVE);
+
+        return rows.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (Integer) row[0],
+                        Collectors.mapping(row -> (PromotionDto) row[1], Collectors.toList())
+                ));
+    }
+
     @Transactional
     @Override
     public void addListPromotionProduct(Promotion pro, List<Integer> productIds) {
-
-        log.info("adding list promotion product.....");
+        log.info("Adding {} promotion-product mappings for promotionId={}", productIds.size(), pro.getId());
 
         List<PromotionProduct> mappings = productIds.stream()
                 .map(productId -> {

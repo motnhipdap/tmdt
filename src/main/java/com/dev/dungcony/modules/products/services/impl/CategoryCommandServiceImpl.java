@@ -38,7 +38,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         Category category = new Category();
         category.setName(req.name());
-        category.setDesc(req.description());
+        category.setDescription(req.description());
         category.setImgUrl(req.img());
         category.setParent(parent);
         category.setIsLeaf(true);

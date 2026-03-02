@@ -106,6 +106,7 @@ CREATE TABLE tbl_promotions
     id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     type            VARCHAR(20)    NOT NULL,
     value           INT            NOT NULL,
+    code            VARCHAR(20)    NOT NULL UNIQUE,
     start_at        TIMESTAMP(3)            DEFAULT CURRENT_TIMESTAMP(3),
     end_at          TIMESTAMP(3),
     priority        INT                     DEFAULT 1,

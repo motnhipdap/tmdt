@@ -1,7 +1,8 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.products.dtos.DiscountInfo;
-import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
+import com.dev.dungcony.modules.products.repositories.CategoryRepository;
+import com.dev.dungcony.modules.products.repositories.ProductRepository;
+import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
@@ -22,37 +23,35 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service quản lý CRUD promotion.
+ * Logic tính toán giá đã được tách sang {@link PromotionCalculatorImpl}.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service("v1-promotion")
-public class PromotionServiceImpl implements PromotionService, PromotionCalculator {
+public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
     private final PromotionProductService promotionProductService;
     private final PromotionCategoryService promotionCategoryService;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     @Override
     public int addNew(PromoAddReq req) {
-        log.info("adding new promotion: {}", req);
+        log.info("Adding new promotion: {}", req);
 
-        // Validate business rules
-        if (req.endAt().isBefore(req.startAt())) {
-            throw new InvalidPromotionException("End date must be after start date");
-        }
+        validateAddRequest(req);
 
-        if (req.scope() == PromotionScope.PRODUCT && (req.productIds() == null || req.productIds().isEmpty())) {
-            throw new InvalidPromotionException("Product IDs are required for PRODUCT scope");
-        }
-
-        if (req.scope() == PromotionScope.CATEGORY && (req.categoryIds() == null || req.categoryIds().isEmpty())) {
-            throw new InvalidPromotionException("Category IDs are required for CATEGORY scope");
-        }
+        // Xác định status ban đầu dựa trên thời gian
+        PromotionStatus initialStatus = determineInitialStatus(req.startAt(), req.endAt());
 
         Promotion promotion = new Promotion();
         promotion.setType(req.type());
@@ -61,30 +60,34 @@ public class PromotionServiceImpl implements PromotionService, PromotionCalculat
         promotion.setStartAt(req.startAt());
         promotion.setEndAt(req.endAt());
         promotion.setPriority(req.priority());
-        promotion.setMinPriceApply(req.priceRequire());
+        promotion.setMinPriceApply(req.priceRequire() != null
+                ? BigDecimal.valueOf(req.priceRequire())
+                : BigDecimal.ZERO);
+        promotion.setStatus(initialStatus);
 
         promotion = promotionRepository.save(promotion);
 
-        if (req.scope() == PromotionScope.PRODUCT)
+        // Tạo mapping với product/category
+        if (req.scope() == PromotionScope.PRODUCT) {
             promotionProductService.addListPromotionProduct(promotion, req.productIds());
-
-        if (req.scope() == PromotionScope.CATEGORY)
+        }
+        if (req.scope() == PromotionScope.CATEGORY) {
             promotionCategoryService.addListPromotionCategory(promotion, req.categoryIds());
+        }
 
         return promotion.getId();
     }
 
     @Override
     public void delete(Integer promotionId) {
-        log.info("Attempting to soft-delete promotion with id: {}", promotionId);
-        promotionRepository.findById(promotionId).ifPresent(promotion -> {
-            promotion.setStatus(PromotionStatus.DELETED);
-            promotionRepository.save(promotion);
-            log.info("Successfully soft-deleted promotion with id: {}", promotionId);
-        });
+        log.info("Soft-deleting promotion id={}", promotionId);
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new PromotionNotFoundException(promotionId));
+
+        promotion.setStatus(PromotionStatus.DELETED);
+        promotionRepository.save(promotion);
     }
 
-    // trả về page toàn bộ pgg dành cho admin
     @Override
     public Page<PromotionDto> getAll(Pageable pageable) {
         return promotionRepository.getAll(pageable);
@@ -92,50 +95,52 @@ public class PromotionServiceImpl implements PromotionService, PromotionCalculat
 
     @Override
     public void remove(Integer promotionId) {
+        if (!promotionRepository.existsById(promotionId)) {
+            throw new PromotionNotFoundException(promotionId);
+        }
         promotionRepository.deleteById(promotionId);
     }
 
     @Transactional
     @Override
     public void update(PromoUpdateReq req) {
-        log.info("Updating promotion with id: {}", req.id());
+        log.info("Updating promotion id={}", req.id());
 
         Promotion promotion = promotionRepository.findById(req.id())
                 .orElseThrow(() -> new PromotionNotFoundException(req.id()));
 
-        // Validate dates if both are provided
-        if (req.startAt() != null && req.endAt() != null && req.endAt().isBefore(req.startAt())) {
+        // Không cho update promotion đã DELETED
+        if (promotion.getStatus() == PromotionStatus.DELETED) {
+            throw new InvalidPromotionException("Cannot update a deleted promotion");
+        }
+
+        // Xác định startAt và endAt cuối cùng để validate
+        Instant effectiveStart = req.startAt() != null ? req.startAt() : promotion.getStartAt();
+        Instant effectiveEnd = req.endAt() != null ? req.endAt() : promotion.getEndAt();
+
+        if (effectiveEnd.isBefore(effectiveStart)) {
             throw new InvalidPromotionException("End date must be after start date");
         }
 
-        // Update only provided fields
-        if (req.type() != null) {
-            promotion.setType(req.type());
-        }
-        if (req.value() != null) {
-            if (promotion.getType() == PromotionType.PERCENT && (req.value() < 0 || req.value() > 100)) {
-                throw new InvalidPromotionException("Percent value must be between 0 and 100");
-            }
-            promotion.setValue(req.value());
-        }
-        if (req.startAt() != null) {
-            promotion.setStartAt(req.startAt());
-        }
-        if (req.endAt() != null) {
-            promotion.setEndAt(req.endAt());
-        }
-        if (req.priority() != null) {
-            promotion.setPriority(req.priority());
-        }
-        if (req.priceRequire() != null) {
-            promotion.setMinPriceApply(req.priceRequire());
-        }
-        if (req.status() != null) {
-            promotion.setStatus(req.status());
+        // Xác định type cuối cùng để validate value
+        PromotionType effectiveType = req.type() != null ? req.type() : promotion.getType();
+
+        if (req.value() != null && effectiveType == PromotionType.PERCENT
+                && (req.value() < 0 || req.value() > 100)) {
+            throw new InvalidPromotionException("Percent value must be between 0 and 100");
         }
 
+        // Update only provided fields
+        if (req.type() != null) promotion.setType(req.type());
+        if (req.value() != null) promotion.setValue(req.value());
+        if (req.startAt() != null) promotion.setStartAt(req.startAt());
+        if (req.endAt() != null) promotion.setEndAt(req.endAt());
+        if (req.priority() != null) promotion.setPriority(req.priority());
+        if (req.priceRequire() != null) promotion.setMinPriceApply(BigDecimal.valueOf(req.priceRequire()));
+        if (req.status() != null) promotion.setStatus(req.status());
+
         promotionRepository.save(promotion);
-        log.info("Successfully updated promotion with id: {}", req.id());
+        log.info("Successfully updated promotion id={}", req.id());
     }
 
     @Override
@@ -151,60 +156,58 @@ public class PromotionServiceImpl implements PromotionService, PromotionCalculat
     }
 
     @Override
-    public DiscountInfo calculateFinalPrice(int productId, int categoryId, int price) {
-        log.info("Calculating final price for productId: {}, categoryId: {}, price: {}", productId, categoryId, price);
-
-        // Get all applicable promotions
-        List<PromotionDto> productPromotions = promotionProductService.getPromotionByProduct(productId);
-        List<PromotionDto> categoryPromotions = promotionCategoryService.getPromotionByCategory(categoryId);
-        List<PromotionDto> globalPromotions = promotionRepository.findGlobalPromotions(
-                Instant.now(),
-                PromotionStatus.ACTIVE
-        );
-
-        // Merge all promotions into one list
-        List<PromotionDto> allPromotions = new ArrayList<>();
-        allPromotions.addAll(productPromotions);
-        allPromotions.addAll(categoryPromotions);
-        allPromotions.addAll(globalPromotions);
-
-        // Filter promotions that are applicable based on minimum price
-        List<PromotionDto> applicablePromotions = allPromotions.stream()
-                .filter(promo -> promo.isApplicable(price))
-                .toList();
-
-        if (applicablePromotions.isEmpty()) {
-            log.info("No applicable promotions found");
-            return new DiscountInfo((double) price, (double) price, "NONE", 0);
-        }
-
-        // Find the best promotion (one that gives the highest discount)
-        PromotionDto bestPromotion = applicablePromotions.stream()
-                .max((p1, p2) -> {
-                    int discount1 = calculateDiscount(p1, price);
-                    int discount2 = calculateDiscount(p2, price);
-                    return Integer.compare(discount1, discount2);
-                })
-                .orElseThrow();
-
-        // Calculate final price
-        int discount = calculateDiscount(bestPromotion, price);
-        int finalPrice = price - discount;
-
-        log.info("Best promotion found: type={}, value={}, discount={}, finalPrice={}",
-                bestPromotion.type(), bestPromotion.value(), discount, finalPrice);
-
-        return new DiscountInfo(
-                (double) price,
-                (double) finalPrice,
-                bestPromotion.type().getValue(),
-                bestPromotion.value());
+    public List<PromotionDto> getGlobalPromotions(Instant now) {
+        return promotionRepository.findGlobalPromotions(now, PromotionStatus.ACTIVE);
     }
 
-    private int calculateDiscount(PromotionDto promotion, int price) {
-        return switch (promotion.type()) {
-            case PERCENT -> price * promotion.value() / 100;
-            case FIXED -> Math.min(promotion.value(), price); // Don't discount more than the price
-        };
+    // ============ PRIVATE HELPERS ============
+
+    private void validateAddRequest(PromoAddReq req) {
+        if (req.endAt().isBefore(req.startAt())) {
+            throw new InvalidPromotionException("End date must be after start date");
+        }
+
+        if (req.type() == PromotionType.PERCENT && (req.value() < 0 || req.value() > 100)) {
+            throw new InvalidPromotionException("Percent value must be between 0 and 100");
+        }
+
+        if (req.scope() == PromotionScope.PRODUCT) {
+            if (req.productIds() == null || req.productIds().isEmpty()) {
+                throw new InvalidPromotionException("Product IDs are required for PRODUCT scope");
+            }
+            // Validate tất cả productIds tồn tại và đang ACTIVE
+            long existCount = productRepository.countByIdInAndStatus(req.productIds(), ProductStatus.ACTIVE);
+            if (existCount != req.productIds().size()) {
+                throw new InvalidPromotionException(
+                        "Some product IDs are invalid or inactive. Expected " + req.productIds().size()
+                                + " but found " + existCount
+                );
+            }
+        }
+
+        if (req.scope() == PromotionScope.CATEGORY) {
+            if (req.categoryIds() == null || req.categoryIds().isEmpty()) {
+                throw new InvalidPromotionException("Category IDs are required for CATEGORY scope");
+            }
+            // Validate tất cả categoryIds tồn tại
+            long existCount = categoryRepository.countByIdIn(req.categoryIds());
+            if (existCount != req.categoryIds().size()) {
+                throw new InvalidPromotionException(
+                        "Some category IDs are invalid. Expected " + req.categoryIds().size()
+                                + " but found " + existCount
+                );
+            }
+        }
+    }
+
+    /**
+     * Xác định status ban đầu: nếu startAt đã qua -> ACTIVE, nếu chưa -> SCHEDULED.
+     */
+    private PromotionStatus determineInitialStatus(Instant startAt, Instant endAt) {
+        Instant now = Instant.now();
+        if (endAt.isBefore(now)) {
+            throw new InvalidPromotionException("Cannot create promotion that has already ended");
+        }
+        return startAt.isBefore(now) ? PromotionStatus.ACTIVE : PromotionStatus.SCHEDULED;
     }
 }

@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,8 +28,7 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     @Transactional
     @Override
     public void addListPromotionCategory(Promotion promotion, List<Integer> categoryIds) {
-
-        log.info("adding list promotion category.....");
+        log.info("Adding {} promotion-category mappings for promotionId={}", categoryIds.size(), promotion.getId());
 
         List<PromotionCategory> mappings = categoryIds.stream()
                 .map(categoryId -> {
@@ -43,5 +45,21 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     @Override
     public List<PromotionDto> getPromotionByCategory(Integer categoryId) {
         return promotionCategoryRepository.findByCategoryId(categoryId, Instant.now(), PromotionStatus.ACTIVE);
+    }
+
+    @Override
+    public Map<Integer, List<PromotionDto>> getPromotionsByCategories(List<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<Object[]> rows = promotionCategoryRepository
+                .findByCategoryIds(categoryIds, Instant.now(), PromotionStatus.ACTIVE);
+
+        return rows.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (Integer) row[0],
+                        Collectors.mapping(row -> (PromotionDto) row[1], Collectors.toList())
+                ));
     }
 }

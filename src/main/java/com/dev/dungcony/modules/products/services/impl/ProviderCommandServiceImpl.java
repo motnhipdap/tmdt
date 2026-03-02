@@ -32,7 +32,7 @@ public class ProviderCommandServiceImpl implements ProviderService {
                 .orElseThrow(ProviderNotFoundException::new);
 
         provider.setStatus(ProviderStatus.INACTIVE);
-        providerRepository.deleteById(id);
+        providerRepository.save(provider); // soft-delete: chỉ đổi status, không xoá khỏi DB
     }
 
     @Override

@@ -28,6 +28,10 @@ public class Promotion {
     private PromotionType type = PromotionType.PERCENT;
 
     @NotNull
+    @Column(name = "code", nullable = false, length = 20)
+    private String code;
+
+    @NotNull
     @Column(name = "value", nullable = false)
     private Integer value;
 

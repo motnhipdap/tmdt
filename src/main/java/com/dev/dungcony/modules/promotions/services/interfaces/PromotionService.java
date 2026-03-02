@@ -6,6 +6,8 @@ import com.dev.dungcony.modules.promotions.dtos.res.PromotionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 public interface PromotionService {
@@ -20,4 +22,9 @@ public interface PromotionService {
     Page<PromotionDto> getAll(Pageable pageable);
 
     Optional<PromotionDto> getById(Integer id);
+
+    /**
+     * Lấy danh sách global promotions đang active tại thời điểm now.
+     */
+    List<PromotionDto> getGlobalPromotions(Instant now);
 }

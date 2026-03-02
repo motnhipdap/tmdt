@@ -6,7 +6,9 @@ import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
@@ -20,7 +22,9 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     // Tìm các khuyến mãi sắp diễn ra và đã đến giờ bắt đầu
     List<Promotion> findByStatusAndStartAtBefore(PromotionStatus status, Instant now);
 
-
+    /**
+     * Lấy danh sách promotion (không bao gồm DELETED) cho admin.
+     */
     @Query("""
                 SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
                     p.id,
@@ -31,10 +35,9 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                     p.endAt
                 )
                 FROM Promotion p
+                WHERE p.status <> com.dev.dungcony.modules.promotions.enums.PromotionStatus.DELETED
             """)
-    Page<PromotionDto> getAll(
-            Pageable pageable
-    );
+    Page<PromotionDto> getAll(Pageable pageable);
 
     @Query("""
             SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionDto(
@@ -52,7 +55,54 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
             ORDER BY p.priority DESC
             """)
     List<PromotionDto> findGlobalPromotions(
-            @org.springframework.data.repository.query.Param("now") Instant now,
-            @org.springframework.data.repository.query.Param("status") PromotionStatus status
+            @Param("now") Instant now,
+            @Param("status") PromotionStatus status
+    );
+
+    /**
+     * Bulk update: đánh dấu ENDED cho tất cả promotion ACTIVE đã hết hạn.
+     * Tránh load entity rồi save lại từng cái.
+     */
+    @Modifying
+    @Query("""
+            UPDATE Promotion p
+            SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ENDED
+            WHERE p.status = :activeStatus
+                AND p.endAt < :now
+            """)
+    int bulkExpirePromotions(
+            @Param("activeStatus") PromotionStatus activeStatus,
+            @Param("now") Instant now
+    );
+
+    /**
+     * Bulk update: kích hoạt các promotion SCHEDULED đã đến giờ start và chưa hết hạn.
+     */
+    @Modifying
+    @Query("""
+            UPDATE Promotion p
+            SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ACTIVE
+            WHERE p.status = :scheduledStatus
+                AND p.startAt <= :now
+                AND p.endAt > :now
+            """)
+    int bulkActivatePromotions(
+            @Param("scheduledStatus") PromotionStatus scheduledStatus,
+            @Param("now") Instant now
+    );
+
+    /**
+     * Bulk update: đánh dấu ENDED cho các promotion SCHEDULED đã quá hạn luôn (endAt < now).
+     */
+    @Modifying
+    @Query("""
+            UPDATE Promotion p
+            SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ENDED
+            WHERE p.status = :scheduledStatus
+                AND p.endAt <= :now
+            """)
+    int bulkExpireScheduledPromotions(
+            @Param("scheduledStatus") PromotionStatus scheduledStatus,
+            @Param("now") Instant now
     );
 }

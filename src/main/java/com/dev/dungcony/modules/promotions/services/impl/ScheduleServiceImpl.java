@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.reporitories.PromotionRepository;
 import jakarta.transaction.Transactional;
@@ -10,8 +9,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.List;
 
+/**
+ * Scheduled tasks để cập nhật trạng thái promotion.
+ * Sử dụng bulk UPDATE query thay vì load entity rồi save lại,
+ * giúp giảm số lượng query và memory usage.
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -20,48 +23,43 @@ public class ScheduleServiceImpl {
     private final PromotionRepository promotionRepository;
 
     /**
-     * Tác vụ này chạy mỗi phút để kiểm tra và cập nhật các khuyến mãi đã hết hạn.
-     * cron = "0 * * * * ?" có nghĩa là chạy vào giây thứ 0 của mỗi phút.
+     * Chạy mỗi phút: đánh dấu ENDED cho các promotion ACTIVE đã hết hạn.
+     * Sử dụng 1 bulk UPDATE query thay vì SELECT + loop + saveAll.
      */
     @Scheduled(cron = "0 * * * * ?")
     @Transactional
     public void updateExpiredPromotions() {
-        log.info("Running job to update expired promotions...");
         Instant now = Instant.now();
 
-        List<Promotion> activePromotions = promotionRepository.findByStatusAndEndAtBefore(PromotionStatus.ACTIVE, now);
+        int expiredCount = promotionRepository.bulkExpirePromotions(PromotionStatus.ACTIVE, now);
 
-        if (!activePromotions.isEmpty()) {
-            log.info("Found {} promotions to expire.", activePromotions.size());
-            for (Promotion promotion : activePromotions) {
-                promotion.setStatus(PromotionStatus.ENDED);
-            }
-            promotionRepository.saveAll(activePromotions);
+        if (expiredCount > 0) {
+            log.info("Expired {} active promotions.", expiredCount);
         }
     }
 
     /**
-     * Tác vụ này chạy mỗi phút để kích hoạt các khuyến mãi đã đến giờ.
+     * Chạy mỗi phút: kích hoạt các promotion SCHEDULED đã đến giờ start.
+     * Xử lý 2 trường hợp:
+     * 1. Đã đến giờ start & chưa hết hạn -> ACTIVE
+     * 2. Đã đến giờ start & đã hết hạn (KM rất ngắn) -> ENDED
      */
     @Scheduled(cron = "0 * * * * ?")
     @Transactional
     public void activateScheduledPromotions() {
-        log.info("Running job to activate scheduled promotions...");
         Instant now = Instant.now();
 
-        List<Promotion> scheduledPromotions = promotionRepository.findByStatusAndStartAtBefore(PromotionStatus.SCHEDULED, now);
+        // Kích hoạt các promotion chưa hết hạn
+        int activatedCount = promotionRepository.bulkActivatePromotions(PromotionStatus.SCHEDULED, now);
 
-        if (!scheduledPromotions.isEmpty()) {
-            log.info("Found {} promotions to activate.", scheduledPromotions.size());
-            for (Promotion promotion : scheduledPromotions) {
-                // Kiểm tra lại để chắc chắn nó chưa hết hạn (trường hợp thời gian KM rất ngắn)
-                if (promotion.getEndAt().isAfter(now)) {
-                    promotion.setStatus(PromotionStatus.ACTIVE);
-                } else {
-                    promotion.setStatus(PromotionStatus.ENDED);
-                }
-            }
-            promotionRepository.saveAll(scheduledPromotions);
+        // Đánh dấu ENDED cho các promotion SCHEDULED đã quá hạn luôn
+        int expiredScheduledCount = promotionRepository.bulkExpireScheduledPromotions(PromotionStatus.SCHEDULED, now);
+
+        if (activatedCount > 0) {
+            log.info("Activated {} scheduled promotions.", activatedCount);
+        }
+        if (expiredScheduledCount > 0) {
+            log.info("Expired {} overdue scheduled promotions.", expiredScheduledCount);
         }
     }
 }
