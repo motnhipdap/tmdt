@@ -13,7 +13,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_providers", schema = "db1")
+@Table(name = "tbl_providers")
 public class Provider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,13 @@ public class Provider {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Size(max = 10)
+    @NotNull
+    @Column(name = "provider_code", nullable = false, length = 10)
+    private String providerCode;
+
     @Size(max = 255)
-    @Column(name = "`desc`")
+    @Column(name = "description", length = 255)
     private String description;
 
     @Size(max = 100)

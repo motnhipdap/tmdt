@@ -10,12 +10,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_promotions", schema = "db1")
+@Table(name = "tbl_promotions")
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +49,7 @@ public class Promotion {
     @NotNull
     @ColumnDefault("0")
     @Column(name = "min_price_apply", nullable = false)
-    private Integer minPriceApply;
+    private BigDecimal minPriceApply;
     @Size(max = 20)
 
     @Enumerated(EnumType.STRING)

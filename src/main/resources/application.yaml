@@ -6,8 +6,6 @@ spring:
   profiles:
     active: dev
 
-
-
   flyway:
     locations: classpath:db/migration
     baseline-on-migration: false
@@ -15,27 +13,18 @@ spring:
     validate-on-migrate: true
 
   mail:
-    host: smtp.sendgrid.net
-    port: 587
-    username: apikey
     properties:
       mail:
         SMTP:
           auth: true
           STARTTLS:
             enable: true
-    from: OTP Service <dungcony@dungcony.io.vn>
 
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
 
-  data:
-    redis:
-      port: 6379
-      host: localhost
-      
   devtools:
     restart:
       enabled: true

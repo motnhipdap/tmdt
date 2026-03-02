@@ -10,7 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_promotion_category", schema = "db1")
+@Table(name = "tbl_promotion_category")
 public class PromotionCategory {
     @EmbeddedId
     private PromotionCategoryId id;

@@ -8,75 +8,79 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_products", schema = "db1",
-        indexes = {
+@Table(name = "tbl_products", indexes = {
                 @Index(name = "idx_product_status", columnList = "status"),
                 @Index(name = "idx_product_category", columnList = "category_id"),
                 @Index(name = "idx_product_status_price", columnList = "status, price"),
                 @Index(name = "idx_product_status_rated", columnList = "status, rated"),
                 @Index(name = "idx_product_sold", columnList = "quantity_sold")
-        }
-)
+})
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "id", nullable = false)
+        private Integer id;
 
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+        @Size(max = 50)
+        @NotNull
+        @Column(name = "name", nullable = false, length = 50)
+        private String name;
 
-    @Size(max = 255)
-    @Column(name = "`desc`")
-    private String description;
+        @Size(max = 10)
+        @NotNull
+        @Column(name = "product_code", nullable = false, length = 10)
+        private String productCode;
 
-    @ColumnDefault("0")
-    @Column(name = "quantity")
-    private int quantity;
+        @Size(max = 255)
+        @Column(name = "description", length = 255)
+        private String description;
 
-    @ColumnDefault("0")
-    @Column(name = "quantity_sold")
-    private int quantitySold;
+        @ColumnDefault("0")
+        @Column(name = "quantity")
+        private int quantity;
 
-    @ColumnDefault("0")
-    @Column(name = "price")
-    private Double price;
+        @ColumnDefault("0")
+        @Column(name = "quantity_sold")
+        private int quantitySold;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20, nullable = false)
-    private ProductStatus status = ProductStatus.ACTIVE;
+        @ColumnDefault("0")
+        @Column(name = "price")
+        private BigDecimal price;
 
-    @Column(name = "rated")
-    private Float rated;
+        @Enumerated(EnumType.STRING)
+        @Column(name = "status", length = 20, nullable = false)
+        private ProductStatus status = ProductStatus.ACTIVE;
 
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "create_at")
-    private Instant createAt;
+        @Column(name = "rated")
+        private Float rated;
 
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "update_at")
-    private Instant updateAt;
+        @ColumnDefault("CURRENT_TIMESTAMP(3)")
+        @Column(name = "create_at")
+        private Instant createAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+        @ColumnDefault("CURRENT_TIMESTAMP(3)")
+        @Column(name = "update_at")
+        private Instant updateAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
-    private Provider provider;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "category_id")
+        private Category category;
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Long version;
-    
-    @Size(max = 255)
-    @Column(name = "img")
-    private String img;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "provider_id")
+        private Provider provider;
+
+        @Version
+        @Column(name = "version", nullable = false)
+        private Long version;
+
+        @Size(max = 255)
+        @Column(name = "img")
+        private String img;
 }

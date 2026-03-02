@@ -1,11 +1,26 @@
 package com.dev.dungcony.modules.products.dtos.req;
 
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public record ProductAddReq(
-        Integer categoryId,
-        Integer providerId,
-        String name,
+
+        @NotNull Integer categoryId,
+
+        @NotNull Integer providerId,
+
+        @NotBlank String name,
+
+        @NotBlank String productCode,
+
         String description,
-        Double price,
-        Integer quantity
-) {
+
+        @NotNull @Positive BigDecimal price,
+
+        @NotNull Integer quantity,
+
+        String imgUrl) {
 }
