@@ -80,6 +80,12 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public void delete(Integer promotionId) {
+        log.info("deleting promotion id={}", promotionId);
+        promotionRepository.deleteById(promotionId);
+    }
+
+    @Override
+    public void softDelete(Integer promotionId) {
         log.info("Soft-deleting promotion id={}", promotionId);
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionNotFoundException(promotionId));
@@ -165,10 +171,6 @@ public class PromotionServiceImpl implements PromotionService {
     private void validateAddRequest(PromoAddReq req) {
         if (req.endAt().isBefore(req.startAt())) {
             throw new InvalidPromotionException("End date must be after start date");
-        }
-
-        if (req.type() == PromotionType.PERCENT && (req.value() < 0 || req.value() > 100)) {
-            throw new InvalidPromotionException("Percent value must be between 0 and 100");
         }
 
         if (req.scope() == PromotionScope.PRODUCT) {

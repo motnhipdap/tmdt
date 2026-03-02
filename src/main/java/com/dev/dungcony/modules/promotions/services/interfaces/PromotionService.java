@@ -19,6 +19,8 @@ public interface PromotionService {
 
     void delete(Integer promotionId);
 
+    void softDelete(Integer promotionId);
+
     Page<PromotionDto> getAll(Pageable pageable);
 
     Optional<PromotionDto> getById(Integer id);
