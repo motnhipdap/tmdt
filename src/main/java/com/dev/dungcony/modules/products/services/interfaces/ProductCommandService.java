@@ -6,13 +6,11 @@ import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 
 public interface ProductCommandService {
 
-
     ProductDetailRes addNew(ProductAddReq req);
 
     void addQuantity(int id, int quantity);
 
     void delete(int pId);
 
-    ProductDetailRes update(ProductUpdateReq req);
-
+    void update(ProductUpdateReq req);
 }

@@ -8,9 +8,9 @@ import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.CategoryCommandService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -25,9 +25,15 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         Category parent = null;
 
-        if (req.parent_id() != null) {
-            parent = categoryRepository.findById(req.parent_id())
+        if (req.parentId() != null) {
+            parent = categoryRepository.findById(req.parentId())
                     .orElseThrow(CategoryNotFoundException::new);
+
+            if (parent.getStatus() != CategoryStatus.ACTIVE) {
+                throw new CategoryCanNotCreateException(
+                        "Cannot create sub-category under a hidden category"
+                );
+            }
 
             if (productRepository.existsByCategoryId(parent.getId())) {
                 throw new CategoryCanNotCreateException(
@@ -38,6 +44,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         Category category = new Category();
         category.setName(req.name());
+        category.setCategoryCode(req.categoryCode());
         category.setDescription(req.description());
         category.setImgUrl(req.img());
         category.setParent(parent);
@@ -51,8 +58,10 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
             parent.setIsLeaf(false);
         }
 
-        categoryRepository.save(category);
+        // Save lần 1 để lấy ID
+        categoryRepository.saveAndFlush(category);
 
+        // Set path rồi dirty checking sẽ update
         if (parent == null) {
             category.setPath("/" + category.getId() + "/");
         } else {
@@ -62,11 +71,20 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
 
     @Override
+    @Transactional
     public void removeCategory(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(CategoryNotFoundException::new);
 
+        if (category.getStatus() == CategoryStatus.HIDDEN) {
+            return; // already hidden
+        }
+
         category.setStatus(CategoryStatus.HIDDEN);
-        categoryRepository.save(category);
+
+        // Cascade HIDDEN to all sub-categories using path prefix
+        if (category.getPath() != null) {
+            categoryRepository.hideAllByPathPrefix(category.getPath());
+        }
     }
 }

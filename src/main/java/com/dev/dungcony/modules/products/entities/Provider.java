@@ -61,4 +61,16 @@ public class Provider {
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
+
+    @PrePersist
+    protected void onCreate() {
+        Instant now = Instant.now();
+        this.createAt = now;
+        this.updateAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = Instant.now();
+    }
 }

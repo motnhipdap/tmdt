@@ -1,19 +1,16 @@
 package com.dev.dungcony.modules.products.services.impl;
 
+import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
-import com.dev.dungcony.modules.products.dtos.ProductBasicInterface;
-import com.dev.dungcony.modules.products.dtos.res.ProductAddRes;
-import com.dev.dungcony.modules.products.dtos.res.ProductDetailDto;
+import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
-import com.dev.dungcony.modules.products.dtos.res.ProductImgDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
-import com.dev.dungcony.modules.products.entities.ProductImg;
+import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
-import com.dev.dungcony.modules.products.repositories.ProductImgRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
 import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
@@ -22,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,54 +32,95 @@ public class ProductGetServiceImpl implements ProductGetService {
     private final PromotionCalculator promotionCalculator;
 
     @Override
+    @Transactional(readOnly = true)
     public ProductDetailRes getById(Integer id) {
 
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new ProductNotFoundException("product not found")
-        );
+        Product product = productRepository.findByIdWithCategoryAndProvider(id)
+                .orElseThrow(() -> new ProductNotFoundException("product not found"));
 
-        List<ProductImgDto> productImgDtos = new ArrayList<>();
+        // Không trả về product đã bị xóa
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ProductNotFoundException("product not found");
+        }
 
-        for (ProductImg item : productImgRepository.findByProduct(product)) {
-            productImgDtos.add(new ProductImgDto(item.getId(), item.getImageUrl()));
+        // Ẩn sản phẩm nếu category bị ẩn
+        if (product.getCategory() != null && product.getCategory().getStatus() == CategoryStatus.HIDDEN) {
+            throw new ProductNotFoundException("product not found");
         }
 
         // Tính discount cho sản phẩm
         int categoryId = product.getCategory() != null ? product.getCategory().getId() : 0;
         DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
-                product.getId(), categoryId, product.getPrice()
-        );
+                product.getId(), categoryId, product.getPrice());
 
-        return new ProductDetailDto(product, productImgDtos).withDiscount(discount);
+        CategorySummaryDto catDto = null;
+        if (product.getCategory() != null) {
+            catDto = new CategorySummaryDto(
+                    product.getCategory().getId(),
+                    product.getCategory().getName(),
+                    product.getCategory().getCategoryCode());
+        }
+        ProviderSummaryDto provDto = null;
+        if (product.getProvider() != null) {
+            provDto = new ProviderSummaryDto(
+                    product.getProvider().getId(),
+                    product.getProvider().getName(),
+                    product.getProvider().getProviderCode());
+        }
+
+        return new ProductDetailRes(
+                product.getId(),
+                product.getName(),
+                product.getProductCode(),
+                product.getDescription(),
+                product.getPrice(),
+                discount != null ? discount.finalPrice() : product.getPrice(),
+                discount != null ? discount.discountType() : "NONE",
+                discount != null ? discount.discountValue() : 0,
+                product.getQuantity(),
+                product.getQuantitySold(),
+                product.getRated(),
+                product.getImg(),
+                product.getStatus(),
+                product.getCreateAt(),
+                product.getUpdateAt(),
+                catDto,
+                provDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ProductSumaryRes> getAll(Pageable pageable) {
         Page<ProductSumaryRes> page = productRepository.findProductList(
                 ProductStatus.ACTIVE,
-                pageable
-        );
+                pageable);
 
         return enrichWithDiscounts(page);
     }
 
     @Override
-    public Page<ProductAddRes> getAllByCategoryId(Integer categoryId, Pageable pageable) {
-        if (!categoryRepository.existsById(categoryId))
-            throw new CategoryNotFoundException();
+    @Transactional(readOnly = true)
+    public Page<ProductSumaryRes> getAllByCategoryId(Integer categoryId, Pageable pageable) {
+        categoryRepository.findById(categoryId)
+                .filter(c -> c.getStatus() == CategoryStatus.ACTIVE)
+                .orElseThrow(CategoryNotFoundException::new);
 
-        Page<ProductBasicInterface> rawPage =
-                productRepository.findAllByCategoryTree(categoryId, pageable);
+        Page<ProductSumaryRes> rawPage = productRepository.findAllByCategoryTree(categoryId, pageable);
 
-        Page<ProductAddRes> page = rawPage
-                .map(p -> new ProductAddRes(
-                        p.getId(),
-                        p.getName(),
-                        p.getPrice(),
-                        p.getRated(),
-                        p.getImage(),
-                        p.getCategoryId() != null ? p.getCategoryId() : categoryId
-                ));
+        return enrichWithDiscounts(rawPage);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductSumaryRes> searchByKeyword(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isBlank()) {
+            return getAll(pageable);
+        }
+
+        Page<ProductSumaryRes> page = productRepository.getAllByKeyword(
+                ProductStatus.ACTIVE,
+                keyword.trim(),
+                pageable);
 
         return enrichWithDiscounts(page);
     }
@@ -93,8 +131,8 @@ public class ProductGetServiceImpl implements ProductGetService {
      * Batch tính discount cho tất cả products trong 1 page.
      * Chỉ 3 queries DB bất kể page size.
      */
-    private Page<ProductAddRes> enrichWithDiscounts(Page<ProductAddRes> page) {
-        List<ProductAddRes> content = page.getContent();
+    private Page<ProductSumaryRes> enrichWithDiscounts(Page<ProductSumaryRes> page) {
+        List<ProductSumaryRes> content = page.getContent();
         if (content.isEmpty()) {
             return page;
         }
@@ -104,8 +142,7 @@ public class ProductGetServiceImpl implements ProductGetService {
                 .map(p -> new ProductPriceInput(
                         p.id(),
                         p.categoryId() != null ? p.categoryId() : 0,
-                        p.price()
-                ))
+                        p.price()))
                 .toList();
 
         // Batch calculation: 3 queries thay vì 3*N

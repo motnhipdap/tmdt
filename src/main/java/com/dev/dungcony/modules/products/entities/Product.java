@@ -14,7 +14,10 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_products")
+@Table(name = "tbl_products", indexes = {
+        @Index(name = "idx_product_status", columnList = "status"),
+        @Index(name = "idx_product_category", columnList = "category_id, status")
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,4 +80,16 @@ public class Product {
     @Size(max = 255)
     @Column(name = "img")
     private String img;
+
+    @PrePersist
+    protected void onCreate() {
+        Instant now = Instant.now();
+        this.createAt = now;
+        this.updateAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = Instant.now();
+    }
 }

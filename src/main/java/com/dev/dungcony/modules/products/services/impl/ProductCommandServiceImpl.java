@@ -3,10 +3,14 @@ package com.dev.dungcony.modules.products.services.impl;
 import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
+import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
+import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.Provider;
+import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
+import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProductConfligException;
 import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
@@ -37,27 +41,26 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 .orElseThrow(CategoryNotFoundException::new);
 
         validateLeaf(cate);
+        validateCategoryActive(cate);
 
         Provider provider = providerRepository.findById(req.providerId())
                 .orElseThrow(ProviderNotFoundException::new);
+
+        validateProviderActive(provider);
 
         Product product = new Product();
         product.setCategory(cate);
         product.setProvider(provider);
         product.setName(req.name());
+        product.setProductCode(req.productCode());
         product.setDescription(req.description());
         product.setPrice(req.price());
         product.setQuantity(req.quantity());
+        product.setImg(req.imgUrl());
 
         productRepository.save(product);
 
-        return new ProductDetailRes(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getQuantity(),
-                product.getImg());
+        return toDetailRes(product);
     }
 
     @Transactional
@@ -66,14 +69,16 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         Product product = productRepository.findById(pId)
                 .orElseThrow(ProductNotFoundException::new);
 
-        product.setStatus(ProductStatus.DELETED);
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ProductConfligException("product is already deleted");
+        }
 
-        productRepository.save(product);
+        product.setStatus(ProductStatus.DELETED);
     }
 
     @Transactional
     @Override
-    public ProductUpdateRes update(ProductUpdateReq req) {
+    public void update(ProductUpdateReq req) {
 
         Product product = productRepository.findById(req.productId())
                 .orElseThrow(ProductNotFoundException::new);
@@ -82,76 +87,60 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             throw new ProductConfligException("product is deleted");
 
         // ===== CATEGORY =====
-        if (req.newCategoryId() != null &&
-                !product.getCategory().getId().equals(req.newCategoryId())) {
+        if (req.categoryId() != null &&
+                (product.getCategory() == null || !req.categoryId().equals(product.getCategory().getId()))) {
 
-            Category cate = categoryRepository.findById(req.newCategoryId())
+            Category cate = categoryRepository.findById(req.categoryId())
                     .orElseThrow(CategoryNotFoundException::new);
 
             validateLeaf(cate);
-
+            validateCategoryActive(cate);
             product.setCategory(cate);
         }
 
         // ===== PROVIDER =====
-        if (req.newProviderId() != null &&
+        if (req.providerId() != null &&
                 (product.getProvider() == null ||
-                        !product.getProvider().getId().equals(req.newProviderId()))) {
+                        !req.providerId().equals(product.getProvider().getId()))) {
 
-            Provider provider = providerRepository.findById(req.newProviderId())
+            Provider provider = providerRepository.findById(req.providerId())
                     .orElseThrow(ProviderNotFoundException::new);
 
+            validateProviderActive(provider);
             product.setProvider(provider);
         }
 
         // ===== BASIC FIELDS =====
-        if (req.newName() != null)
-            product.setName(req.newName());
-        if (req.newDesc() != null)
-            product.setDescription(req.newDesc());
-        if (req.newPrice() != null)
-            product.setPrice(req.newPrice());
-
-        return new ProductUpdateRes(
-                product.getId(),
-                product.getCategory().getId(),
-                product.getProvider().getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getRated(),
-                product.getQuantity(),
-                product.getQuantitySold(),
-                product.getImg(),
-                product.getStatus());
+        if (req.name() != null)
+            product.setName(req.name());
+        if (req.description() != null)
+            product.setDescription(req.description());
+        if (req.price() != null)
+            product.setPrice(req.price());
+        if (req.quantity() != null)
+            product.setQuantity(req.quantity());
+        if (req.imgUrl() != null)
+            product.setImg(req.imgUrl());
     }
 
-    //
-    // @Override
-    // public void buyProduct(ProductBuyReq req) {
-    // Product product = productRepository.findById(req.id())
-    // .orElseThrow(ProductNotFoundException::new);
-    //
-    // if (product.getQuantity() < req.quantity())
-    // throw new ProductConfligException("INSUFFICIENT_STOCK", "Requested quantity
-    // exceeds available stock");
-    //
-    // if (product.getQuantity() == req.quantity())
-    // product.setStatus(ProductStatus.OUT_OF_STOCK);
-    //
-    // product.setQuantity(product.getQuantity() - req.quantity());
-    // product.setQuantitySold(product.getQuantitySold() + req.quantity());
-    //
-    // productRepository.save(product);
-    // }
-
+    @Transactional
     @Override
     public void addQuantity(int pId, int quantity) {
+        if (quantity == 0)
+            return;
+
         Product product = productRepository.findById(pId)
                 .orElseThrow(ProductNotFoundException::new);
 
-        product.setQuantity(product.getQuantity() + quantity);
-        productRepository.save(product);
+        if (product.getStatus() == ProductStatus.DELETED)
+            throw new ProductConfligException("cannot add quantity to deleted product");
+
+        int newQuantity = product.getQuantity() + quantity;
+        if (newQuantity < 0)
+            throw new ProductConfligException("quantity cannot be negative, current: "
+                    + product.getQuantity() + ", requested change: " + quantity);
+
+        product.setQuantity(newQuantity);
     }
 
     // check if category is leaf, only leaf category can contain product
@@ -160,4 +149,44 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             throw new ProductConfligException("Category must be leaf");
     }
 
+    private void validateCategoryActive(Category cate) {
+        if (cate.getStatus() != CategoryStatus.ACTIVE)
+            throw new ProductConfligException("Category is not active");
+    }
+
+    private void validateProviderActive(Provider provider) {
+        if (provider.getStatus() != ProviderStatus.ACTIVE)
+            throw new ProductConfligException("Provider is not active");
+    }
+
+    private ProductDetailRes toDetailRes(Product p) {
+        CategorySummaryDto catDto = null;
+        if (p.getCategory() != null) {
+            Category c = p.getCategory();
+            catDto = new CategorySummaryDto(c.getId(), c.getName(), c.getCategoryCode());
+        }
+        ProviderSummaryDto provDto = null;
+        if (p.getProvider() != null) {
+            Provider pv = p.getProvider();
+            provDto = new ProviderSummaryDto(pv.getId(), pv.getName(), pv.getProviderCode());
+        }
+        return new ProductDetailRes(
+                p.getId(),
+                p.getName(),
+                p.getProductCode(),
+                p.getDescription(),
+                p.getPrice(),
+                p.getPrice(),
+                "NONE",
+                0,
+                p.getQuantity(),
+                p.getQuantitySold(),
+                p.getRated(),
+                p.getImg(),
+                p.getStatus(),
+                p.getCreateAt(),
+                p.getUpdateAt(),
+                catDto,
+                provDto);
+    }
 }

@@ -50,7 +50,11 @@ public class SecurityConfig {
                                 "/v1/api/auth/**",
                                 "/v1/api/test/**",
                                 "/",
-                                "/error"
+                                "/error",
+                                // Swagger UI & OpenAPI docs
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers("/v1/api/user/**").authenticated()
                         .anyRequest().authenticated()

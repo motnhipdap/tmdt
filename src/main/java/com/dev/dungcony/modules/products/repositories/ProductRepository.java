@@ -1,7 +1,5 @@
 package com.dev.dungcony.modules.products.repositories;
 
-import com.dev.dungcony.modules.products.dtos.ProductBasicInterface;
-import com.dev.dungcony.modules.products.dtos.res.ProductAddRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
@@ -12,11 +10,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
+    /**
+     * Load product với category và provider trong 1 query (tránh N+1).
+     */
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductAddRes(
+                SELECT p FROM Product p
+                LEFT JOIN FETCH p.category
+                LEFT JOIN FETCH p.provider
+                WHERE p.id = :id
+            """)
+    Optional<Product> findByIdWithCategoryAndProvider(@Param("id") Integer id);
+
+    @Query("""
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
                     p.id,
                     p.name,
                     p.price,
@@ -29,15 +39,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             """)
     Page<ProductSumaryRes> findProductList(
             @Param("status") ProductStatus status,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     /**
      * Tìm sản phẩm theo keyword (tên hoặc mô tả).
      * Đã fix: trước đây không sử dụng tham số :key trong query.
      */
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductAddRes(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
                     p.id,
                     p.name,
                     p.price,
@@ -50,41 +59,29 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :key, '%'))
                          OR LOWER(p.description) LIKE LOWER(CONCAT('%', :key, '%')))
             """)
-    Page<ProductAddRes> getAllByKeyword(
+    Page<ProductSumaryRes> getAllByKeyword(
             @Param("status") ProductStatus status,
             @Param("key") String key,
-            Pageable pageable
-    );
+            Pageable pageable);
 
-    @Query(value = """
-            WITH RECURSIVE cate_tree AS (
-                SELECT id
-                FROM tbl_categories
-                WHERE id = :categoryId
-                UNION ALL
-                SELECT c.id
-                FROM tbl_categories c
-                JOIN cate_tree ct ON c.parent_id = ct.id
-            )
-            SELECT
-                p.id AS id,
-                p.name AS name,
-                p.price AS price,
-                p.rated AS rated,
-                img.image_url AS image,
-                p.category_id AS categoryId
-            FROM tbl_products p
-            LEFT JOIN tbl_product_img img
-                ON img.product_id = p.id AND img.is_main = true
-            WHERE p.category_id IN (
-                SELECT id FROM cate_tree
-            )
-            """,
-            nativeQuery = true)
-    Page<ProductBasicInterface> findAllByCategoryTree(
+    @Query("""
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
+                    p.id,
+                    p.name,
+                    p.price,
+                    p.rated,
+                    p.img,
+                    p.category.id
+                )
+                FROM Product p
+                JOIN p.category c
+                JOIN Category root ON root.id = :categoryId
+                WHERE p.status = com.dev.dungcony.modules.products.enums.ProductStatus.ACTIVE
+                  AND c.path LIKE CONCAT(root.path, '%')
+            """)
+    Page<ProductSumaryRes> findAllByCategoryTree(
             @Param("categoryId") Integer categoryId,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     boolean existsByCategoryId(Integer id);
 
@@ -95,6 +92,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT COUNT(p) FROM Product p WHERE p.id IN :ids AND p.status = :status")
     long countByIdInAndStatus(
             @Param("ids") List<Integer> ids,
-            @Param("status") ProductStatus status
-    );
+            @Param("status") ProductStatus status);
 }

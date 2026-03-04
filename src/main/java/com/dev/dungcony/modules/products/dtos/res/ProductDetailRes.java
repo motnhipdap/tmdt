@@ -8,23 +8,27 @@ import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 
 public record ProductDetailRes(
-                Integer id,
+        Integer id,
 
-                String name,
-                String productCode,
-                String description,
+        String name,
+        String productCode,
+        String description,
 
-                BigDecimal price,
-                Integer quantity,
-                Integer sold,
+        BigDecimal originalPrice,
+        BigDecimal finalPrice,
+        String discountType,
+        int discountValue,
 
-                Float rating,
+        Integer quantity,
+        Integer sold,
 
-                String imgUrl,
-                ProductStatus status,
+        Float rating,
 
-                Instant createdAt,
-                Instant updatedAt,
-                CategorySummaryDto category,
-                ProviderSummaryDto provider) {
+        String imgUrl,
+        ProductStatus status,
+
+        Instant createdAt,
+        Instant updatedAt,
+        CategorySummaryDto category,
+        ProviderSummaryDto provider) {
 }

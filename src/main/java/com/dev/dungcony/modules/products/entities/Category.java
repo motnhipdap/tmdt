@@ -11,14 +11,13 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_categories", indexes = {
-        @Index(name = "idx_category_name", columnList = "name")
+        @Index(name = "idx_category_name", columnList = "name"),
+        @Index(name = "idx_category_path", columnList = "path")
 })
 public class Category {
     @Id
@@ -67,12 +66,6 @@ public class Category {
     @Column(name = "path")
     private String path;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private Set<Category> tblCategories = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "category")
-    private Set<Product> tblProducts = new LinkedHashSet<>();
-
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
@@ -82,4 +75,16 @@ public class Category {
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 }

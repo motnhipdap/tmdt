@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.auth.dtos.responses;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record AccountRes(
         int id,
@@ -9,11 +9,11 @@ public record AccountRes(
         String phone,
         String status,
         String role,
-        LocalDateTime create_at
+        Instant createdAt
 ) {
 
     @Override
     public String toString() {
-        return email + " " + username + " " + phone + " " + status + " " + create_at;
+        return email + " " + username + " " + phone + " " + status + " " + createdAt;
     }
 }
