@@ -46,7 +46,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         Category category = new Category();
         category.setName(req.name());
-        category.setCategoryCode(req.categoryCode());
+        category.setCode(req.code());
         category.setDescription(req.description());
         category.setImgUrl(req.imgUrl());
         category.setParent(parent);
@@ -54,10 +54,10 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         if (parent == null) {
             category.setLevel(0);
-            category.setPath("/" + req.categoryCode() + "/");
+            category.setPath("/" + req.code() + "/");
         } else {
             category.setLevel(parent.getLevel() + 1);
-            category.setPath(parent.getPath() + req.categoryCode() + "/");
+            category.setPath(parent.getPath() + req.code() + "/");
             parent.setIsLeaf(false);
         }
 
@@ -65,7 +65,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         return new CategorySummaryDto(
                 category.getName(),
-                category.getCategoryCode()
+                category.getCode()
         );
     }
 

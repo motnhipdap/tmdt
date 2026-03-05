@@ -14,7 +14,7 @@ public record ProductSumaryRes(
         BigDecimal price,
         Float rated,
         String imgUrl,
-        Integer categoryCode) {
+        String categoryCode) {
 
     public ProductSumaryRes withDiscount(DiscountInfoDto discount) {
         if (discount == null) {

@@ -29,8 +29,8 @@ public class Product {
 
     @Size(max = 10)
     @NotNull
-    @Column(name = "product_code", nullable = false, length = 10)
-    private String productCode;
+    @Column(name = "code", nullable = false, length = 10)
+    private String code;
 
     @Size(max = 255)
     @Column(name = "description", length = 255)

@@ -29,8 +29,8 @@ public class Category {
 
     @Size(max = 10)
     @NotNull
-    @Column(name = "category_code", nullable = false, length = 10)
-    private String categoryCode;
+    @Column(name = "code", nullable = false, length = 10)
+    private String code;
 
     @Size(max = 255)
     @Column(name = "img_url")

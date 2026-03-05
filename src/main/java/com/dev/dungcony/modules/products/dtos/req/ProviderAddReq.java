@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record ProviderAddReq(
         @NotBlank String name,
-        @NotBlank String providerCode,
+        String providerCode,
         String email,
         String phone,
         String description,

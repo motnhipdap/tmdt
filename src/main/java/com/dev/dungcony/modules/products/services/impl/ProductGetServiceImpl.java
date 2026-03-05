@@ -56,23 +56,21 @@ public class ProductGetServiceImpl implements ProductGetService {
         CategorySummaryDto catDto = null;
         if (product.getCategory() != null) {
             catDto = new CategorySummaryDto(
-                    product.getCategory().getId(),
                     product.getCategory().getName(),
-                    product.getCategory().getCategoryCode());
+                    product.getCategory().getCode());
         }
         ProviderSummaryDto provDto = null;
         if (product.getProvider() != null) {
             provDto = new ProviderSummaryDto(
-                    product.getProvider().getId(),
                     product.getProvider().getName(),
-                    product.getProvider().getProviderCode());
+                    product.getProvider().getCode());
         }
 
         return new ProductDetailRes(
-                product.getId(),
                 product.getName(),
-                product.getProductCode(),
+                product.getCode(),
                 product.getDescription(),
+
                 product.getPrice(),
                 discount != null ? discount.finalPrice() : product.getPrice(),
                 discount != null ? discount.discountType() : "NONE",
@@ -135,17 +133,20 @@ public class ProductGetServiceImpl implements ProductGetService {
         // Tạo batch input
         List<ProductPriceInput> inputs = content.stream()
                 .map(p -> new ProductPriceInput(
-                        p.id(),
-                        p.categoryId() != null ? p.categoryId() : 0,
+                        p.code(),
+                        p.categoryCode() != null ? p.categoryCode() : null,
                         p.price()))
                 .toList();
 
         // Batch calculation: 3 queries thay vì 3*N
-        Map<Integer, DiscountInfoDto> discountMap = promotionCalculator.calculateFinalPrices(inputs);
+        Map<String, DiscountInfoDto> discountMap = promotionCalculator.calculateFinalPrices(inputs);
 
         // Map discount vào từng product
         return page.map(p -> {
-            DiscountInfoDto discount = discountMap.getOrDefault(p.id(), DiscountInfoDto.noDiscount(p.price()));
+            DiscountInfoDto discount = discountMap.getOrDefault(
+                    p.code(),
+                    DiscountInfoDto.noDiscount(p.price())
+            );
             return p.withDiscount(discount);
         });
     }

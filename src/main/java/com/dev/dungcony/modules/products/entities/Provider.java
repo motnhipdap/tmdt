@@ -28,8 +28,8 @@ public class Provider {
 
     @Size(max = 10)
     @NotNull
-    @Column(name = "provider_code", nullable = false, length = 10)
-    private String providerCode;
+    @Column(name = "code", nullable = false, length = 10)
+    private String code;
 
     @Size(max = 255)
     @Column(name = "description", length = 255)

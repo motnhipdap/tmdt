@@ -7,7 +7,13 @@ import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
 public interface ProviderService {
     ProviderRes addNew(ProviderAddReq dto);
 
+    ProviderRes get(String code);
+
+    ProviderRes get(int id);
+
     void delete(int id);
 
-    ProviderRes update(ProviderUpdateReq dto);
+    void delete(String code);
+
+    ProviderRes update(String code, ProviderUpdateReq dto);
 }

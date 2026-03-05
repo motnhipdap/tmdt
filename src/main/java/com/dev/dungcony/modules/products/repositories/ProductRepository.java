@@ -27,12 +27,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("""
                 SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
-                    p.id,
+                    p.code,
                     p.name,
                     p.price,
                     p.rated,
                     p.img,
-                    p.category.id
+                    p.category.code
                 )
                 FROM Product p
                 WHERE p.status = :status
@@ -47,12 +47,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
      */
     @Query("""
                 SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
-                    p.id,
+                    p.code,
                     p.name,
                     p.price,
                     p.rated,
                     p.img,
-                    p.category.id
+                    p.category.code
                 )
                 FROM Product p
                 WHERE p.status = :status
@@ -66,12 +66,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("""
                 SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
-                    p.id,
+                    p.code,
                     p.name,
                     p.price,
                     p.rated,
                     p.img,
-                    p.category.id
+                    p.category.code
                 )
                 FROM Product p
                 JOIN p.category c
@@ -93,4 +93,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     long countByIdInAndStatus(
             @Param("ids") List<Integer> ids,
             @Param("status") ProductStatus status);
+
+    Optional<Product> findByCode(String productCode);
 }

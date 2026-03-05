@@ -7,10 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record ProductAddReq(
-        @NotNull Integer categoryCode,
-        @NotNull Integer providerCode,
+        @NotNull String categoryCode,
+        @NotNull String providerCode,
         @NotBlank String name,
-        @NotBlank String productCode,
         String description,
         @NotNull @Positive BigDecimal price,
         @NotNull Integer quantity,

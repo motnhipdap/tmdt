@@ -26,7 +26,7 @@ public class ProviderCommandServiceImpl implements ProviderService {
     public ProviderRes addNew(ProviderAddReq dto) {
         Provider provider = new Provider();
         provider.setName(dto.name());
-        provider.setProviderCode(dto.providerCode());
+        provider.setCode(dto.providerCode());
         provider.setEmail(dto.email());
         provider.setPhone(dto.phone());
         provider.setDescription(dto.description());
@@ -35,6 +35,23 @@ public class ProviderCommandServiceImpl implements ProviderService {
         providerRepository.save(provider);
 
         return toRes(provider);
+    }
+
+    @Override
+    public ProviderRes get(String code) {
+        Provider provider = providerRepository.findByCode(code)
+                .orElseThrow(ProviderNotFoundException::new);
+
+        return toRes(provider);
+    }
+
+    @Override
+    public ProviderRes get(int id) {
+        Provider provider = providerRepository.findById(id)
+                .orElseThrow(ProviderNotFoundException::new);
+
+        return toRes(provider);
+
     }
 
     @Transactional
@@ -50,10 +67,22 @@ public class ProviderCommandServiceImpl implements ProviderService {
         provider.setStatus(ProviderStatus.INACTIVE);
     }
 
+    @Override
+    public void delete(String code) {
+        Provider provider = providerRepository.findByCode(code)
+                .orElseThrow(ProviderNotFoundException::new);
+
+        if (provider.getStatus() == ProviderStatus.INACTIVE) {
+            throw new ProviderConfilctException("provider is already inactive");
+        }
+
+        provider.setStatus(ProviderStatus.INACTIVE);
+    }
+
     @Transactional
     @Override
-    public ProviderRes update(int id, ProviderUpdateReq dto) {
-        Provider provider = providerRepository.findById(id)
+    public ProviderRes update(String code, ProviderUpdateReq dto) {
+        Provider provider = providerRepository.findByCode(code)
                 .orElseThrow(ProviderNotFoundException::new);
 
         if (provider.getStatus() == ProviderStatus.INACTIVE) {
@@ -62,8 +91,6 @@ public class ProviderCommandServiceImpl implements ProviderService {
 
         if (dto.name() != null)
             provider.setName(dto.name());
-        if (dto.providerCode() != null)
-            provider.setProviderCode(dto.providerCode());
         if (dto.email() != null)
             provider.setEmail(dto.email());
         if (dto.phone() != null)
@@ -78,8 +105,8 @@ public class ProviderCommandServiceImpl implements ProviderService {
 
     private ProviderRes toRes(Provider p) {
         return new ProviderRes(
-                p.getId(),
                 p.getName(),
+                p.getCode(),
                 p.getEmail(),
                 p.getPhone(),
                 p.getDescription(),

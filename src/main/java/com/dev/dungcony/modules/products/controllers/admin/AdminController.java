@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.controllers;
+package com.dev.dungcony.modules.products.controllers.admin;
 
 import com.dev.dungcony.commons.bases.ControllerBase;
 import com.dev.dungcony.commons.dtos.ApiRes;

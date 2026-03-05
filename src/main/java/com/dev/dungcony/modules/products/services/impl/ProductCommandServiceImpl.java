@@ -5,7 +5,6 @@ import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
-import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.Provider;
@@ -25,6 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
+import java.util.Locale;
+import java.util.UUID;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -38,13 +41,13 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     @Override
     public ProductDetailRes addNew(ProductAddReq req) {
 
-        Category cate = categoryRepository.findById(req.categoryId())
+        Category cate = categoryRepository.findByCategoryCode(req.categoryCode())
                 .orElseThrow(CategoryNotFoundException::new);
 
         validateLeaf(cate);
         validateCategoryActive(cate);
 
-        Provider provider = providerRepository.findById(req.providerId())
+        Provider provider = providerRepository.findByCode(req.providerCode())
                 .orElseThrow(ProviderNotFoundException::new);
 
         validateProviderActive(provider);
@@ -53,7 +56,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         product.setCategory(cate);
         product.setProvider(provider);
         product.setName(req.name());
-        product.setProductCode(req.productCode());
+        product.setCode(generateProductCode(provider.getName(), req.name()));
         product.setDescription(req.description());
         product.setPrice(req.price());
         product.setQuantity(req.quantity());
@@ -81,52 +84,29 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     @Override
     public ProductDetailRes update(ProductUpdateReq req) {
 
-        CategorySummaryDto catDto = null;
-        ProviderSummaryDto provDto = null;
-
-        Product product = productRepository.findById(req.productId())
+        Product product = productRepository.findByCode(req.productCode())
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED)
             throw new ProductConfligException("product is deleted");
 
         // ===== CATEGORY =====
-        if (req.categoryId() != null &&
-                (product.getCategory() == null || !req.categoryId().equals(product.getCategory().getId()))) {
+        if (req.categoryCode() != null &&
+                (product.getCategory() == null || !req.categoryCode().equals(product.getCategory().getCode()))) {
 
-            Category cate = categoryRepository.findById(req.categoryId())
+            Category cate = categoryRepository.findByCategoryCode(req.categoryCode())
                     .orElseThrow(CategoryNotFoundException::new);
 
             validateLeaf(cate);
             validateCategoryActive(cate);
             product.setCategory(cate);
-
-            catDto = new CategorySummaryDto(
-                    cate.getId(),
-                    cate.getName(),
-                    cate.getCategoryCode());
-        }
-
-        // ===== PROVIDER =====
-        if (req.providerId() != null &&
-                (product.getProvider() == null ||
-                        !req.providerId().equals(product.getProvider().getId()))) {
-
-            Provider provider = providerRepository.findById(req.providerId())
-                    .orElseThrow(ProviderNotFoundException::new);
-
-            validateProviderActive(provider);
-            product.setProvider(provider);
-            provDto = new ProviderSummaryDto(
-                    provider.getId(),
-                    provider.getName(),
-                    provider.getProviderCode()
-            );
         }
 
         // ===== BASIC FIELDS =====
-        if (req.name() != null)
+        if (req.name() != null) {
             product.setName(req.name());
+            product.setCode(generateProductCode(product.getName(), req.name()));
+        }
         if (req.description() != null)
             product.setDescription(req.description());
         if (req.price() != null)
@@ -136,33 +116,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         if (req.imgUrl() != null)
             product.setImg(req.imgUrl());
 
-        return new ProductDetailRes(
-                product.getId(),
-
-                product.getName(),
-                product.getProductCode(),
-                product.getDescription(),
-
-                product.getPrice(),
-                product.getPrice(),
-
-                null,
-                0,
-
-                product.getQuantity(),
-                product.getQuantitySold(),
-
-                product.getRated(),
-
-                product.getImg(),
-                product.getStatus(),
-
-                product.getCreatedAt(),
-                product.getUpdateAt(),
-
-                catDto,
-                provDto
-        );
+        return toDetailRes(product);
     }
 
     @Transactional
@@ -205,18 +159,18 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         CategorySummaryDto catDto = null;
         if (p.getCategory() != null) {
             Category c = p.getCategory();
-            catDto = new CategorySummaryDto(c.getId(), c.getName(), c.getCategoryCode());
+            catDto = new CategorySummaryDto(c.getName(), c.getCode());
         }
         ProviderSummaryDto provDto = null;
         if (p.getProvider() != null) {
             Provider pv = p.getProvider();
-            provDto = new ProviderSummaryDto(pv.getId(), pv.getName(), pv.getProviderCode());
+            provDto = new ProviderSummaryDto(pv.getName(), pv.getCode());
         }
         return new ProductDetailRes(
-                p.getId(),
                 p.getName(),
-                p.getProductCode(),
+                p.getCode(),
                 p.getDescription(),
+
                 p.getPrice(),
                 p.getPrice(),
                 "NONE",
@@ -230,5 +184,26 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 p.getUpdateAt(),
                 catDto,
                 provDto);
+    }
+
+    private String generateProductCode(String providerName, String name) {
+
+        String provider = normalize(providerName).substring(0, Math.min(3, providerName.length()));
+        String product = normalize(name).replaceAll(" ", "");
+
+        if (product.length() > 6) {
+            product = product.substring(0, 6);
+        }
+
+        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+
+        return provider + "-" + product + "-" + random;
+    }
+
+    private String normalize(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        normalized = normalized.replaceAll("[^a-zA-Z0-9 ]", "");
+        return normalized.toUpperCase(Locale.ROOT);
     }
 }

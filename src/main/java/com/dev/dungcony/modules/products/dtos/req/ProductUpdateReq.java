@@ -7,7 +7,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public record ProductUpdateReq(
-        Integer categoryCode,
+        String productCode,
+        String categoryCode,
         String name,
         String description,
         @Positive BigDecimal price,

@@ -15,13 +15,13 @@ public interface PromotionCalculator {
 
     /**
      * Batch: tính giá cho nhiều sản phẩm cùng lúc, tránh N+1 query.
-     * Key = productId, Value = DiscountInfo
+     * Key = productCode, Value = DiscountInfo
      */
-    Map<Integer, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs);
+    Map<String, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs);
 
     /**
      * Input DTO cho batch calculation.
      */
-    record ProductPriceInput(int productId, int categoryId, BigDecimal price) {
+    record ProductPriceInput(String productCode, String categoryCode, BigDecimal price) {
     }
 }
