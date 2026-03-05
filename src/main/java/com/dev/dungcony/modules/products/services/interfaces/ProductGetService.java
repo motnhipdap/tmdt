@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductGetService {
-    ProductDetailRes getById(Integer id);
+    ProductDetailRes getByCode(String code);
 
     Page<ProductSumaryRes> getAll(Pageable pageable);
 
-    Page<ProductSumaryRes> getAllByCategoryId(Integer categoryId, Pageable pageable);
+    Page<ProductSumaryRes> getAllByCategoryCode(String categoryCode, Pageable pageable);
 
     Page<ProductSumaryRes> searchByKeyword(String keyword, Pageable pageable);
 }

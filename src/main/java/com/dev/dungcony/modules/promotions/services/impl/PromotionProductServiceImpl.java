@@ -32,17 +32,23 @@ public class PromotionProductServiceImpl implements PromotionProductService {
     }
 
     @Override
-    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes) {
+    public Map<String, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes) {
         if (productCodes == null || productCodes.isEmpty()) {
             return Collections.emptyMap();
         }
 
+        Map<String, Integer> codeToId = getIdByCode.mapProductCodesToIds(productCodes);
+        List<Integer> productIds = codeToId.values().stream().toList();
+
         List<Object[]> rows = promotionProductRepository
-                .findByProductIds(getIdByCode.getByCategoryCodes(productCodes), Instant.now(), PromotionStatus.ACTIVE);
+                .findByProductIds(productIds, Instant.now(), PromotionStatus.ACTIVE);
+
+        Map<Integer, String> idToCode = codeToId.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 
         return rows.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Integer) row[0],
+                        row -> idToCode.get((Integer) row[0]),
                         Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
                 ));
     }

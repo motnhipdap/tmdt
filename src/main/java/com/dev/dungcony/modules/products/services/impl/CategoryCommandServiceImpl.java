@@ -88,21 +88,4 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
             categoryRepository.hideAllByPathPrefix(category.getPath());
         }
     }
-
-    @Override
-    public void delete(Integer id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(CategoryNotFoundException::new);
-
-        if (category.getStatus() == CategoryStatus.HIDDEN) {
-            return; // already hidden
-        }
-
-        category.setStatus(CategoryStatus.HIDDEN);
-
-        // Cascade HIDDEN to all sub-categories using path prefix
-        if (category.getPath() != null) {
-            categoryRepository.hideAllByPathPrefix(category.getPath());
-        }
-    }
 }

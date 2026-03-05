@@ -49,7 +49,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Transactional
     @Override
-    public int addNew(PromoAddReq req) {
+    public String addNew(PromoAddReq req) {
         log.info("Adding new promotion: {}", req);
 
         validateAddRequest(req);
@@ -69,7 +69,7 @@ public class PromotionServiceImpl implements PromotionService {
             promotionCategoryService.addListPromotionCategory(promotion, req.categoryCodes());
         }
 
-        return promotion.getId();
+        return promotion.getCode();
     }
 
     @Override
@@ -172,13 +172,12 @@ public class PromotionServiceImpl implements PromotionService {
 
         if (req.scope() == PromotionScope.PRODUCT) {
             if (req.productCodes() == null || req.productCodes().isEmpty()) {
-                throw new InvalidPromotionException("Product IDs are required for PRODUCT scope");
+                throw new InvalidPromotionException("Product codes are required for PRODUCT scope");
             }
-            // Validate tất cả productCodes() tồn tại và đang ACTIVE
             long existCount = productRepository.countByIdInAndStatus(getIdByCode.getByProductCodes(req.productCodes()), ProductStatus.ACTIVE);
             if (existCount != req.productCodes().size()) {
                 throw new InvalidPromotionException(
-                        "Some product IDs are invalid or inactive. Expected " + req.productCodes().size()
+                        "Some product codes are invalid or inactive. Expected " + req.productCodes().size()
                                 + " but found " + existCount
                 );
             }
@@ -186,13 +185,12 @@ public class PromotionServiceImpl implements PromotionService {
 
         if (req.scope() == PromotionScope.CATEGORY) {
             if (req.categoryCodes() == null || req.categoryCodes().isEmpty()) {
-                throw new InvalidPromotionException("Category IDs are required for CATEGORY scope");
+                throw new InvalidPromotionException("Category codes are required for CATEGORY scope");
             }
-            // Validate tất cả categoryCodes() tồn tại
             long existCount = categoryRepository.countByIdIn(getIdByCode.getByCategoryCodes(req.categoryCodes()));
             if (existCount != req.categoryCodes().size()) {
                 throw new InvalidPromotionException(
-                        "Some category IDs are invalid. Expected " + req.categoryCodes().size()
+                        "Some category codes are invalid. Expected " + req.categoryCodes().size()
                                 + " but found " + existCount
                 );
             }

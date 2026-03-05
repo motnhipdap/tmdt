@@ -8,9 +8,9 @@ public interface ProductCommandService {
 
     ProductDetailRes addNew(ProductAddReq req);
 
-    void addQuantity(int id, int quantity);
+    void addQuantity(String code, int quantity);
 
-    void delete(int pId);
+    void delete(String code);
 
     ProductDetailRes update(ProductUpdateReq req);
 }

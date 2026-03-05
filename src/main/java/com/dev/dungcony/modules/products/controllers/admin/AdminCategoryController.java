@@ -32,16 +32,6 @@ public class AdminCategoryController {
     }
 
 
-    @DeleteMapping("/category/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable int id
-    ) {
-        categoryCommandService.delete(id);
-        return ResponseEntity
-                .ok()
-                .build();
-    }
-
     @DeleteMapping("/category/{code}")
     public ResponseEntity<Void> delete(
             @PathVariable String code

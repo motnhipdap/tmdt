@@ -8,8 +8,6 @@ public interface ProviderGetService {
 
     ProviderRes getByCode(String code);
 
-    ProviderRes getById(int id);
-
     ProviderRes getByName(String name);
 
     List<ProviderRes> getAll();

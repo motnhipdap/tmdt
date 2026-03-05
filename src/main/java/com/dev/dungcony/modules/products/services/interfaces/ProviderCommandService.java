@@ -9,8 +9,6 @@ import java.util.List;
 public interface ProviderCommandService {
     ProviderRes addNew(ProviderAddReq dto);
 
-    void delete(int id);
-
     void delete(String code);
 
     ProviderRes update(String code, ProviderUpdateReq dto);

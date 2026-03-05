@@ -7,6 +7,4 @@ public interface CategoryCommandService {
     CategorySummaryDto addNew(CategoryAddReq category);
 
     void delete(String code);
-
-    void delete(Integer id);
 }

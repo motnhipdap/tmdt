@@ -95,4 +95,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("status") ProductStatus status);
 
     Optional<Product> findByCode(String productCode);
+
+    /**
+     * Load product với category và provider theo mã sản phẩm (tránh N+1).
+     */
+    @Query("""
+                SELECT p FROM Product p
+                LEFT JOIN FETCH p.category
+                LEFT JOIN FETCH p.provider
+                WHERE p.code = :code
+            """)
+    Optional<Product> findByCodeWithCategoryAndProvider(@Param("code") String code);
 }

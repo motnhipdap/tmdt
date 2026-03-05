@@ -13,7 +13,7 @@ public interface PromotionCategoryService {
 
     /**
      * Batch: lấy promotions cho nhiều categories cùng lúc.
-     * Key = categoryId, Value = danh sách PromotionDto
+     * Key = categoryCode, Value = danh sách PromotionDto
      */
-    Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> codes);
+    Map<String, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> codes);
 }

@@ -11,9 +11,9 @@ public interface PromotionProductService {
 
     /**
      * Batch: lấy promotions cho nhiều products cùng lúc.
-     * Key = productId, Value = danh sách PromotionDto
+     * Key = productCode, Value = danh sách PromotionDto
      */
-    Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes);
+    Map<String, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes);
 
     void addListPromotionProduct(Promotion promotion, List<String> productCodes);
 }

@@ -27,14 +27,6 @@ public class ProviderGetServiceImpl implements ProviderGetService {
     }
 
     @Override
-    public ProviderRes getById(int id) {
-        Provider provider = providerRepository.findById(id)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        return toRes(provider);
-    }
-
-    @Override
     public ProviderRes getByName(String name) {
         Provider prov = providerRepository.findByName(name)
                 .orElseThrow(ProviderNotFoundException::new);

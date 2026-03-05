@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PromotionService {
-    int addNew(PromoAddReq req);
+    String addNew(PromoAddReq req);
 
     void update(PromoUpdateReq req);
 

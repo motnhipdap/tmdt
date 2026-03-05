@@ -42,16 +42,6 @@ public class AdminProviderController {
     }
 
 
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<Void> deleteProvider(
-            @PathVariable int id
-    ) {
-        providerCommandService.delete(id);
-        return ResponseEntity
-                .ok()
-                .build();
-    }
-
     @DeleteMapping("delete/{code}")
     public ResponseEntity<Void> deleteProvider(
             @PathVariable String code

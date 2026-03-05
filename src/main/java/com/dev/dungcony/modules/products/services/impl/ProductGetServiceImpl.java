@@ -35,9 +35,9 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDetailRes getById(Integer id) {
+    public ProductDetailRes getByCode(String code) {
 
-        Product product = productRepository.findByIdWithCategoryAndProvider(id)
+        Product product = productRepository.findByCodeWithCategoryAndProvider(code)
                 .orElseThrow(() -> new ProductNotFoundException("product not found"));
 
         // Không trả về product đã bị xóa
@@ -51,9 +51,9 @@ public class ProductGetServiceImpl implements ProductGetService {
         }
 
         // Tính discount cho sản phẩm
-        int categoryId = product.getCategory() != null ? product.getCategory().getId() : 0;
+        String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
         DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
-                product.getId(), categoryId, product.getPrice());
+                product.getCode(), categoryCode, product.getPrice());
 
         CategorySummaryDto catDto = null;
         if (product.getCategory() != null) {
@@ -100,10 +100,14 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductSumaryRes> getAllByCategoryId(Integer categoryId, Pageable pageable) {
-        categoryRepository.findById(categoryId)
+    public Page<ProductSumaryRes> getAllByCategoryCode(String categoryCode, Pageable pageable) {
+        categoryRepository.findByCode(categoryCode)
                 .filter(c -> c.getStatus() == CategoryStatus.ACTIVE)
                 .orElseThrow(CategoryNotFoundException::new);
+
+        Integer categoryId = categoryRepository.findByCode(categoryCode)
+                .orElseThrow(CategoryNotFoundException::new)
+                .getId();
 
         Page<ProductSumaryRes> rawPage = productRepository.findAllByCategoryTree(categoryId, pageable);
 

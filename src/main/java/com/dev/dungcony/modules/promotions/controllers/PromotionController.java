@@ -26,20 +26,20 @@ public class PromotionController {
     private final PromotionProductService promotionProductService;
     private final PromotionCategoryService promotionCategoryService;
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/product/{productCode}")
     public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByProduct(
-            @PathVariable Integer productId
+            @PathVariable String productCode
     ) {
-        List<PromotionSumaryRes> promotions = promotionProductService.getPromotionByProduct(productId);
+        List<PromotionSumaryRes> promotions = promotionProductService.getPromotionByProduct(productCode);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for product", promotions));
     }
 
-    @GetMapping("/category/{categoryId}")
+    @GetMapping("/category/{categoryCode}")
     public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByCategory(
-            @PathVariable Integer categoryId
+            @PathVariable String categoryCode
     ) {
-        List<PromotionSumaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryId);
+        List<PromotionSumaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryCode);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for category", promotions));
     }

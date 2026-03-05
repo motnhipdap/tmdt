@@ -39,18 +39,6 @@ public class ProviderCommandServiceImpl implements ProviderCommandService {
 
     @Transactional
     @Override
-    public void delete(int id) {
-        Provider provider = providerRepository.findById(id)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        if (provider.getStatus() == ProviderStatus.INACTIVE) {
-            throw new ProviderConfilctException("provider is already inactive");
-        }
-
-        provider.setStatus(ProviderStatus.INACTIVE);
-    }
-
-    @Override
     public void delete(String code) {
         Provider provider = providerRepository.findByCode(code)
                 .orElseThrow(ProviderNotFoundException::new);

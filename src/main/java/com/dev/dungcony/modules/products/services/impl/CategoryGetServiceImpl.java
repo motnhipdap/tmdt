@@ -41,13 +41,6 @@ public class CategoryGetServiceImpl implements CategoryGetService {
     }
 
     @Override
-    public CategoryRes getById(Integer id) {
-        Category cate = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        return toRes(cate);
-    }
-
-    @Override
     public CategoryRes getByCode(String code) {
         Category cate = categoryRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException("Category not found with code: " + code));
@@ -60,7 +53,6 @@ public class CategoryGetServiceImpl implements CategoryGetService {
                 .orElseThrow(() -> new RuntimeException("Category not found with name: " + name));
         return toRes(cate);
     }
-
 
     private CategoryRes toRes(Category category) {
         return new CategoryRes(

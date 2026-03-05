@@ -46,21 +46,27 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
 
     @Override
     public List<PromotionSumaryRes> getPromotionByCategory(String categoryCode) {
-        return promotionCategoryRepository.findByCategoryId(categoryCode, Instant.now(), PromotionStatus.ACTIVE);
+        return promotionCategoryRepository.findByCategoryId(getIdByCode.getByCategoryCode(categoryCode), Instant.now(), PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> categoryCodes) {
+    public Map<String, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> categoryCodes) {
         if (categoryCodes == null || categoryCodes.isEmpty()) {
             return Collections.emptyMap();
         }
 
+        Map<String, Integer> codeToId = getIdByCode.mapCategoryCodesToIds(categoryCodes);
+        List<Integer> categoryIds = codeToId.values().stream().toList();
+
         List<Object[]> rows = promotionCategoryRepository
-                .findByCategoryIds(getIdByCode.getByCategoryCodes(categoryCodes), Instant.now(), PromotionStatus.ACTIVE);
+                .findByCategoryIds(categoryIds, Instant.now(), PromotionStatus.ACTIVE);
+
+        Map<Integer, String> idToCode = codeToId.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 
         return rows.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Integer) row[0],
+                        row -> idToCode.get((Integer) row[0]),
                         Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
                 ));
     }

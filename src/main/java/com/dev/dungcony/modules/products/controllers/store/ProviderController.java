@@ -29,15 +29,6 @@ public class ProviderController {
                         ProviderGetService.getByCode(code)));
     }
 
-    @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<ApiRes<?>> getByCode(
-            @PathVariable Integer id) {
-        return ResponseEntity.ok()
-                .body(ApiRes.success(
-                        "provider",
-                        ProviderGetService.getById(id)));
-    }
-
     @GetMapping("/get-by-name/{name}")
     public ResponseEntity<ApiRes<?>> getByName(
             @PathVariable String name) {

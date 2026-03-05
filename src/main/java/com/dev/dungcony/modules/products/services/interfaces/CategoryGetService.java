@@ -9,8 +9,6 @@ public interface CategoryGetService {
 
     List<CategoryRes> getAll();
 
-    CategoryRes getById(Integer id);
-
     CategoryRes getByCode(String code);
 
     CategoryRes getByName(String name);

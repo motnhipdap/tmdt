@@ -34,7 +34,8 @@ public class AdminController {
     public ResponseEntity<Void> addNew(
             @Valid @RequestBody PromoAddReq req
     ) {
-        URI uri = URI.create("/v1/api/promotions/" + promotionService.addNew(req));
+        String promotionCode = promotionService.addNew(req);
+        URI uri = URI.create("/v1/api/promotions/code/" + promotionCode);
 
         return ResponseEntity
                 .created(uri)

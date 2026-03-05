@@ -69,8 +69,8 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
     @Transactional
     @Override
-    public void delete(int pId) {
-        Product product = productRepository.findById(pId)
+    public void delete(String code) {
+        Product product = productRepository.findByCode(code)
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED) {
@@ -121,11 +121,11 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
     @Transactional
     @Override
-    public void addQuantity(int pId, int quantity) {
+    public void addQuantity(String code, int quantity) {
         if (quantity == 0)
             return;
 
-        Product product = productRepository.findById(pId)
+        Product product = productRepository.findByCode(code)
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED)
