@@ -10,24 +10,47 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    // check category có category con hay không
+
     boolean existsByParent_Id(Integer parentId);
 
-    /**
-     * Đếm số category tồn tại trong danh sách IDs.
-     * Dùng khi validate categoryIds trước khi tạo promotion.
-     */
     long countByIdIn(List<Integer> ids);
 
-    /**
-     * Cascade HIDDEN status cho tất cả sub-categories dựa trên path prefix.
-     * Ví dụ: path = "/1/2/" sẽ HIDDEN tất cả category có path bắt đầu bằng "/1/2/"
-     * (trừ chính nó vì đã được set ở service layer).
-     */
-    @Modifying
-    @Query("UPDATE Category c SET c.status = 'HIDDEN' WHERE c.path LIKE CONCAT(:pathPrefix, '%') AND c.status = 'ACTIVE'")
-    void hideAllByPathPrefix(@Param("pathPrefix") String pathPrefix);
+    Optional<Category> findByCode(String categoryCode);
 
-    // Tìm category theo mã code (dùng khi client chỉ biết code, không biết id)
-    Optional<Category> findByCategoryCode(String categoryCode);
+    Optional<Category> findByName(String name);
+
+    List<Category> findByParent_Id(Integer parentId);
+
+    @Query("""
+                SELECT c
+                FROM Category c
+                WHERE c.path LIKE CONCAT(:path, '/%')
+            """)
+    List<Category> findAllChildrenByPath(String path);
+
+    @Query(value = """
+                SELECT c.*
+                FROM category c
+                WHERE c.path LIKE CONCAT(
+                    (SELECT p.path FROM category p WHERE p.code = :code),
+                    '/%'
+                )
+            """, nativeQuery = true)
+    List<Category> findAllChildrenByCode(String code);
+
+    @Query("""
+                SELECT c
+                FROM Category c
+                WHERE c.path LIKE CONCAT(:pathPrefix, '%')
+            """)
+    List<Category> findSubTree(String pathPrefix);
+
+    @Modifying
+    @Query("""
+                UPDATE Category c
+                SET c.status = 'HIDDEN'
+                WHERE c.path LIKE CONCAT(:pathPrefix, '/%')
+                AND c.status = 'ACTIVE'
+            """)
+    void hideAllByPathPrefix(@Param("pathPrefix") String pathPrefix);
 }

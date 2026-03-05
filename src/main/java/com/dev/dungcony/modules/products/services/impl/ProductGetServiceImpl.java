@@ -16,6 +16,7 @@ import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
 import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
 import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator.ProductPriceInput;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class ProductGetServiceImpl implements ProductGetService {
     private final ProductRepository productRepository;

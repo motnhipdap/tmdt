@@ -33,21 +33,21 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
     private final PromotionService promotionService;
 
     @Override
-    public DiscountInfoDto calculateFinalPrice(int productId, int categoryId, BigDecimal price) {
-        log.debug("Calculating final price for productId={}, categoryId={}, price={}", productId, categoryId, price);
+    public DiscountInfoDto calculateFinalPrice(String productCode, String categoryCode, BigDecimal price) {
+        log.debug("Calculating final price for productCode={}, categoryCode={}, price={}", productCode, categoryCode, price);
 
         Instant now = Instant.now();
 
         // Delegate sang service layer — single source of truth
-        List<PromotionSumaryRes> productPromotions = promotionProductService.getPromotionByProduct(productId);
-        List<PromotionSumaryRes> categoryPromotions = promotionCategoryService.getPromotionByCategory(categoryId);
+        List<PromotionSumaryRes> productPromotions = promotionProductService.getPromotionByProduct(productCode);
+        List<PromotionSumaryRes> categoryPromotions = promotionCategoryService.getPromotionByCategory(categoryCode);
         List<PromotionSumaryRes> globalPromotions = promotionService.getGlobalPromotions(now);
 
         return findBestDiscount(price, now, productPromotions, categoryPromotions, globalPromotions);
     }
 
     @Override
-    public Map<Integer, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs) {
+    public Map<String, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs) {
         if (inputs == null || inputs.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -55,24 +55,24 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
         Instant now = Instant.now();
 
         // Thu thập tất cả productIds và categoryIds để batch query
-        List<Integer> productIds = inputs.stream().map(ProductPriceInput::productId).toList();
-        List<Integer> categoryIds = inputs.stream().map(ProductPriceInput::categoryId).distinct().toList();
+        List<String> productCodes = inputs.stream().map(ProductPriceInput::productCode).toList();
+        List<String> categoryCodes = inputs.stream().map(ProductPriceInput::categoryCode).distinct().toList();
 
         // Batch query qua service layer: 3 queries thay vì 3*N
-        Map<Integer, List<PromotionSumaryRes>> productPromotionMap =
-                promotionProductService.getPromotionsByProducts(productIds);
-        Map<Integer, List<PromotionSumaryRes>> categoryPromotionMap =
-                promotionCategoryService.getPromotionsByCategories(categoryIds);
+        Map<String, List<PromotionSumaryRes>> productPromotionMap =
+                promotionProductService.getPromotionsByProducts(productCodes);
+        Map<String, List<PromotionSumaryRes>> categoryPromotionMap =
+                promotionCategoryService.getPromotionsByCategories(categoryCodes);
         List<PromotionSumaryRes> globalPromotions = promotionService.getGlobalPromotions(now);
 
         // Tính cho từng product
-        Map<Integer, DiscountInfoDto> result = new HashMap<>();
+        Map<String, DiscountInfoDto> result = new HashMap<>();
         for (ProductPriceInput input : inputs) {
-            List<PromotionSumaryRes> prodPromos = productPromotionMap.getOrDefault(input.productId(), List.of());
-            List<PromotionSumaryRes> catePromos = categoryPromotionMap.getOrDefault(input.categoryId(), List.of());
+            List<PromotionSumaryRes> prodPromos = productPromotionMap.getOrDefault(input.productCode(), List.of());
+            List<PromotionSumaryRes> catePromos = categoryPromotionMap.getOrDefault(input.categoryCode(), List.of());
 
             DiscountInfoDto discount = findBestDiscount(input.price(), now, prodPromos, catePromos, globalPromotions);
-            result.put(input.productId(), discount);
+            result.put(input.productCode(), discount);
         }
 
         return result;

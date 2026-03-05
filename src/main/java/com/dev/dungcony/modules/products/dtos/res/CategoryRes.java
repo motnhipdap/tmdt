@@ -7,8 +7,6 @@ public record CategoryRes(
         String categoryCode,
         CategoryStatus status,
         String description,
-        String path,
-        Integer level,
         String imgUrl) {
 
 }

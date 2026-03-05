@@ -10,10 +10,11 @@ import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.CategoryCommandService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CategoryCommandServiceImpl implements CategoryCommandService {
@@ -28,7 +29,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         if (req.parentCode() != null && !req.parentCode().isBlank()) {
 
-            parent = categoryRepository.findByCategoryCode(req.parentCode())
+            parent = categoryRepository.findByCode(req.parentCode())
                     .orElseThrow(CategoryNotFoundException::new);
 
             if (parent.getStatus() != CategoryStatus.ACTIVE) {
@@ -72,8 +73,8 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
     @Override
     @Transactional
-    public void remove(String code) {
-        Category category = categoryRepository.findByCategoryCode(code)
+    public void delete(String code) {
+        Category category = categoryRepository.findByCode(code)
                 .orElseThrow(CategoryNotFoundException::new);
 
         if (category.getStatus() == CategoryStatus.HIDDEN) {
@@ -89,7 +90,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     }
 
     @Override
-    public void remove(Integer id) {
+    public void delete(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(CategoryNotFoundException::new);
 

@@ -34,6 +34,27 @@ public interface PromotionCategoryRepository extends JpaRepository<PromotionCate
             @Param("status") PromotionStatus status
     );
 
+    @Query("""
+            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes(
+                        pp.promotion.id,
+                        pp.promotion.type,
+                        pp.promotion.value,
+                        pp.promotion.minPriceApply,
+                        pp.promotion.startAt,
+                        pp.promotion.endAt
+                        )
+            FROM PromotionCategory pp
+            WHERE pp.categoryId = :categoryId
+                 AND pp.promotion.status = :status
+                 AND pp.promotion.endAt > :now
+            ORDER BY pp.promotion.priority DESC
+            """)
+    List<PromotionSumaryRes> findByCategoryId(
+            @Param("categoryCode") String categoryCode,
+            @Param("now") Instant now,
+            @Param("status") PromotionStatus status
+    );
+
     /**
      * Batch query: lấy tất cả promotions đang active cho danh sách categoryIds.
      * Tránh N+1 khi cần tính giá cho nhiều sản phẩm thuộc nhiều category.

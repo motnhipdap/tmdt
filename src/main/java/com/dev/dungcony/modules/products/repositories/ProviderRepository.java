@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ProviderRepository extends JpaRepository<Provider, Integer> {
-    Optional<Provider> findByCode(String providerCode);
+    Optional<Provider> findByCode(String code);
+
+    Optional<Provider> findByName(String name);
+
 }

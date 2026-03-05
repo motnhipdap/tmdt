@@ -8,7 +8,7 @@ import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.ProviderConfilctException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
-import com.dev.dungcony.modules.products.services.interfaces.ProviderService;
+import com.dev.dungcony.modules.products.services.interfaces.ProviderCommandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class ProviderCommandServiceImpl implements ProviderService {
+public class ProviderCommandServiceImpl implements ProviderCommandService {
 
     private final ProviderRepository providerRepository;
 
@@ -35,23 +35,6 @@ public class ProviderCommandServiceImpl implements ProviderService {
         providerRepository.save(provider);
 
         return toRes(provider);
-    }
-
-    @Override
-    public ProviderRes get(String code) {
-        Provider provider = providerRepository.findByCode(code)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        return toRes(provider);
-    }
-
-    @Override
-    public ProviderRes get(int id) {
-        Provider provider = providerRepository.findById(id)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        return toRes(provider);
-
     }
 
     @Transactional

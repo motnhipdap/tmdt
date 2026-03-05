@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface PromotionCategoryService {
-    void addListPromotionCategory(Promotion promotion, List<Integer> categoryIds);
+    void addListPromotionCategory(Promotion promotion, List<String> categoryCodes);
 
-    List<PromotionSumaryRes> getPromotionByCategory(Integer categoryId);
+    List<PromotionSumaryRes> getPromotionByCategory(String categoryCode);
 
     /**
      * Batch: lấy promotions cho nhiều categories cùng lúc.
      * Key = categoryId, Value = danh sách PromotionDto
      */
-    Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<Integer> categoryIds);
+    Map<String, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> categoryCodes);
 }

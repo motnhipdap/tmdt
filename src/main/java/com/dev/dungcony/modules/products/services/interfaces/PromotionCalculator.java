@@ -11,7 +11,7 @@ public interface PromotionCalculator {
     /**
      * Tính giá cuối cùng cho 1 sản phẩm sau khi áp dụng promotion tốt nhất.
      */
-    DiscountInfoDto calculateFinalPrice(int productId, int categoryId, BigDecimal price);
+    DiscountInfoDto calculateFinalPrice(String productCode, String categoryCode, BigDecimal price);
 
     /**
      * Batch: tính giá cho nhiều sản phẩm cùng lúc, tránh N+1 query.

@@ -6,7 +6,7 @@ import com.dev.dungcony.modules.products.dtos.req.CategoryAddReq;
 public interface CategoryCommandService {
     CategorySummaryDto addNew(CategoryAddReq category);
 
-    void remove(String code);
+    void delete(String code);
 
-    void remove(Integer id);
+    void delete(Integer id);
 }

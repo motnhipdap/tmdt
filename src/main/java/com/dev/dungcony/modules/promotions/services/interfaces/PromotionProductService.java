@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface PromotionProductService {
-    List<PromotionSumaryRes> getPromotionByProduct(Integer productId);
+    List<PromotionSumaryRes> getPromotionByProduct(String productCode);
 
     /**
      * Batch: lấy promotions cho nhiều products cùng lúc.
      * Key = productId, Value = danh sách PromotionDto
      */
-    Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<Integer> productIds);
+    Map<String, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes);
 
-    void addListPromotionProduct(Promotion promotion, List<Integer> productIds);
+    void addListPromotionProduct(Promotion promotion, List<String> productCodes);
 }

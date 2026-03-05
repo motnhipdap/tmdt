@@ -27,14 +27,14 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
 
     @Transactional
     @Override
-    public void addListPromotionCategory(Promotion promotion, List<Integer> categoryIds) {
+    public void addListPromotionCategory(Promotion promotion, List<String> categoryIds) {
         log.info("Adding {} promotion-category mappings for promotionId={}", categoryIds.size(), promotion.getId());
 
         List<PromotionCategory> mappings = categoryIds.stream()
-                .map(categoryId -> {
+                .map(categoryCode -> {
                     PromotionCategory pp = new PromotionCategory();
                     pp.setPromotion(promotion);
-                    pp.setId(new PromotionCategoryId(categoryId, promotion.getId()));
+                    pp.setId(new PromotionCategoryId(categoryCode, promotion.getId()));
                     return pp;
                 })
                 .toList();
@@ -43,8 +43,8 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     }
 
     @Override
-    public List<PromotionSumaryRes> getPromotionByCategory(Integer categoryId) {
-        return promotionCategoryRepository.findByCategoryId(categoryId, Instant.now(), PromotionStatus.ACTIVE);
+    public List<PromotionSumaryRes> getPromotionByCategory(String categoryCode) {
+        return promotionCategoryRepository.findByCategoryId(categoryCode, Instant.now(), PromotionStatus.ACTIVE);
     }
 
     @Override

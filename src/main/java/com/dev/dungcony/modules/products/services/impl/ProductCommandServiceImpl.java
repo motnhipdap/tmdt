@@ -41,7 +41,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     @Override
     public ProductDetailRes addNew(ProductAddReq req) {
 
-        Category cate = categoryRepository.findByCategoryCode(req.categoryCode())
+        Category cate = categoryRepository.findByCode(req.categoryCode())
                 .orElseThrow(CategoryNotFoundException::new);
 
         validateLeaf(cate);
@@ -94,7 +94,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         if (req.categoryCode() != null &&
                 (product.getCategory() == null || !req.categoryCode().equals(product.getCategory().getCode()))) {
 
-            Category cate = categoryRepository.findByCategoryCode(req.categoryCode())
+            Category cate = categoryRepository.findByCode(req.categoryCode())
                     .orElseThrow(CategoryNotFoundException::new);
 
             validateLeaf(cate);

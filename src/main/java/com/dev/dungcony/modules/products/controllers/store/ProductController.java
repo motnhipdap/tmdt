@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.controllers;
+package com.dev.dungcony.modules.products.controllers.store;
 
 import com.dev.dungcony.commons.bases.ControllerBase;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -10,17 +10,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("v1/api/public/product")
-@Tag(name = "Product", description = "Quản lý sản phẩm")
-public class ProductController extends ControllerBase {
-
+@Tag(name = "Product", description = "api công khai để lấy thông tin sản phẩm")
+public class ProductController {
     private final ProductGetService productQueryService;
 
     @Operation(summary = "Lấy danh sách sản phẩm", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
