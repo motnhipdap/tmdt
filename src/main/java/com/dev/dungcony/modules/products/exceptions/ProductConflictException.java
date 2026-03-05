@@ -2,16 +2,16 @@ package com.dev.dungcony.modules.products.exceptions;
 
 import com.dev.dungcony.commons.exceptions.ConflictException;
 
-public class ProductConfligException extends ConflictException {
-    public ProductConfligException() {
+public class ProductConflictException extends ConflictException {
+    public ProductConflictException() {
         super("product is already existed");
     }
 
-    public ProductConfligException(String mes) {
+    public ProductConflictException(String mes) {
         super(mes);
     }
 
-    public ProductConfligException(String code, String message) {
+    public ProductConflictException(String code, String message) {
         super(code, message);
     }
 }

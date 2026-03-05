@@ -1,12 +1,12 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.entities.PromotionProduct;
 import com.dev.dungcony.modules.promotions.entities.PromotionProductId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
-import com.dev.dungcony.modules.promotions.reporitories.PromotionProductRepository;
-import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
+import com.dev.dungcony.modules.promotions.repositories.PromotionProductRepository;
+import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +27,13 @@ public class PromotionProductServiceImpl implements PromotionProductService {
     private final GetIdByCode getIdByCode;
 
     @Override
-    public List<PromotionSumaryRes> getPromotionByProduct(String code) {
-        return promotionProductRepository.findByProductId(getIdByCode.getByProductCode(code), Instant.now(), PromotionStatus.ACTIVE);
+    public List<PromotionSummaryRes> getPromotionByProduct(String code) {
+        return promotionProductRepository.findByProductId(getIdByCode.getByProductCode(code), Instant.now(),
+                PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<String, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes) {
+    public Map<String, List<PromotionSummaryRes>> getPromotionsByProducts(List<String> productCodes) {
         if (productCodes == null || productCodes.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -49,8 +50,7 @@ public class PromotionProductServiceImpl implements PromotionProductService {
         return rows.stream()
                 .collect(Collectors.groupingBy(
                         row -> idToCode.get((Integer) row[0]),
-                        Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
-                ));
+                        Collectors.mapping(row -> (PromotionSummaryRes) row[1], Collectors.toList())));
     }
 
     @Transactional

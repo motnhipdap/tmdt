@@ -11,7 +11,6 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-
 @Getter
 @Setter
 @Entity
@@ -55,7 +54,6 @@ public class Product {
     @Column(name = "rated")
     private Float rated;
 
-
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "created_at")
     private Instant createdAt;
@@ -82,7 +80,9 @@ public class Product {
 
     @PrePersist
     protected void onCreate() {
-        this.updateAt = Instant.now();
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updateAt = now;
     }
 
     @PreUpdate

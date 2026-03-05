@@ -5,7 +5,6 @@ import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -54,11 +53,12 @@ public class Promotion {
     @ColumnDefault("0")
     @Column(name = "min_price_apply", nullable = false)
     private BigDecimal minPriceApply;
-    @Size(max = 20)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "scope", nullable = false, length = 20)
     private PromotionScope scope = PromotionScope.GLOBAL;
+
+    @Version
     @NotNull
     @ColumnDefault("0")
     @Column(name = "version", nullable = false)

@@ -12,7 +12,7 @@ import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
-import com.dev.dungcony.modules.products.exceptions.ProductConfligException;
+import com.dev.dungcony.modules.products.exceptions.ProductConflictException;
 import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
@@ -74,7 +74,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED) {
-            throw new ProductConfligException("product is already deleted");
+            throw new ProductConflictException("product is already deleted");
         }
 
         product.setStatus(ProductStatus.DELETED);
@@ -88,7 +88,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED)
-            throw new ProductConfligException("product is deleted");
+            throw new ProductConflictException("product is deleted");
 
         // ===== CATEGORY =====
         if (req.categoryCode() != null &&
@@ -129,11 +129,11 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStatus() == ProductStatus.DELETED)
-            throw new ProductConfligException("cannot add quantity to deleted product");
+            throw new ProductConflictException("cannot add quantity to deleted product");
 
         int newQuantity = product.getQuantity() + quantity;
         if (newQuantity < 0)
-            throw new ProductConfligException("quantity cannot be negative, current: "
+            throw new ProductConflictException("quantity cannot be negative, current: "
                     + product.getQuantity() + ", requested change: " + quantity);
 
         product.setQuantity(newQuantity);
@@ -142,17 +142,17 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     // check if category is leaf, only leaf category can contain product
     private void validateLeaf(Category cate) {
         if (!cate.getIsLeaf())
-            throw new ProductConfligException("Category must be leaf");
+            throw new ProductConflictException("Category must be leaf");
     }
 
     private void validateCategoryActive(Category cate) {
         if (cate.getStatus() != CategoryStatus.ACTIVE)
-            throw new ProductConfligException("Category is not active");
+            throw new ProductConflictException("Category is not active");
     }
 
     private void validateProviderActive(Provider provider) {
         if (provider.getStatus() != ProviderStatus.ACTIVE)
-            throw new ProductConfligException("Provider is not active");
+            throw new ProductConflictException("Provider is not active");
     }
 
     private ProductDetailRes toDetailRes(Product p) {

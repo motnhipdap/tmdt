@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.promotions.services.interfaces;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionDetailRes;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,12 +20,12 @@ public interface PromotionService {
 
     void softDelete(Integer promotionId);
 
-    Page<PromotionSumaryRes> getAll(Pageable pageable);
+    Page<PromotionSummaryRes> getAll(Pageable pageable);
 
     Optional<PromotionDetailRes> getById(Integer id);
 
     /**
      * Lấy danh sách global promotions đang active tại thời điểm now.
      */
-    List<PromotionSumaryRes> getGlobalPromotions(Instant now);
+    List<PromotionSummaryRes> getGlobalPromotions(Instant now);
 }

@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.products.services.impl;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.promotions.exceptions.InvalidPromotionException;
-import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
+import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -5,7 +5,7 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public record PromotionSumaryRes(
+public record PromotionSummaryRes(
         Integer promotionId,
         PromotionType type,
         int value,

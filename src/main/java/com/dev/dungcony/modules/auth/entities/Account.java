@@ -1,17 +1,23 @@
 package com.dev.dungcony.modules.auth.entities;
 
+import com.dev.dungcony.commons.bases.EntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
+@Getter
+@Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tbl_accounts", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(name = "tbl_accounts", uniqueConstraints = { @UniqueConstraint(columnNames = "email") })
 public class Account extends EntityBase {
 
     @Id

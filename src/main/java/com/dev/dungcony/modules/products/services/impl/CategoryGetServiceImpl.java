@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.products.services.impl;
 
 import com.dev.dungcony.modules.products.dtos.res.CategoryRes;
 import com.dev.dungcony.modules.products.entities.Category;
+import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.services.interfaces.CategoryGetService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,13 @@ public class CategoryGetServiceImpl implements CategoryGetService {
 
     @Override
     public List<CategoryRes> getAllChildren(String code) {
-//
-//        Category parent = categoryRepository.findByCode(code)
-//                .orElseThrow(() -> new RuntimeException("Category not found with code: " + code));
-//
-//        List<Category> categories = categoryRepository.findAllChildrenByPath(parent.getPath());
+        //
+        // Category parent = categoryRepository.findByCode(code)
+        // .orElseThrow(() -> new RuntimeException("Category not found with code: " +
+        // code));
+        //
+        // List<Category> categories =
+        // categoryRepository.findAllChildrenByPath(parent.getPath());
         List<Category> categories = categoryRepository.findAllChildrenByCode(code);
 
         return categories.stream().map(this::toRes).toList();
@@ -43,14 +46,14 @@ public class CategoryGetServiceImpl implements CategoryGetService {
     @Override
     public CategoryRes getByCode(String code) {
         Category cate = categoryRepository.findByCode(code)
-                .orElseThrow(() -> new RuntimeException("Category not found with code: " + code));
+                .orElseThrow(CategoryNotFoundException::new);
         return toRes(cate);
     }
 
     @Override
     public CategoryRes getByName(String name) {
         Category cate = categoryRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Category not found with name: " + name));
+                .orElseThrow(CategoryNotFoundException::new);
         return toRes(cate);
     }
 
@@ -60,7 +63,6 @@ public class CategoryGetServiceImpl implements CategoryGetService {
                 category.getCode(),
                 category.getStatus(),
                 category.getDescription(),
-                category.getImgUrl()
-        );
+                category.getImgUrl());
     }
 }

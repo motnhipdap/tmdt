@@ -5,7 +5,7 @@ import com.dev.dungcony.modules.products.dtos.req.ProviderUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
 import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
-import com.dev.dungcony.modules.products.exceptions.ProviderConfilctException;
+import com.dev.dungcony.modules.products.exceptions.ProviderConflictException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProviderCommandService;
@@ -44,7 +44,7 @@ public class ProviderCommandServiceImpl implements ProviderCommandService {
                 .orElseThrow(ProviderNotFoundException::new);
 
         if (provider.getStatus() == ProviderStatus.INACTIVE) {
-            throw new ProviderConfilctException("provider is already inactive");
+            throw new ProviderConflictException("provider is already inactive");
         }
 
         provider.setStatus(ProviderStatus.INACTIVE);
@@ -57,7 +57,7 @@ public class ProviderCommandServiceImpl implements ProviderCommandService {
                 .orElseThrow(ProviderNotFoundException::new);
 
         if (provider.getStatus() == ProviderStatus.INACTIVE) {
-            throw new ProviderConfilctException("cannot update inactive provider");
+            throw new ProviderConflictException("cannot update inactive provider");
         }
 
         if (dto.name() != null)

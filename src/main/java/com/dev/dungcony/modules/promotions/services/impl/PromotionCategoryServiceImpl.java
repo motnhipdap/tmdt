@@ -1,12 +1,12 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategory;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategoryId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
-import com.dev.dungcony.modules.promotions.reporitories.PromotionCategoryRepository;
-import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
+import com.dev.dungcony.modules.promotions.repositories.PromotionCategoryRepository;
+import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -45,12 +45,13 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     }
 
     @Override
-    public List<PromotionSumaryRes> getPromotionByCategory(String categoryCode) {
-        return promotionCategoryRepository.findByCategoryId(getIdByCode.getByCategoryCode(categoryCode), Instant.now(), PromotionStatus.ACTIVE);
+    public List<PromotionSummaryRes> getPromotionByCategory(String categoryCode) {
+        return promotionCategoryRepository.findByCategoryId(getIdByCode.getByCategoryCode(categoryCode), Instant.now(),
+                PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<String, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> categoryCodes) {
+    public Map<String, List<PromotionSummaryRes>> getPromotionsByCategories(List<String> categoryCodes) {
         if (categoryCodes == null || categoryCodes.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -67,7 +68,6 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
         return rows.stream()
                 .collect(Collectors.groupingBy(
                         row -> idToCode.get((Integer) row[0]),
-                        Collectors.mapping(row -> (PromotionSumaryRes) row[1], Collectors.toList())
-                ));
+                        Collectors.mapping(row -> (PromotionSummaryRes) row[1], Collectors.toList())));
     }
 }

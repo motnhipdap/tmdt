@@ -6,15 +6,15 @@ import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionDetailRes;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionScope;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import com.dev.dungcony.modules.promotions.exceptions.InvalidPromotionException;
 import com.dev.dungcony.modules.promotions.exceptions.PromotionNotFoundException;
-import com.dev.dungcony.modules.promotions.reporitories.PromotionRepository;
-import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
+import com.dev.dungcony.modules.promotions.repositories.PromotionRepository;
+import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -92,7 +92,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public Page<PromotionSumaryRes> getAll(Pageable pageable) {
+    public Page<PromotionSummaryRes> getAll(Pageable pageable) {
         return promotionRepository.getAll(pageable);
     }
 
@@ -126,13 +126,20 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         // Update only provided fields
-        if (req.type() != null) promotion.setType(req.type());
-        if (req.value() != null) promotion.setValue(req.value());
-        if (req.startAt() != null) promotion.setStartAt(req.startAt());
-        if (req.endAt() != null) promotion.setEndAt(req.endAt());
-        if (req.priority() != null) promotion.setPriority(req.priority());
-        if (req.priceRequire() != null) promotion.setMinPriceApply(BigDecimal.valueOf(req.priceRequire()));
-        if (req.status() != null) promotion.setStatus(req.status());
+        if (req.type() != null)
+            promotion.setType(req.type());
+        if (req.value() != null)
+            promotion.setValue(req.value());
+        if (req.startAt() != null)
+            promotion.setStartAt(req.startAt());
+        if (req.endAt() != null)
+            promotion.setEndAt(req.endAt());
+        if (req.priority() != null)
+            promotion.setPriority(req.priority());
+        if (req.priceRequire() != null)
+            promotion.setMinPriceApply(BigDecimal.valueOf(req.priceRequire()));
+        if (req.status() != null)
+            promotion.setStatus(req.status());
 
         promotionRepository.save(promotion);
         log.info("Successfully updated promotion id={}", req.id());
@@ -155,7 +162,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public List<PromotionSumaryRes> getGlobalPromotions(Instant now) {
+    public List<PromotionSummaryRes> getGlobalPromotions(Instant now) {
         return promotionRepository.findGlobalPromotions(now, PromotionStatus.ACTIVE);
     }
 
@@ -174,12 +181,12 @@ public class PromotionServiceImpl implements PromotionService {
             if (req.productCodes() == null || req.productCodes().isEmpty()) {
                 throw new InvalidPromotionException("Product codes are required for PRODUCT scope");
             }
-            long existCount = productRepository.countByIdInAndStatus(getIdByCode.getByProductCodes(req.productCodes()), ProductStatus.ACTIVE);
+            long existCount = productRepository.countByIdInAndStatus(getIdByCode.getByProductCodes(req.productCodes()),
+                    ProductStatus.ACTIVE);
             if (existCount != req.productCodes().size()) {
                 throw new InvalidPromotionException(
                         "Some product codes are invalid or inactive. Expected " + req.productCodes().size()
-                                + " but found " + existCount
-                );
+                                + " but found " + existCount);
             }
         }
 
@@ -191,8 +198,7 @@ public class PromotionServiceImpl implements PromotionService {
             if (existCount != req.categoryCodes().size()) {
                 throw new InvalidPromotionException(
                         "Some category codes are invalid. Expected " + req.categoryCodes().size()
-                                + " but found " + existCount
-                );
+                                + " but found " + existCount);
             }
         }
     }
@@ -207,7 +213,6 @@ public class PromotionServiceImpl implements PromotionService {
         }
         return startAt.isBefore(now) ? PromotionStatus.ACTIVE : PromotionStatus.SCHEDULED;
     }
-
 
     private Promotion getPromotion(PromoAddReq req, PromotionStatus initialStatus) {
         Promotion promotion = new Promotion();

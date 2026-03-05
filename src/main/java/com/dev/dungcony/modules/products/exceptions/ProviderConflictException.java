@@ -2,16 +2,16 @@ package com.dev.dungcony.modules.products.exceptions;
 
 import com.dev.dungcony.commons.exceptions.ConflictException;
 
-public class ProviderConfilctException extends ConflictException {
-    public ProviderConfilctException(String mes) {
+public class ProviderConflictException extends ConflictException {
+    public ProviderConflictException(String mes) {
         super("CONFLICT", mes);
     }
 
-    public ProviderConfilctException(String code, String mes) {
+    public ProviderConflictException(String code, String mes) {
         super(code, mes);
     }
 
-    public ProviderConfilctException() {
+    public ProviderConflictException() {
         super("Provider is already exist");
     }
 }

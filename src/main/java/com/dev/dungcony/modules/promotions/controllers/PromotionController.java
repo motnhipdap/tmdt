@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.promotions.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionDetailRes;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -27,19 +27,19 @@ public class PromotionController {
     private final PromotionCategoryService promotionCategoryService;
 
     @GetMapping("/product/{productCode}")
-    public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByProduct(
+    public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByProduct(
             @PathVariable String productCode
     ) {
-        List<PromotionSumaryRes> promotions = promotionProductService.getPromotionByProduct(productCode);
+        List<PromotionSummaryRes> promotions = promotionProductService.getPromotionByProduct(productCode);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for product", promotions));
     }
 
     @GetMapping("/category/{categoryCode}")
-    public ResponseEntity<ApiRes<List<PromotionSumaryRes>>> getPromotionsByCategory(
+    public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByCategory(
             @PathVariable String categoryCode
     ) {
-        List<PromotionSumaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryCode);
+        List<PromotionSummaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryCode);
         return ResponseEntity.ok()
                 .body(ApiRes.success("Promotions for category", promotions));
     }

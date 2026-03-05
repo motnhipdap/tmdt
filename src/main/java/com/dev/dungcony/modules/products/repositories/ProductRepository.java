@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.products.repositories;
 
-import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
+import com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Optional<Product> findByIdWithCategoryAndProvider(@Param("id") Integer id);
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -37,7 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 FROM Product p
                 WHERE p.status = :status
             """)
-    Page<ProductSumaryRes> findProductList(
+    Page<ProductSummaryRes> findProductList(
             @Param("status") ProductStatus status,
             Pageable pageable);
 
@@ -46,7 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
      * Đã fix: trước đây không sử dụng tham số :key trong query.
      */
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -59,13 +59,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :key, '%'))
                          OR LOWER(p.description) LIKE LOWER(CONCAT('%', :key, '%')))
             """)
-    Page<ProductSumaryRes> getAllByKeyword(
+    Page<ProductSummaryRes> getAllByKeyword(
             @Param("status") ProductStatus status,
             @Param("key") String key,
             Pageable pageable);
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes(
+                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -79,7 +79,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 WHERE p.status = com.dev.dungcony.modules.products.enums.ProductStatus.ACTIVE
                   AND c.path LIKE CONCAT(root.path, '%')
             """)
-    Page<ProductSumaryRes> findAllByCategoryTree(
+    Page<ProductSummaryRes> findAllByCategoryTree(
             @Param("categoryId") Integer categoryId,
             Pageable pageable);
 

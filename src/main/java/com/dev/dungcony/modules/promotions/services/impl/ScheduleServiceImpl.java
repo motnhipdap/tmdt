@@ -1,7 +1,7 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
-import com.dev.dungcony.modules.promotions.reporitories.PromotionRepository;
+import com.dev.dungcony.modules.promotions.repositories.PromotionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -32,7 +32,7 @@ promotions/
 │   ├── PromotionNotFoundException.java
 │   ├── InvalidPromotionException.java
 │   └── PromotionExceptionHandler.java
-├── reporitories/          # JPA Repositories
+├── repositories/          # JPA Repositories
 │   ├── PromotionRepository.java
 │   ├── PromotionProductRepository.java
 │   └── PromotionCategoryRepository.java
@@ -371,4 +371,3 @@ mvn test -Dtest=*Promotion*
 - [ ] Analytics & Reports
 - [ ] Redis caching
 - [ ] Webhook notifications
-

@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.products.controllers.store;
 
-
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.products.services.interfaces.ProviderGetService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,32 +17,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/api/public/provider")
 @Tag(name = "provider", description = "public API để lấy thông tin nhà cung cấp")
 public class ProviderController {
-    private final ProviderGetService ProviderGetService;
+        private final ProviderGetService providerGetService;
 
-    @GetMapping("/get-by-code/{code}")
-    public ResponseEntity<ApiRes<?>> getByCode(
-            @PathVariable String code) {
-        return ResponseEntity.ok()
-                .body(ApiRes.success(
-                        "provider",
-                        ProviderGetService.getByCode(code)));
-    }
+        @GetMapping("/get-by-code/{code}")
+        public ResponseEntity<ApiRes<?>> getByCode(
+                        @PathVariable String code) {
+                return ResponseEntity.ok()
+                                .body(ApiRes.success(
+                                                "provider",
+                                                providerGetService.getByCode(code)));
+        }
 
-    @GetMapping("/get-by-name/{name}")
-    public ResponseEntity<ApiRes<?>> getByName(
-            @PathVariable String name) {
-        return ResponseEntity.ok()
-                .body(ApiRes.success(
-                        "provider",
-                        ProviderGetService.getByName(name)));
-    }
+        @GetMapping("/get-by-name/{name}")
+        public ResponseEntity<ApiRes<?>> getByName(
+                        @PathVariable String name) {
+                return ResponseEntity.ok()
+                                .body(ApiRes.success(
+                                                "provider",
+                                                providerGetService.getByName(name)));
+        }
 
-    @GetMapping("/gets")
-    public ResponseEntity<ApiRes<?>> gets() {
-        return ResponseEntity.ok()
-                .body(ApiRes.success(
-                        "provider",
-                        ProviderGetService.getAll()));
-    }
+        @GetMapping("/gets")
+        public ResponseEntity<ApiRes<?>> gets() {
+                return ResponseEntity.ok()
+                                .body(ApiRes.success(
+                                                "provider",
+                                                providerGetService.getAll()));
+        }
 
 }

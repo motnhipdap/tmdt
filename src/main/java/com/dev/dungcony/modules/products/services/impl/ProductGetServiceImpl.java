@@ -1,10 +1,10 @@
 package com.dev.dungcony.modules.products.services.impl;
 
 import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
-import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
+import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
-import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
+import com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
@@ -13,8 +13,8 @@ import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
-import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
-import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator.ProductPriceInput;
+import com.dev.dungcony.commons.interfaces.PromotionCalculator;
+import com.dev.dungcony.commons.interfaces.PromotionCalculator.ProductPriceInput;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -90,8 +90,8 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductSumaryRes> getAll(Pageable pageable) {
-        Page<ProductSumaryRes> page = productRepository.findProductList(
+    public Page<ProductSummaryRes> getAll(Pageable pageable) {
+        Page<ProductSummaryRes> page = productRepository.findProductList(
                 ProductStatus.ACTIVE,
                 pageable);
 
@@ -100,7 +100,7 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductSumaryRes> getAllByCategoryCode(String categoryCode, Pageable pageable) {
+    public Page<ProductSummaryRes> getAllByCategoryCode(String categoryCode, Pageable pageable) {
         categoryRepository.findByCode(categoryCode)
                 .filter(c -> c.getStatus() == CategoryStatus.ACTIVE)
                 .orElseThrow(CategoryNotFoundException::new);
@@ -109,19 +109,19 @@ public class ProductGetServiceImpl implements ProductGetService {
                 .orElseThrow(CategoryNotFoundException::new)
                 .getId();
 
-        Page<ProductSumaryRes> rawPage = productRepository.findAllByCategoryTree(categoryId, pageable);
+        Page<ProductSummaryRes> rawPage = productRepository.findAllByCategoryTree(categoryId, pageable);
 
         return enrichWithDiscounts(rawPage);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductSumaryRes> searchByKeyword(String keyword, Pageable pageable) {
+    public Page<ProductSummaryRes> searchByKeyword(String keyword, Pageable pageable) {
         if (keyword == null || keyword.isBlank()) {
             return getAll(pageable);
         }
 
-        Page<ProductSumaryRes> page = productRepository.getAllByKeyword(
+        Page<ProductSummaryRes> page = productRepository.getAllByKeyword(
                 ProductStatus.ACTIVE,
                 keyword.trim(),
                 pageable);
@@ -130,8 +130,8 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     // ============ PRIVATE HELPERS ============
-    private Page<ProductSumaryRes> enrichWithDiscounts(Page<ProductSumaryRes> page) {
-        List<ProductSumaryRes> content = page.getContent();
+    private Page<ProductSummaryRes> enrichWithDiscounts(Page<ProductSummaryRes> page) {
+        List<ProductSummaryRes> content = page.getContent();
         if (content.isEmpty()) {
             return page;
         }

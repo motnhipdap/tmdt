@@ -2,14 +2,14 @@ package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
-import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.enums.PromotionScope;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import com.dev.dungcony.modules.promotions.exceptions.InvalidPromotionException;
 import com.dev.dungcony.modules.promotions.exceptions.PromotionNotFoundException;
-import com.dev.dungcony.modules.promotions.reporitories.PromotionRepository;
+import com.dev.dungcony.modules.promotions.repositories.PromotionRepository;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,8 +60,7 @@ class PromotionServiceImplTest {
                 1,
                 0,
                 null,
-                null
-        );
+                null);
 
         promotion = new Promotion();
         promotion.setId(1);
@@ -105,8 +104,7 @@ class PromotionServiceImplTest {
                 1,
                 0,
                 List.of(1, 2, 3),
-                null
-        );
+                null);
 
         when(promotionRepository.save(any(Promotion.class))).thenReturn(promotion);
 
@@ -133,8 +131,7 @@ class PromotionServiceImplTest {
                 1,
                 0,
                 null,
-                null
-        );
+                null);
 
         // When/Then
         assertThatThrownBy(() -> promotionService.addNew(invalidReq))
@@ -157,8 +154,7 @@ class PromotionServiceImplTest {
                 1,
                 0,
                 null,
-                null
-        );
+                null);
 
         // When/Then
         assertThatThrownBy(() -> promotionService.addNew(invalidReq))
@@ -181,8 +177,7 @@ class PromotionServiceImplTest {
                 1,
                 0,
                 null,
-                null
-        );
+                null);
 
         // When/Then
         assertThatThrownBy(() -> promotionService.addNew(invalidReq))
@@ -201,8 +196,7 @@ class PromotionServiceImplTest {
                 null,
                 2,
                 1000,
-                PromotionStatus.ACTIVE
-        );
+                PromotionStatus.ACTIVE);
 
         when(promotionRepository.findById(1)).thenReturn(Optional.of(promotion));
         when(promotionRepository.save(any(Promotion.class))).thenReturn(promotion);
@@ -226,8 +220,7 @@ class PromotionServiceImplTest {
                 null,
                 null,
                 null,
-                null
-        );
+                null);
 
         when(promotionRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -256,7 +249,7 @@ class PromotionServiceImplTest {
         when(promotionRepository.findById(1)).thenReturn(Optional.of(promotion));
 
         // When
-        Optional<PromotionSumaryRes> result = promotionService.getById(1);
+        Optional<PromotionSummaryRes> result = promotionService.getById(1);
 
         // Then
         assertThat(result).isPresent();
@@ -271,10 +264,9 @@ class PromotionServiceImplTest {
         when(promotionRepository.findById(999)).thenReturn(Optional.empty());
 
         // When
-        Optional<PromotionSumaryRes> result = promotionService.getById(999);
+        Optional<PromotionSummaryRes> result = promotionService.getById(999);
 
         // Then
         assertThat(result).isEmpty();
     }
 }
-

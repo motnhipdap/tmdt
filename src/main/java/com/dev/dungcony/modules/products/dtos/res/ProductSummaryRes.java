@@ -2,13 +2,13 @@ package com.dev.dungcony.modules.products.dtos.res;
 
 import java.math.BigDecimal;
 
-import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
+import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 
 /**
  * Lightweight projection for product listing. Matches JPQL projections in
  * repository.
  */
-public record ProductSumaryRes(
+public record ProductSummaryRes(
         String code,
         String name,
         BigDecimal price,
@@ -16,11 +16,11 @@ public record ProductSumaryRes(
         String imgUrl,
         String categoryCode) {
 
-    public ProductSumaryRes withDiscount(DiscountInfoDto discount) {
+    public ProductSummaryRes withDiscount(DiscountInfoDto discount) {
         if (discount == null) {
             return this;
         }
-        return new ProductSumaryRes(
+        return new ProductSummaryRes(
                 code,
                 name,
                 discount.finalPrice(),
