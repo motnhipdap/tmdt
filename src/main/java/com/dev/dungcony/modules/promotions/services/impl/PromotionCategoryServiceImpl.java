@@ -6,6 +6,7 @@ import com.dev.dungcony.modules.promotions.entities.PromotionCategory;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategoryId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.reporitories.PromotionCategoryRepository;
+import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,18 @@ import java.util.stream.Collectors;
 public class PromotionCategoryServiceImpl implements PromotionCategoryService {
 
     private final PromotionCategoryRepository promotionCategoryRepository;
+    private final GetIdByCode getIdByCode;
 
     @Transactional
     @Override
-    public void addListPromotionCategory(Promotion promotion, List<String> categoryIds) {
-        log.info("Adding {} promotion-category mappings for promotionId={}", categoryIds.size(), promotion.getId());
+    public void addListPromotionCategory(Promotion promotion, List<String> categoryCodes) {
+        log.info("Adding {} promotion-category mappings for promotionId={}", categoryCodes.size(), promotion.getId());
 
-        List<PromotionCategory> mappings = categoryIds.stream()
+        List<PromotionCategory> mappings = categoryCodes.stream()
                 .map(categoryCode -> {
                     PromotionCategory pp = new PromotionCategory();
                     pp.setPromotion(promotion);
-                    pp.setId(new PromotionCategoryId(categoryCode, promotion.getId()));
+                    pp.setId(new PromotionCategoryId(getIdByCode.getByCategoryCode(categoryCode), promotion.getId()));
                     return pp;
                 })
                 .toList();
@@ -48,13 +50,13 @@ public class PromotionCategoryServiceImpl implements PromotionCategoryService {
     }
 
     @Override
-    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<Integer> categoryIds) {
-        if (categoryIds == null || categoryIds.isEmpty()) {
+    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByCategories(List<String> categoryCodes) {
+        if (categoryCodes == null || categoryCodes.isEmpty()) {
             return Collections.emptyMap();
         }
 
         List<Object[]> rows = promotionCategoryRepository
-                .findByCategoryIds(categoryIds, Instant.now(), PromotionStatus.ACTIVE);
+                .findByCategoryIds(getIdByCode.getByCategoryCodes(categoryCodes), Instant.now(), PromotionStatus.ACTIVE);
 
         return rows.stream()
                 .collect(Collectors.groupingBy(

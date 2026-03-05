@@ -37,7 +37,7 @@ public record PromoAddReq(
         @Min(value = 0, message = "Price requirement must be non-negative")
         Integer priceRequire,
 
-        List<Integer> productIds,
-        List<Integer> categoryIds
+        List<String> productCodes,
+        List<String> categoryCodes
 ) {
 }

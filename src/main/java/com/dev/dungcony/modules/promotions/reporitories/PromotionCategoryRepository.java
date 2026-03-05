@@ -99,4 +99,6 @@ public interface PromotionCategoryRepository extends JpaRepository<PromotionCate
     );
 
     void deleteAllByIdPromotionId(Integer promotionId);
+
+    List<Category> findByCodeIn(List<String> codes);
 }

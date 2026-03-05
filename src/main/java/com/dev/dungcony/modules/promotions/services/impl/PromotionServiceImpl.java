@@ -14,6 +14,7 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import com.dev.dungcony.modules.promotions.exceptions.InvalidPromotionException;
 import com.dev.dungcony.modules.promotions.exceptions.PromotionNotFoundException;
 import com.dev.dungcony.modules.promotions.reporitories.PromotionRepository;
+import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -44,6 +45,8 @@ public class PromotionServiceImpl implements PromotionService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
+    private final GetIdByCode getIdByCode;
+
     @Transactional
     @Override
     public int addNew(PromoAddReq req) {
@@ -60,10 +63,10 @@ public class PromotionServiceImpl implements PromotionService {
 
         // Tạo mapping với product/category
         if (req.scope() == PromotionScope.PRODUCT) {
-            promotionProductService.addListPromotionProduct(promotion, req.productIds());
+            promotionProductService.addListPromotionProduct(promotion, req.productCodes());
         }
         if (req.scope() == PromotionScope.CATEGORY) {
-            promotionCategoryService.addListPromotionCategory(promotion, req.categoryIds());
+            promotionCategoryService.addListPromotionCategory(promotion, req.categoryCodes());
         }
 
         return promotion.getId();
@@ -168,28 +171,28 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         if (req.scope() == PromotionScope.PRODUCT) {
-            if (req.productIds() == null || req.productIds().isEmpty()) {
+            if (req.productCodes() == null || req.productCodes().isEmpty()) {
                 throw new InvalidPromotionException("Product IDs are required for PRODUCT scope");
             }
-            // Validate tất cả productIds tồn tại và đang ACTIVE
-            long existCount = productRepository.countByIdInAndStatus(req.productIds(), ProductStatus.ACTIVE);
-            if (existCount != req.productIds().size()) {
+            // Validate tất cả productCodes() tồn tại và đang ACTIVE
+            long existCount = productRepository.countByIdInAndStatus(getIdByCode.getByProductCodes(req.productCodes()), ProductStatus.ACTIVE);
+            if (existCount != req.productCodes().size()) {
                 throw new InvalidPromotionException(
-                        "Some product IDs are invalid or inactive. Expected " + req.productIds().size()
+                        "Some product IDs are invalid or inactive. Expected " + req.productCodes().size()
                                 + " but found " + existCount
                 );
             }
         }
 
         if (req.scope() == PromotionScope.CATEGORY) {
-            if (req.categoryIds() == null || req.categoryIds().isEmpty()) {
+            if (req.categoryCodes() == null || req.categoryCodes().isEmpty()) {
                 throw new InvalidPromotionException("Category IDs are required for CATEGORY scope");
             }
-            // Validate tất cả categoryIds tồn tại
-            long existCount = categoryRepository.countByIdIn(req.categoryIds());
-            if (existCount != req.categoryIds().size()) {
+            // Validate tất cả categoryCodes() tồn tại
+            long existCount = categoryRepository.countByIdIn(getIdByCode.getByCategoryCodes(req.categoryCodes()));
+            if (existCount != req.categoryCodes().size()) {
                 throw new InvalidPromotionException(
-                        "Some category IDs are invalid. Expected " + req.categoryIds().size()
+                        "Some category IDs are invalid. Expected " + req.categoryCodes().size()
                                 + " but found " + existCount
                 );
             }

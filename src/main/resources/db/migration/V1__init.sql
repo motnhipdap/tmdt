@@ -41,19 +41,19 @@ CREATE INDEX idx_address_user ON tbl_address (user_id);
 
 CREATE TABLE tbl_categories
 (
-    id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name          VARCHAR(50) NOT NULL,
-    category_code VARCHAR(10) NOT NULL unique,
-    img_url       VARCHAR(255),
-    description   VARCHAR(255),
-    status        VARCHAR(20) NOT NULL DEFAULT 'active',
-    parent_id     INT UNSIGNED,
-    created_at    TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3),
-    updated_at    TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    version       BIGINT      NOT NULL DEFAULT 0,
-    is_leaf       BOOLEAN     NOT NULL DEFAULT TRUE,
-    level         INT         NOT NULL DEFAULT 0,
-    path          VARCHAR(255),
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    code        VARCHAR(10) NOT NULL unique,
+    img_url     VARCHAR(255),
+    description VARCHAR(255),
+    status      VARCHAR(20) NOT NULL DEFAULT 'active',
+    parent_id   INT UNSIGNED,
+    created_at  TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at  TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    version     BIGINT      NOT NULL DEFAULT 0,
+    is_leaf     BOOLEAN     NOT NULL DEFAULT TRUE,
+    level       INT         NOT NULL DEFAULT 0,
+    path        VARCHAR(255),
     CONSTRAINT fk_category_parent FOREIGN KEY (parent_id) REFERENCES tbl_categories (id) ON DELETE SET NULL
 );
 CREATE INDEX idx_category_status ON tbl_categories (status);
@@ -62,23 +62,23 @@ CREATE INDEX idx_category_path ON tbl_categories (path);
 
 CREATE TABLE tbl_providers
 (
-    id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name          VARCHAR(50) NOT NULL,
-    provider_code VARCHAR(10) NOT NULL unique,
-    description   VARCHAR(255),
-    email         VARCHAR(100),
-    phone         VARCHAR(15),
-    status        VARCHAR(20) NOT NULL DEFAULT 'active',
-    created_at    TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3),
-    updated_at    TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    logo          VARCHAR(255)
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    code        VARCHAR(10) NOT NULL unique,
+    description VARCHAR(255),
+    email       VARCHAR(100),
+    phone       VARCHAR(15),
+    status      VARCHAR(20) NOT NULL DEFAULT 'active',
+    created_at  TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at  TIMESTAMP(3)         DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    logo        VARCHAR(255)
 );
 
 CREATE TABLE tbl_products
 (
     id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name          VARCHAR(50) NOT NULL,
-    product_code  VARCHAR(10) NOT NULL unique,
+    code          VARCHAR(10) NOT NULL unique,
     description   VARCHAR(255),
     quantity      int unsigned         DEFAULT 0,
     quantity_sold int unsigned         DEFAULT 0,

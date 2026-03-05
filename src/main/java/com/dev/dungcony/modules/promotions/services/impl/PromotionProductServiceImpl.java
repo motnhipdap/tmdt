@@ -6,6 +6,7 @@ import com.dev.dungcony.modules.promotions.entities.PromotionProduct;
 import com.dev.dungcony.modules.promotions.entities.PromotionProductId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.reporitories.PromotionProductRepository;
+import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,20 +24,21 @@ import java.util.stream.Collectors;
 @Service
 public class PromotionProductServiceImpl implements PromotionProductService {
     private final PromotionProductRepository promotionProductRepository;
+    private final GetIdByCode getIdByCode;
 
     @Override
-    public List<PromotionSumaryRes> getPromotionByProduct(Integer productId) {
-        return promotionProductRepository.findByProductId(productId, Instant.now(), PromotionStatus.ACTIVE);
+    public List<PromotionSumaryRes> getPromotionByProduct(String code) {
+        return promotionProductRepository.findByProductId(getIdByCode.getByProductCode(code), Instant.now(), PromotionStatus.ACTIVE);
     }
 
     @Override
-    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<Integer> productIds) {
-        if (productIds == null || productIds.isEmpty()) {
+    public Map<Integer, List<PromotionSumaryRes>> getPromotionsByProducts(List<String> productCodes) {
+        if (productCodes == null || productCodes.isEmpty()) {
             return Collections.emptyMap();
         }
 
         List<Object[]> rows = promotionProductRepository
-                .findByProductIds(productIds, Instant.now(), PromotionStatus.ACTIVE);
+                .findByProductIds(getIdByCode.getByCategoryCodes(productCodes), Instant.now(), PromotionStatus.ACTIVE);
 
         return rows.stream()
                 .collect(Collectors.groupingBy(
@@ -47,14 +49,14 @@ public class PromotionProductServiceImpl implements PromotionProductService {
 
     @Transactional
     @Override
-    public void addListPromotionProduct(Promotion pro, List<Integer> productIds) {
-        log.info("Adding {} promotion-product mappings for promotionId={}", productIds.size(), pro.getId());
+    public void addListPromotionProduct(Promotion pro, List<String> productCodes) {
+        log.info("Adding {} promotion-product mappings for promotionId={}", productCodes.size(), pro.getId());
 
-        List<PromotionProduct> mappings = productIds.stream()
-                .map(productId -> {
+        List<PromotionProduct> mappings = productCodes.stream()
+                .map(productCode -> {
                     PromotionProduct pp = new PromotionProduct();
                     pp.setPromotion(pro);
-                    pp.setId(new PromotionProductId(productId, pro.getId()));
+                    pp.setId(new PromotionProductId(getIdByCode.getByProductCode(productCode), pro.getId()));
                     return pp;
                 })
                 .toList();

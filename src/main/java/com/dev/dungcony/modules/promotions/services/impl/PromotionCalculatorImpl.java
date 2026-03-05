@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.promotions.services.impl;
 import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.products.services.interfaces.PromotionCalculator;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionSumaryRes;
+import com.dev.dungcony.modules.promotions.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -31,6 +32,7 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
     private final PromotionProductService promotionProductService;
     private final PromotionCategoryService promotionCategoryService;
     private final PromotionService promotionService;
+    private final GetIdByCode getIdByCode;
 
     @Override
     public DiscountInfoDto calculateFinalPrice(String productCode, String categoryCode, BigDecimal price) {
@@ -47,7 +49,7 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
     }
 
     @Override
-    public Map<String, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs) {
+    public Map<Integer, DiscountInfoDto> calculateFinalPrices(List<ProductPriceInput> inputs) {
         if (inputs == null || inputs.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -59,20 +61,20 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
         List<String> categoryCodes = inputs.stream().map(ProductPriceInput::categoryCode).distinct().toList();
 
         // Batch query qua service layer: 3 queries thay vì 3*N
-        Map<String, List<PromotionSumaryRes>> productPromotionMap =
+        Map<Integer, List<PromotionSumaryRes>> productPromotionMap =
                 promotionProductService.getPromotionsByProducts(productCodes);
-        Map<String, List<PromotionSumaryRes>> categoryPromotionMap =
+        Map<Integer, List<PromotionSumaryRes>> categoryPromotionMap =
                 promotionCategoryService.getPromotionsByCategories(categoryCodes);
         List<PromotionSumaryRes> globalPromotions = promotionService.getGlobalPromotions(now);
 
         // Tính cho từng product
-        Map<String, DiscountInfoDto> result = new HashMap<>();
+        Map<Integer, DiscountInfoDto> result = new HashMap<>();
         for (ProductPriceInput input : inputs) {
-            List<PromotionSumaryRes> prodPromos = productPromotionMap.getOrDefault(input.productCode(), List.of());
-            List<PromotionSumaryRes> catePromos = categoryPromotionMap.getOrDefault(input.categoryCode(), List.of());
+            List<PromotionSumaryRes> prodPromos = productPromotionMap.getOrDefault(getIdByCode.getByCategoryCode(input.productCode()), List.of());
+            List<PromotionSumaryRes> catePromos = categoryPromotionMap.getOrDefault(getIdByCode.getByCategoryCode(input.categoryCode()), List.of());
 
             DiscountInfoDto discount = findBestDiscount(input.price(), now, prodPromos, catePromos, globalPromotions);
-            result.put(input.productCode(), discount);
+            result.put(getIdByCode.getByCategoryCode(input.productCode()), discount);
         }
 
         return result;
