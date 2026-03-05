@@ -5,19 +5,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.Instant;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@Entity
 @Table(name = "tbl_accounts", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
-public class Account {
+public class Account extends EntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

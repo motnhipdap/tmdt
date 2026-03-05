@@ -2,16 +2,14 @@ package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.modules.auth.TestConfig;
-import com.dev.dungcony.modules.auth.dtos.requests.UpdatePasswordReq;
-import com.dev.dungcony.modules.auth.dtos.responses.AccountRes;
+import com.dev.dungcony.modules.auth.dtos.req.UpdatePasswordReq;
+import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

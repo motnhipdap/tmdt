@@ -15,10 +15,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_categories", indexes = {
-        @Index(name = "idx_category_name", columnList = "name"),
-        @Index(name = "idx_category_path", columnList = "path")
-})
+@Table(name = "tbl_categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

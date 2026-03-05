@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     // check category có category con hay không
@@ -26,4 +27,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Modifying
     @Query("UPDATE Category c SET c.status = 'HIDDEN' WHERE c.path LIKE CONCAT(:pathPrefix, '%') AND c.status = 'ACTIVE'")
     void hideAllByPathPrefix(@Param("pathPrefix") String pathPrefix);
+
+    // Tìm category theo mã code (dùng khi client chỉ biết code, không biết id)
+    Optional<Category> findByCategoryCode(String categoryCode);
 }

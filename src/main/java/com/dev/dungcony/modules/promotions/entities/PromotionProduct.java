@@ -1,14 +1,9 @@
 package com.dev.dungcony.modules.promotions.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Entity
 @Table(name = "tbl_promotion_product")
-public class PromotionProduct {
+public class PromotionProduct extends EntityBase {
     @EmbeddedId
     private PromotionProductId id;
 

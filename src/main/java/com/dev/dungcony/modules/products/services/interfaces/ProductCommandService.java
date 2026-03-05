@@ -12,5 +12,5 @@ public interface ProductCommandService {
 
     void delete(int pId);
 
-    void update(ProductUpdateReq req);
+    ProductDetailRes update(ProductUpdateReq req);
 }

@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.auth.dtos.responses;
+package com.dev.dungcony.modules.auth.dtos.res;
 
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 

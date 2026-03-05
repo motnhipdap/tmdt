@@ -1,101 +1,70 @@
 package com.dev.dungcony.modules.products.controllers;
 
+import com.dev.dungcony.commons.bases.ControllerBase;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.commons.dtos.PageRes;
-import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
-import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
-import com.dev.dungcony.modules.products.services.interfaces.ProductCommandService;
 import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("v1/api/product")
+@RequestMapping("v1/api/public/product")
 @Tag(name = "Product", description = "Quản lý sản phẩm")
-public class ProductController {
-        private final ProductCommandService productService;
-        private final ProductGetService productQueryService;
+public class ProductController extends ControllerBase {
 
-        @Operation(summary = "Lấy danh sách sản phẩm", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
-        @GetMapping("/get-all")
-        public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> getAll(
-                        @ParameterObject Pageable pageable) {
+    private final ProductGetService productQueryService;
 
-                Page<ProductSumaryRes> productPage = productQueryService.getAll(pageable);
+    @Operation(summary = "Lấy danh sách sản phẩm", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
+    @GetMapping("/get-all")
+    public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> getAll(
+            @ParameterObject Pageable pageable) {
 
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "list product",
-                                                PageRes.from(productPage)));
-        }
+        Page<ProductSumaryRes> productPage = productQueryService.getAll(pageable);
 
-        @Operation(summary = "Lấy sản phẩm theo danh mục", description = "Bao gồm cả sản phẩm trong sub-categories")
-        @GetMapping("/get-by-category")
-        public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> getByCategory(
-                        @Parameter(description = "ID danh mục") @RequestParam("category_id") int categoryId,
-                        @ParameterObject Pageable pageable) {
-                Page<ProductSumaryRes> productPage = productQueryService.getAllByCategoryId(categoryId, pageable);
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "list product",
+                        PageRes.from(productPage)));
+    }
 
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("list product",
-                                                PageRes.from(productPage)));
-        }
+    @Operation(summary = "Lấy sản phẩm theo danh mục", description = "Bao gồm cả sản phẩm trong sub-categories")
+    @GetMapping("/get-by-category")
+    public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> getByCategory(
+            @Parameter(description = "ID danh mục") @RequestParam("category_id") int categoryId,
+            @ParameterObject Pageable pageable) {
+        Page<ProductSumaryRes> productPage = productQueryService.getAllByCategoryId(categoryId, pageable);
 
-        @Operation(summary = "Xem chi tiết sản phẩm")
-        @GetMapping("/get-by-id")
-        public ResponseEntity<ApiRes<ProductDetailRes>> getById(
-                        @Parameter(description = "ID sản phẩm") @RequestParam("id") int id) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("product", productQueryService.getById(id)));
-        }
+        return ResponseEntity.ok()
+                .body(ApiRes.success("list product",
+                        PageRes.from(productPage)));
+    }
 
-        @Operation(summary = "Tìm kiếm sản phẩm", description = "Tìm theo tên hoặc mô tả sản phẩm")
-        @GetMapping("/search")
-        public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> search(
-                        @Parameter(description = "Từ khóa tìm kiếm") @RequestParam("keyword") String keyword,
-                        @ParameterObject Pageable pageable) {
-                Page<ProductSumaryRes> productPage = productQueryService.searchByKeyword(keyword, pageable);
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("search results",
-                                                PageRes.from(productPage)));
-        }
+    @Operation(summary = "Xem chi tiết sản phẩm")
+    @GetMapping("/get-by-id")
+    public ResponseEntity<ApiRes<ProductDetailRes>> getById(
+            @Parameter(description = "ID sản phẩm") @RequestParam("id") int id) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("product", productQueryService.getById(id)));
+    }
 
-        @Operation(summary = "Thêm sản phẩm mới")
-        @PostMapping("/addnew")
-        public ResponseEntity<ApiRes<ProductDetailRes>> addNew(
-                        @Valid @RequestBody ProductAddReq req) {
-                ProductDetailRes result = productService.addNew(req);
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(ApiRes.success("product created", result));
-        }
+    @Operation(summary = "Tìm kiếm sản phẩm", description = "Tìm theo tên hoặc mô tả sản phẩm")
+    @GetMapping("/search")
+    public ResponseEntity<ApiRes<PageRes<ProductSumaryRes>>> search(
+            @Parameter(description = "Từ khóa tìm kiếm") @RequestParam("keyword") String keyword,
+            @ParameterObject Pageable pageable) {
+        Page<ProductSumaryRes> productPage = productQueryService.searchByKeyword(keyword, pageable);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("search results",
+                        PageRes.from(productPage)));
+    }
 
-        @Operation(summary = "Cập nhật sản phẩm")
-        @PutMapping("/update")
-        public ResponseEntity<ApiRes<Void>> update(
-                        @Valid @RequestBody ProductUpdateReq req) {
-                productService.update(req);
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("product updated"));
-        }
-
-        @Operation(summary = "Xóa sản phẩm (soft delete)")
-        @DeleteMapping("/delete/{id}")
-        public ResponseEntity<ApiRes<Void>> delete(
-                        @Parameter(description = "ID sản phẩm cần xóa") @PathVariable("id") int id) {
-                productService.delete(id);
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("product deleted"));
-        }
 }

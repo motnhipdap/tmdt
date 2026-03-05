@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.auth.dtos.requests;
+package com.dev.dungcony.modules.auth.dtos.req;
 
 import com.dev.dungcony.modules.auth.dtos.OtpType;
 import jakarta.validation.constraints.Email;

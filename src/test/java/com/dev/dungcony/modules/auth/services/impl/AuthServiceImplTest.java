@@ -1,10 +1,10 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.config.JwtConfig;
-import com.dev.dungcony.modules.auth.dtos.requests.RegisReq;
-import com.dev.dungcony.modules.auth.dtos.responses.AccountRes;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginRes;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginResult;
+import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
+import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
+import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
+import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
 import com.dev.dungcony.modules.auth.exceptions.InvalidCredentialsException;

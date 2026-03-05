@@ -2,16 +2,11 @@ package com.dev.dungcony.modules.promotions.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-@Getter
-@Setter
-@Entity
 @Table(name = "tbl_promotion_category")
-public class PromotionCategory {
+public class PromotionCategory extends EntityBase {
     @EmbeddedId
     private PromotionCategoryId id;
 

@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
-import com.dev.dungcony.modules.auth.dtos.responses.AccountRes;
+import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 
 public interface AccountService {
     boolean existsByEmail(String email);

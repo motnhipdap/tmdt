@@ -11,13 +11,11 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_products", indexes = {
-        @Index(name = "idx_product_status", columnList = "status"),
-        @Index(name = "idx_product_category", columnList = "category_id, status")
-})
+@Table(name = "tbl_products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,9 +55,10 @@ public class Product {
     @Column(name = "rated")
     private Float rated;
 
+
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "created_at")
-    private Instant createAt;
+    private Instant createdAt;
 
     @ColumnDefault("CURRENT_TIMESTAMP(3)")
     @Column(name = "updated_at")
@@ -83,9 +82,7 @@ public class Product {
 
     @PrePersist
     protected void onCreate() {
-        Instant now = Instant.now();
-        this.createAt = now;
-        this.updateAt = now;
+        this.updateAt = Instant.now();
     }
 
     @PreUpdate

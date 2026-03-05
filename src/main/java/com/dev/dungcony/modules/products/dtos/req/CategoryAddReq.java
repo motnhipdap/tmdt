@@ -3,9 +3,13 @@ package com.dev.dungcony.modules.products.dtos.req;
 import jakarta.validation.constraints.NotBlank;
 
 public record CategoryAddReq(
-        @NotBlank String name,
-        @NotBlank String categoryCode,
+        @NotBlank
+        String name,
+        @NotBlank
+        String categoryCode,
         String description,
-        Integer parentId,
-        String img) {
+        String parentCode,
+        String imgUrl
+
+) {
 }

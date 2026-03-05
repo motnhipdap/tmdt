@@ -5,6 +5,7 @@ import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
+import com.dev.dungcony.modules.products.dtos.res.ProductSumaryRes;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.Provider;
@@ -78,7 +79,10 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
     @Transactional
     @Override
-    public void update(ProductUpdateReq req) {
+    public ProductDetailRes update(ProductUpdateReq req) {
+
+        CategorySummaryDto catDto = null;
+        ProviderSummaryDto provDto = null;
 
         Product product = productRepository.findById(req.productId())
                 .orElseThrow(ProductNotFoundException::new);
@@ -96,6 +100,11 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             validateLeaf(cate);
             validateCategoryActive(cate);
             product.setCategory(cate);
+
+            catDto = new CategorySummaryDto(
+                    cate.getId(),
+                    cate.getName(),
+                    cate.getCategoryCode());
         }
 
         // ===== PROVIDER =====
@@ -108,6 +117,11 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
             validateProviderActive(provider);
             product.setProvider(provider);
+            provDto = new ProviderSummaryDto(
+                    provider.getId(),
+                    provider.getName(),
+                    provider.getProviderCode()
+            );
         }
 
         // ===== BASIC FIELDS =====
@@ -121,6 +135,34 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             product.setQuantity(req.quantity());
         if (req.imgUrl() != null)
             product.setImg(req.imgUrl());
+
+        return new ProductDetailRes(
+                product.getId(),
+
+                product.getName(),
+                product.getProductCode(),
+                product.getDescription(),
+
+                product.getPrice(),
+                product.getPrice(),
+
+                null,
+                0,
+
+                product.getQuantity(),
+                product.getQuantitySold(),
+
+                product.getRated(),
+
+                product.getImg(),
+                product.getStatus(),
+
+                product.getCreatedAt(),
+                product.getUpdateAt(),
+
+                catDto,
+                provDto
+        );
     }
 
     @Transactional
@@ -184,7 +226,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
                 p.getRated(),
                 p.getImg(),
                 p.getStatus(),
-                p.getCreateAt(),
+                p.getCreatedAt(),
                 p.getUpdateAt(),
                 catDto,
                 provDto);

@@ -6,6 +6,6 @@ public record CategoryUpdateReq(
         String name,
         String description,
         String imgUrl,
-        CategoryStatus status,
-        Integer parentId   // nếu cho phép đổi parent
-) {}
+        CategoryStatus status
+) {
+}

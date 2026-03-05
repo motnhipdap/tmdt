@@ -82,7 +82,7 @@ public class ProductGetServiceImpl implements ProductGetService {
                 product.getRated(),
                 product.getImg(),
                 product.getStatus(),
-                product.getCreateAt(),
+                product.getCreatedAt(),
                 product.getUpdateAt(),
                 catDto,
                 provDto);
@@ -126,11 +126,6 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     // ============ PRIVATE HELPERS ============
-
-    /**
-     * Batch tính discount cho tất cả products trong 1 page.
-     * Chỉ 3 queries DB bất kể page size.
-     */
     private Page<ProductSumaryRes> enrichWithDiscounts(Page<ProductSumaryRes> page) {
         List<ProductSumaryRes> content = page.getContent();
         if (content.isEmpty()) {

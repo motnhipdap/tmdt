@@ -1,8 +1,8 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
-import com.dev.dungcony.modules.auth.dtos.requests.RegisReq;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginRes;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginResult;
+import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
+import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
+import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 
 public interface AuthService {
     void register(RegisReq req);

@@ -6,18 +6,13 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Getter
-@Setter
-@Entity
 @Table(name = "tbl_promotions")
-public class Promotion {
+public class Promotion extends EntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")

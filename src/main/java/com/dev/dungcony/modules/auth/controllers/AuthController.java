@@ -1,12 +1,14 @@
 package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.auth.dtos.requests.LoginReq;
-import com.dev.dungcony.modules.auth.dtos.requests.RegisReq;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginRes;
-import com.dev.dungcony.modules.auth.dtos.responses.LoginResult;
+import com.dev.dungcony.modules.auth.dtos.req.LoginReq;
+import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
+import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
+import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 import com.dev.dungcony.modules.auth.services.interfaces.AuthService;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("v1/api/auth")
+@Tag(name = "Auth", description = "Đăng nhập, đăng ký, refresh token, logout")
 public class AuthController {
 
     private final AuthService authService;
@@ -23,6 +26,7 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @Operation(summary = "Đăng nhập", description = "Trả về access token và set refresh token vào cookie")
     @PostMapping("/login")
     public ResponseEntity<ApiRes<LoginRes>> login(
             @Valid @RequestBody LoginReq loginReq,
@@ -38,6 +42,7 @@ public class AuthController {
                         new LoginRes(res.token(), res.expired())));
     }
 
+    @Operation(summary = "Đăng ký tài khoản")
     @PostMapping("/register")
     public ResponseEntity<ApiRes<Void>> register(@Valid @RequestBody RegisReq req) {
         authService.register(req);
@@ -45,6 +50,7 @@ public class AuthController {
                 .body(ApiRes.success("register success"));
     }
 
+    @Operation(summary = "Refresh token", description = "Dùng refresh token từ cookie để lấy access token mới")
     @PostMapping("/refresh")
     public ResponseEntity<ApiRes<LoginRes>> refresh(
             @CookieValue("refresh_token") String token) {
@@ -52,6 +58,7 @@ public class AuthController {
                 .body(ApiRes.success("refresh_success", authService.refreshToken(token)));
     }
 
+    @Operation(summary = "Đăng xuất", description = "Xóa refresh token và device session")
     @PostMapping("/logout")
     public ResponseEntity<ApiRes<Void>> logout(
             @CookieValue("refresh_token") String token,

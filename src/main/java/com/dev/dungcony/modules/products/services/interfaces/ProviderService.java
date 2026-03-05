@@ -9,5 +9,5 @@ public interface ProviderService {
 
     void delete(int id);
 
-    ProviderRes update(int id, ProviderUpdateReq dto);
+    ProviderRes update(ProviderUpdateReq dto);
 }

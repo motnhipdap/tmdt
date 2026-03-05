@@ -1,7 +1,7 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.config.JwtConfig;
-import com.dev.dungcony.modules.auth.dtos.responses.AccountRes;
+import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;

@@ -1,23 +1,15 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-import com.dev.dungcony.modules.auth.dtos.responses.AccountRes;
+import com.dev.dungcony.commons.bases.ServiceBase;
+import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
-@Service
-public class AccountServiceImpl implements AccountService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
-
+public class AccountServiceImpl extends ServiceBase implements AccountService {
     private final AccountRepository accRepo;
     private final PasswordEncoder passwordEncoder;
 

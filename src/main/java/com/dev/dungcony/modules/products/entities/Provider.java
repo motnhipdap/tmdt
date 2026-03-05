@@ -10,8 +10,9 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
-@Getter
+
 @Setter
+@Getter
 @Entity
 @Table(name = "tbl_providers")
 public class Provider {

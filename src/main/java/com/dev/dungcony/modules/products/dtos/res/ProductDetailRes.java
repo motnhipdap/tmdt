@@ -8,8 +8,6 @@ import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 
 public record ProductDetailRes(
-        Integer id,
-
         String name,
         String productCode,
         String description,

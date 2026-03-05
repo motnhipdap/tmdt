@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.products.services.impl;
 
+import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.products.dtos.req.CategoryAddReq;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.enums.CategoryStatus;
@@ -21,12 +22,13 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
     @Override
     @Transactional
-    public void addCategory(CategoryAddReq req) {
+    public CategorySummaryDto addNew(CategoryAddReq req) {
 
         Category parent = null;
 
-        if (req.parentId() != null) {
-            parent = categoryRepository.findById(req.parentId())
+        if (req.parentCode() != null && !req.parentCode().isBlank()) {
+
+            parent = categoryRepository.findByCategoryCode(req.parentCode())
                     .orElseThrow(CategoryNotFoundException::new);
 
             if (parent.getStatus() != CategoryStatus.ACTIVE) {
@@ -46,33 +48,48 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
         category.setName(req.name());
         category.setCategoryCode(req.categoryCode());
         category.setDescription(req.description());
-        category.setImgUrl(req.img());
+        category.setImgUrl(req.imgUrl());
         category.setParent(parent);
         category.setIsLeaf(true);
 
-        // LEVEL
         if (parent == null) {
             category.setLevel(0);
+            category.setPath("/" + req.categoryCode() + "/");
         } else {
             category.setLevel(parent.getLevel() + 1);
+            category.setPath(parent.getPath() + req.categoryCode() + "/");
             parent.setIsLeaf(false);
         }
 
-        // Save lần 1 để lấy ID
-        categoryRepository.saveAndFlush(category);
+        categoryRepository.save(category);
 
-        // Set path rồi dirty checking sẽ update
-        if (parent == null) {
-            category.setPath("/" + category.getId() + "/");
-        } else {
-            category.setPath(parent.getPath() + category.getId() + "/");
-        }
+        return new CategorySummaryDto(
+                category.getName(),
+                category.getCategoryCode()
+        );
     }
 
 
     @Override
     @Transactional
-    public void removeCategory(Integer id) {
+    public void remove(String code) {
+        Category category = categoryRepository.findByCategoryCode(code)
+                .orElseThrow(CategoryNotFoundException::new);
+
+        if (category.getStatus() == CategoryStatus.HIDDEN) {
+            return; // already hidden
+        }
+
+        category.setStatus(CategoryStatus.HIDDEN);
+
+        // Cascade HIDDEN to all sub-categories using path prefix
+        if (category.getPath() != null) {
+            categoryRepository.hideAllByPathPrefix(category.getPath());
+        }
+    }
+
+    @Override
+    public void remove(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(CategoryNotFoundException::new);
 

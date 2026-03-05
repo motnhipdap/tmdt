@@ -9,23 +9,23 @@ import com.dev.dungcony.modules.products.dtos.DiscountInfoDto;
  * repository.
  */
 public record ProductSumaryRes(
-                Integer id,
-                String name,
-                BigDecimal price,
-                Float rated,
-                String imgUrl,
-                Integer categoryId) {
+        String code,
+        String name,
+        BigDecimal price,
+        Float rated,
+        String imgUrl,
+        Integer categoryCode) {
 
-        public ProductSumaryRes withDiscount(DiscountInfoDto discount) {
-                if (discount == null) {
-                        return this;
-                }
-                return new ProductSumaryRes(
-                                id,
-                                name,
-                                discount.finalPrice(),
-                                rated,
-                                imgUrl,
-                                categoryId);
+    public ProductSumaryRes withDiscount(DiscountInfoDto discount) {
+        if (discount == null) {
+            return this;
         }
+        return new ProductSumaryRes(
+                code,
+                name,
+                discount.finalPrice(),
+                rated,
+                imgUrl,
+                categoryCode);
+    }
 }
