@@ -26,6 +26,8 @@ jwt:
   secret: ${JWT_SECRET}
 
 management:
+  server:
+    port: ${PORT:8080}
   endpoints:
     web:
       exposure:

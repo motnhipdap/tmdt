@@ -24,6 +24,6 @@ COPY --from=builder /app/target/*.jar app.jar
 RUN mkdir -p logs && chown -R appuser:appgroup /app
 USER appuser
 
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
