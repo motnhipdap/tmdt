@@ -54,7 +54,9 @@ public class SecurityConfig {
                                 // Swagger UI & OpenAPI docs
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                // Actuator health check
+                                "/actuator/health"
                         ).permitAll()
                         .requestMatchers("/v1/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/v1/api/user/**").authenticated()
