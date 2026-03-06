@@ -6,16 +6,17 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record PromotionSummaryRes(
-        Integer promotionId,
+        String code,
         PromotionType type,
         int value,
         BigDecimal minPrice,
         Instant startAt,
-        Instant endAt
-) {
+        Instant endAt) {
     /**
-     * Kiểm tra promotion có áp dụng được cho giá sản phẩm và thời điểm hiện tại không.
-     * Sử dụng timestamp truyền vào thay vì gọi Instant.now() nhiều lần để đảm bảo tính nhất quán.
+     * Kiểm tra promotion có áp dụng được cho giá sản phẩm và thời điểm hiện tại
+     * không.
+     * Sử dụng timestamp truyền vào thay vì gọi Instant.now() nhiều lần để đảm bảo
+     * tính nhất quán.
      */
     public boolean isApplicable(BigDecimal price, Instant now) {
         return price.compareTo(minPrice) >= 0

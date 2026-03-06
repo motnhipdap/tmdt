@@ -16,13 +16,13 @@ public interface PromotionService {
 
     void update(PromoUpdateReq req);
 
-    void delete(Integer promotionId);
+    void delete(String code);
 
-    void softDelete(Integer promotionId);
+    void softDelete(String code);
 
     Page<PromotionSummaryRes> getAll(Pageable pageable);
 
-    Optional<PromotionDetailRes> getById(Integer id);
+    Optional<PromotionDetailRes> getByCode(String code);
 
     /**
      * Lấy danh sách global promotions đang active tại thời điểm now.

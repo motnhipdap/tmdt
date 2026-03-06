@@ -73,19 +73,18 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public void delete(Integer promotionId) {
-        log.info("deleting promotion id={}", promotionId);
-        if (!promotionRepository.existsById(promotionId)) {
-            throw new PromotionNotFoundException(promotionId);
-        }
-        promotionRepository.deleteById(promotionId);
+    public void delete(String code) {
+        log.info("deleting promotion code={}", code);
+        Promotion promotion = promotionRepository.findByCode(code)
+                .orElseThrow(() -> new PromotionNotFoundException("Promotion not found with code: " + code));
+        promotionRepository.delete(promotion);
     }
 
     @Override
-    public void softDelete(Integer promotionId) {
-        log.info("Soft-deleting promotion id={}", promotionId);
-        Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new PromotionNotFoundException(promotionId));
+    public void softDelete(String code) {
+        log.info("Soft-deleting promotion code={}", code);
+        Promotion promotion = promotionRepository.findByCode(code)
+                .orElseThrow(() -> new PromotionNotFoundException("Promotion not found with code: " + code));
 
         promotion.setStatus(PromotionStatus.DELETED);
         promotionRepository.save(promotion);
@@ -99,10 +98,10 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     @Override
     public void update(PromoUpdateReq req) {
-        log.info("Updating promotion id={}", req.id());
+        log.info("Updating promotion code={}", req.code());
 
-        Promotion promotion = promotionRepository.findById(req.id())
-                .orElseThrow(() -> new PromotionNotFoundException(req.id()));
+        Promotion promotion = promotionRepository.findByCode(req.code())
+                .orElseThrow(() -> new PromotionNotFoundException("Promotion not found with code: " + req.code()));
 
         // Không cho update promotion đã DELETED
         if (promotion.getStatus() == PromotionStatus.DELETED) {
@@ -142,14 +141,13 @@ public class PromotionServiceImpl implements PromotionService {
             promotion.setStatus(req.status());
 
         promotionRepository.save(promotion);
-        log.info("Successfully updated promotion id={}", req.id());
+        log.info("Successfully updated promotion code={}", req.code());
     }
 
     @Override
-    public Optional<PromotionDetailRes> getById(Integer id) {
-        return promotionRepository.findById(id)
+    public Optional<PromotionDetailRes> getByCode(String code) {
+        return promotionRepository.findByCode(code)
                 .map(p -> new PromotionDetailRes(
-                        p.getId(),
                         p.getType(),
                         p.getCode(),
                         p.getValue(),

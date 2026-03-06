@@ -7,16 +7,13 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import java.time.Instant;
 
 public record PromotionDetailRes(
-        Integer id,
-        PromotionType type,
-        String code,
-        int value,
-        PromotionScope scope,
-        Instant startAt,
-        Instant endAt,
-        Integer priority,
-        PromotionStatus status,
-        int minPriceApply
-) {
+                PromotionType type,
+                String code,
+                int value,
+                PromotionScope scope,
+                Instant startAt,
+                Instant endAt,
+                Integer priority,
+                PromotionStatus status,
+                int minPriceApply) {
 }
-

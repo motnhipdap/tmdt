@@ -22,36 +22,33 @@ import java.util.List;
 @RequestMapping("v1/api/promotions")
 public class PromotionController {
 
-    private final PromotionService promotionService;
-    private final PromotionProductService promotionProductService;
-    private final PromotionCategoryService promotionCategoryService;
+        private final PromotionService promotionService;
+        private final PromotionProductService promotionProductService;
+        private final PromotionCategoryService promotionCategoryService;
 
-    @GetMapping("/product/{productCode}")
-    public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByProduct(
-            @PathVariable String productCode
-    ) {
-        List<PromotionSummaryRes> promotions = promotionProductService.getPromotionByProduct(productCode);
-        return ResponseEntity.ok()
-                .body(ApiRes.success("Promotions for product", promotions));
-    }
+        @GetMapping("/product/{productCode}")
+        public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByProduct(
+                        @PathVariable String productCode) {
+                List<PromotionSummaryRes> promotions = promotionProductService.getPromotionByProduct(productCode);
+                return ResponseEntity.ok()
+                                .body(ApiRes.success("Promotions for product", promotions));
+        }
 
-    @GetMapping("/category/{categoryCode}")
-    public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByCategory(
-            @PathVariable String categoryCode
-    ) {
-        List<PromotionSummaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryCode);
-        return ResponseEntity.ok()
-                .body(ApiRes.success("Promotions for category", promotions));
-    }
+        @GetMapping("/category/{categoryCode}")
+        public ResponseEntity<ApiRes<List<PromotionSummaryRes>>> getPromotionsByCategory(
+                        @PathVariable String categoryCode) {
+                List<PromotionSummaryRes> promotions = promotionCategoryService.getPromotionByCategory(categoryCode);
+                return ResponseEntity.ok()
+                                .body(ApiRes.success("Promotions for category", promotions));
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiRes<PromotionDetailRes>> getById(
-            @PathVariable Integer id
-    ) {
-        return promotionService.getById(id)
-                .map(promotion -> ResponseEntity.ok()
-                        .body(ApiRes.success("Promotion detail", promotion)))
-                .orElse(ResponseEntity.notFound().build());
-    }
+        @GetMapping("/{code}")
+        public ResponseEntity<ApiRes<PromotionDetailRes>> getByCode(
+                        @PathVariable String code) {
+                return promotionService.getByCode(code)
+                                .map(promotion -> ResponseEntity.ok()
+                                                .body(ApiRes.success("Promotion detail", promotion)))
+                                .orElse(ResponseEntity.notFound().build());
+        }
 
 }
