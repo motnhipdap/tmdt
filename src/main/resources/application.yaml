@@ -8,7 +8,6 @@ spring:
   flyway:
     locations: classpath:db/migration
     baseline-on-migration: false
-    repair-on-validate-error: true
     validate-on-migrate: true
 
   mail:

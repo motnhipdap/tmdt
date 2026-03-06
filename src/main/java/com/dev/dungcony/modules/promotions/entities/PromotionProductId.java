@@ -16,10 +16,10 @@ import java.io.Serializable;
 public class PromotionProductId implements Serializable {
     @Serial
     private static final long serialVersionUID = 4100589063436669117L;
-    @Column(name = "product_id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "product_id", columnDefinition = "int not null")
     private Integer productId;
 
-    @Column(name = "promotion_id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "promotion_id", columnDefinition = "int not null")
     private Integer promotionId;
 
 }

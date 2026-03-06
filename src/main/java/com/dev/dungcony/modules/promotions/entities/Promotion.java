@@ -19,7 +19,7 @@ import java.time.Instant;
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Integer id;
 
     @Enumerated(EnumType.STRING)
