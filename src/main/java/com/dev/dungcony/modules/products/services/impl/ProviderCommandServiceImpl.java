@@ -7,6 +7,7 @@ import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import com.dev.dungcony.modules.products.exceptions.ProviderConflictException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
+import com.dev.dungcony.modules.products.mappers.ProviderMapper;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProviderCommandService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProviderCommandServiceImpl implements ProviderCommandService {
 
     private final ProviderRepository providerRepository;
+    private final ProviderMapper providerMapper;
 
     @Transactional
     @Override
@@ -34,7 +36,7 @@ public class ProviderCommandServiceImpl implements ProviderCommandService {
 
         providerRepository.save(provider);
 
-        return toRes(provider);
+        return providerMapper.toRes(provider);
     }
 
     @Transactional
@@ -71,16 +73,6 @@ public class ProviderCommandServiceImpl implements ProviderCommandService {
         if (dto.img() != null)
             provider.setLogo(dto.img());
 
-        return toRes(provider);
-    }
-
-    private ProviderRes toRes(Provider p) {
-        return new ProviderRes(
-                p.getName(),
-                p.getCode(),
-                p.getEmail(),
-                p.getPhone(),
-                p.getDescription(),
-                p.getLogo());
+        return providerMapper.toRes(provider);
     }
 }

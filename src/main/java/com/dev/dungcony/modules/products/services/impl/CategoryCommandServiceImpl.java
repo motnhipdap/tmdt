@@ -34,14 +34,12 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
             if (parent.getStatus() != CategoryStatus.ACTIVE) {
                 throw new CategoryCanNotCreateException(
-                        "Cannot create sub-category under a hidden category"
-                );
+                        "Cannot create sub-category under a hidden category");
             }
 
-            if (productRepository.existsByCategoryId(parent.getId())) {
+            if (productRepository.existsByCategory_Code(parent.getCode())) {
                 throw new CategoryCanNotCreateException(
-                        "Cannot create sub-category under a category that already contains products"
-                );
+                        "Cannot create sub-category under a category that already contains products");
             }
         }
 
@@ -66,10 +64,8 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
         return new CategorySummaryDto(
                 category.getName(),
-                category.getCode()
-        );
+                category.getCode());
     }
-
 
     @Override
     @Transactional

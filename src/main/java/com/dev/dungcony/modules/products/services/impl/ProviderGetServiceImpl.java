@@ -1,8 +1,8 @@
 package com.dev.dungcony.modules.products.services.impl;
 
 import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
-import com.dev.dungcony.modules.products.entities.Provider;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
+import com.dev.dungcony.modules.products.mappers.ProviderMapper;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProviderGetService;
 import lombok.RequiredArgsConstructor;
@@ -17,37 +17,22 @@ import java.util.List;
 public class ProviderGetServiceImpl implements ProviderGetService {
 
     private final ProviderRepository providerRepository;
+    private final ProviderMapper providerMapper;
 
     @Override
     public ProviderRes getByCode(String code) {
-        Provider provider = providerRepository.findByCode(code)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        return toRes(provider);
+        return providerMapper.toRes(
+                providerRepository.findByCode(code).orElseThrow(ProviderNotFoundException::new));
     }
 
     @Override
     public ProviderRes getByName(String name) {
-        Provider prov = providerRepository.findByName(name)
-                .orElseThrow(ProviderNotFoundException::new);
-
-        return toRes(prov);
+        return providerMapper.toRes(
+                providerRepository.findByName(name).orElseThrow(ProviderNotFoundException::new));
     }
 
     @Override
     public List<ProviderRes> getAll() {
-        List<Provider> providers = providerRepository.findAll();
-
-        return providers.stream().map(this::toRes).toList();
-    }
-
-    private ProviderRes toRes(Provider p) {
-        return new ProviderRes(
-                p.getName(),
-                p.getCode(),
-                p.getEmail(),
-                p.getPhone(),
-                p.getDescription(),
-                p.getLogo());
+        return providerRepository.findAll().stream().map(providerMapper::toRes).toList();
     }
 }

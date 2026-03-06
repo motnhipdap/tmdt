@@ -3,8 +3,6 @@ package com.dev.dungcony.modules.products.services.impl;
 import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
-import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
-import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.Provider;
@@ -15,6 +13,7 @@ import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProductConflictException;
 import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
+import com.dev.dungcony.modules.products.mappers.ProductMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
@@ -36,6 +35,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
     @Transactional
     @Override
@@ -64,7 +64,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
         productRepository.save(product);
 
-        return toDetailRes(product);
+        return productMapper.toDetailRes(product);
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         if (req.imgUrl() != null)
             product.setImg(req.imgUrl());
 
-        return toDetailRes(product);
+        return productMapper.toDetailRes(product);
     }
 
     @Transactional
@@ -153,37 +153,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     private void validateProviderActive(Provider provider) {
         if (provider.getStatus() != ProviderStatus.ACTIVE)
             throw new ProductConflictException("Provider is not active");
-    }
-
-    private ProductDetailRes toDetailRes(Product p) {
-        CategorySummaryDto catDto = null;
-        if (p.getCategory() != null) {
-            Category c = p.getCategory();
-            catDto = new CategorySummaryDto(c.getName(), c.getCode());
-        }
-        ProviderSummaryDto provDto = null;
-        if (p.getProvider() != null) {
-            Provider pv = p.getProvider();
-            provDto = new ProviderSummaryDto(pv.getName(), pv.getCode());
-        }
-        return new ProductDetailRes(
-                p.getName(),
-                p.getCode(),
-                p.getDescription(),
-
-                p.getPrice(),
-                p.getPrice(),
-                "NONE",
-                0,
-                p.getQuantity(),
-                p.getQuantitySold(),
-                p.getRated(),
-                p.getImg(),
-                p.getStatus(),
-                p.getCreatedAt(),
-                p.getUpdateAt(),
-                catDto,
-                provDto);
     }
 
     private String generateProductCode(String providerName, String name) {

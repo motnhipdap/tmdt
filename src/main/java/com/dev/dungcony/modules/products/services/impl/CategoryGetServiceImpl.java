@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.products.services.impl;
 import com.dev.dungcony.modules.products.dtos.res.CategoryRes;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
+import com.dev.dungcony.modules.products.mappers.CategoryMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.services.interfaces.CategoryGetService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CategoryGetServiceImpl implements CategoryGetService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public List<CategoryRes> getAllChildren(String code) {
@@ -29,40 +31,26 @@ public class CategoryGetServiceImpl implements CategoryGetService {
         // categoryRepository.findAllChildrenByPath(parent.getPath());
         List<Category> categories = categoryRepository.findAllChildrenByCode(code);
 
-        return categories.stream().map(this::toRes).toList();
+        return categories.stream().map(categoryMapper::toRes).toList();
     }
 
     @Override
     public List<CategoryRes> getAll() {
-        List<Category> categories = categoryRepository.findAll();
-
-        return categories
+        return categoryRepository.findAll()
                 .stream()
-                .map(this::toRes)
+                .map(categoryMapper::toRes)
                 .toList();
-
     }
 
     @Override
     public CategoryRes getByCode(String code) {
-        Category cate = categoryRepository.findByCode(code)
-                .orElseThrow(CategoryNotFoundException::new);
-        return toRes(cate);
+        return categoryMapper.toRes(
+                categoryRepository.findByCode(code).orElseThrow(CategoryNotFoundException::new));
     }
 
     @Override
     public CategoryRes getByName(String name) {
-        Category cate = categoryRepository.findByName(name)
-                .orElseThrow(CategoryNotFoundException::new);
-        return toRes(cate);
-    }
-
-    private CategoryRes toRes(Category category) {
-        return new CategoryRes(
-                category.getName(),
-                category.getCode(),
-                category.getStatus(),
-                category.getDescription(),
-                category.getImgUrl());
+        return categoryMapper.toRes(
+                categoryRepository.findByName(name).orElseThrow(CategoryNotFoundException::new));
     }
 }

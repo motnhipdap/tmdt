@@ -1,8 +1,6 @@
 package com.dev.dungcony.modules.products.services.impl;
 
-import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
-import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
@@ -10,6 +8,7 @@ import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
+import com.dev.dungcony.modules.products.mappers.ProductMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
@@ -32,6 +31,7 @@ public class ProductGetServiceImpl implements ProductGetService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final PromotionCalculator promotionCalculator;
+    private final ProductMapper productMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,37 +55,7 @@ public class ProductGetServiceImpl implements ProductGetService {
         DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
                 product.getCode(), categoryCode, product.getPrice());
 
-        CategorySummaryDto catDto = null;
-        if (product.getCategory() != null) {
-            catDto = new CategorySummaryDto(
-                    product.getCategory().getName(),
-                    product.getCategory().getCode());
-        }
-        ProviderSummaryDto provDto = null;
-        if (product.getProvider() != null) {
-            provDto = new ProviderSummaryDto(
-                    product.getProvider().getName(),
-                    product.getProvider().getCode());
-        }
-
-        return new ProductDetailRes(
-                product.getName(),
-                product.getCode(),
-                product.getDescription(),
-
-                product.getPrice(),
-                discount != null ? discount.finalPrice() : product.getPrice(),
-                discount != null ? discount.discountType() : "NONE",
-                discount != null ? discount.discountValue() : 0,
-                product.getQuantity(),
-                product.getQuantitySold(),
-                product.getRated(),
-                product.getImg(),
-                product.getStatus(),
-                product.getCreatedAt(),
-                product.getUpdateAt(),
-                catDto,
-                provDto);
+        return productMapper.toDetailRes(product, discount);
     }
 
     @Override
@@ -105,11 +75,7 @@ public class ProductGetServiceImpl implements ProductGetService {
                 .filter(c -> c.getStatus() == CategoryStatus.ACTIVE)
                 .orElseThrow(CategoryNotFoundException::new);
 
-        Integer categoryId = categoryRepository.findByCode(categoryCode)
-                .orElseThrow(CategoryNotFoundException::new)
-                .getId();
-
-        Page<ProductSummaryRes> rawPage = productRepository.findAllByCategoryTree(categoryId, pageable);
+        Page<ProductSummaryRes> rawPage = productRepository.findAllByCategoryCode(categoryCode, pageable);
 
         return enrichWithDiscounts(rawPage);
     }
@@ -151,8 +117,7 @@ public class ProductGetServiceImpl implements ProductGetService {
         return page.map(p -> {
             DiscountInfoDto discount = discountMap.getOrDefault(
                     p.code(),
-                    DiscountInfoDto.noDiscount(p.price())
-            );
+                    DiscountInfoDto.noDiscount(p.price()));
             return p.withDiscount(discount);
         });
     }

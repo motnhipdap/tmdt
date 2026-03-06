@@ -4,8 +4,6 @@ import com.dev.dungcony.modules.products.dtos.req.ProviderAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProviderUpdateReq;
 import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
 
-import java.util.List;
-
 public interface ProviderCommandService {
     ProviderRes addNew(ProviderAddReq dto);
 
