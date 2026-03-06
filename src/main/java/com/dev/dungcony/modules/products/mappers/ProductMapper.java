@@ -53,7 +53,7 @@ public class ProductMapper {
                 p.getImg(),
                 p.getStatus(),
                 p.getCreatedAt(),
-                p.getUpdateAt(),
+                p.getUpdatedAt(),
                 catDto,
                 provDto);
     }

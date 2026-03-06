@@ -1,10 +1,10 @@
 package com.dev.dungcony.modules.users.services.impl;
 
+import com.dev.dungcony.commons.exceptions.NotFoundException;
 import com.dev.dungcony.modules.users.dtos.AddressDto;
 import com.dev.dungcony.modules.users.dtos.req.AddressAddReq;
 import com.dev.dungcony.modules.users.entities.Address;
 import com.dev.dungcony.modules.users.entities.User;
-import com.dev.dungcony.modules.users.exceptions.NotFoundException;
 import com.dev.dungcony.modules.users.repositories.AddressRepository;
 import com.dev.dungcony.modules.users.services.interfaces.AddressService;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +23,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDto addAddress(AddressAddReq req) {
         Address address = req.address().toEntity();
-        User u = new User();
-        u.setId(req.uuid());
+        User user = new User();
+        user.setId(req.uuid());
 
-        address.setU(u);
+        address.setUser(user);
 
         addressRepository.save(address);
 
@@ -36,12 +36,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDto updateAddress(AddressDto req) {
         Address address = addressRepository.findById(req.id())
-                .orElseThrow(
-                        () -> new NotFoundException("id address khong hop le")
-                );
+                .orElseThrow(() -> new NotFoundException("id address khong hop le"));
 
         Address addressUpdate = req.toEntity();
-        addressUpdate.setU(address.getU());
+        addressUpdate.setUser(address.getUser());
 
         addressRepository.save(addressUpdate);
 

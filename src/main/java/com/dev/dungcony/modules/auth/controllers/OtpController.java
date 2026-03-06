@@ -6,20 +6,20 @@ import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/auth")
 public class OtpController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OtpController.class);
     private final OtpService otpService;
 
     @PostMapping("/send-regis-otp")

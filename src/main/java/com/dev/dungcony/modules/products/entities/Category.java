@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.products.entities;
 
+import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.products.enums.CategoryStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,13 +11,11 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_categories")
-public class Category {
+public class Category extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -66,22 +65,4 @@ public class Category {
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "created_at")
-    private Instant createdAt;
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        Instant now = Instant.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
 }

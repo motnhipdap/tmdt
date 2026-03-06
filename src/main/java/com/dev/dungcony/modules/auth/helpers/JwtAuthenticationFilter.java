@@ -33,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
     }
 
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -72,14 +73,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            AccountDetails accountDetails =
-                    new AccountDetails(userId, username, role);
+            AccountDetails accountDetails = new AccountDetails(userId, username, role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     accountDetails,
                     null,
-                    accountDetails.getAuthorities()
-            );
+                    accountDetails.getAuthorities());
 
             // SET VÀO SECURITY CONTEXT
             // Từ đây về sau, mọi nơi trong request này đều biết user đã login
@@ -99,7 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * Ví dụ: public endpoints, static resources, etc.
      */
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(@SuppressWarnings("null") HttpServletRequest request) {
         String path = request.getServletPath();
         // Skip filter cho các public endpoints
         return path.startsWith("/v1/api/auth/") ||

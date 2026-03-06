@@ -7,5 +7,5 @@ public interface UserService {
 
     UserDto getUser(int accId);
 
-    UserDto updateUser(UserDto dto);
+    UserDto updateUser(int accId, UserDto dto);
 }

@@ -5,13 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@Entity(name = "tbl_address")
+@Entity
+@Table(name = "tbl_address")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private User u;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotBlank(message = "country not not")
     @Column(name = "country", nullable = false, length = 20)

@@ -1,8 +1,9 @@
 package com.dev.dungcony.modules.users.services.impl;
 
+import com.dev.dungcony.commons.exceptions.NotFoundException;
+import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.users.dtos.UserDto;
 import com.dev.dungcony.modules.users.entities.User;
-import com.dev.dungcony.modules.users.exceptions.NotFoundException;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
 import com.dev.dungcony.modules.users.services.interfaces.UserService;
 import jakarta.transaction.Transactional;
@@ -25,7 +26,10 @@ public class UserServiceImpl implements UserService {
         User user = req.toEntity();
         UUID uuid = UUID.randomUUID();
         user.setId(uuid);
-        user.setAccId(accId);
+
+        Account accountRef = new Account();
+        accountRef.setId(accId);
+        user.setAccount(accountRef);
 
         userRepository.save(user);
 
@@ -34,30 +38,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(int accId) {
-        User user = userRepository.findByAccId(accId)
-                .orElseThrow(
-                        () -> new NotFoundException("user profile has not been created")
-                );
+        User user = userRepository.findByAccount_Id(accId)
+                .orElseThrow(() -> new NotFoundException("user profile has not been created"));
 
         return new UserDto(user);
     }
 
     @Override
-    public UserDto updateUser(UserDto dto) {
+    @Transactional
+    public UserDto updateUser(int accId, UserDto dto) {
 
         UUID uuid = dto.id();
-        User user = userRepository.findById(uuid).orElseThrow(
-                () -> new NotFoundException("not found user with id " + uuid)
-        );
+        User user = userRepository.findById(uuid)
+                .orElseThrow(() -> new NotFoundException("not found user with id " + uuid));
 
-        user.setFirstName(dto.fistName());
+        if (user.getAccount() == null || user.getAccount().getId() != accId)
+            user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setImg(dto.img());
 
         userRepository.save(user);
-        
+
         return new UserDto(user);
     }
-
 
 }

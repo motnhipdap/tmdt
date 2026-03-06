@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-import com.dev.dungcony.modules.auth.dtos.OtpType;
+import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.helpers.Help;
@@ -8,16 +8,15 @@ import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
 import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class OtpServiceImpl implements OtpService {
-
-    private static final Logger logger = LoggerFactory.getLogger(OtpServiceImpl.class);
 
     private final EmailService emailService;
     private final OtpRegisRepository otpRegisRepo;
@@ -44,14 +43,14 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public boolean verifyOTP(VerifyOtpReq req) {
         String value = otpRegisRepo.getValue(key(req.email(), req.type()));
-        logger.info("value: {}", value);
+        log.info("value: {}", value);
 
         if (value == null)
             throw new OtpExpireException();
         if (!passwordEncoder.matches(req.otp(), value))
             return false;
 
-        logger.info("otp verify success");
+        log.info("otp verify success");
         otpRegisRepo.delete(key(req.email(), req.type()));
         return true;
 

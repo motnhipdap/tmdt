@@ -35,6 +35,10 @@ build/
 ### Environment & Secrets ###
 .env
 application-dev.yml
+application-dev.yaml
 application-local.yml
+application-local.yaml
 src/main/resources/application-dev.yml
+src/main/resources/application-dev.yaml
 src/main/resources/application-local.yml
+src/main/resources/application-local.yaml

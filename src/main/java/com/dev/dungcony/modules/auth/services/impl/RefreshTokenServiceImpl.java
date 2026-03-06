@@ -7,8 +7,8 @@ import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +16,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
-
-    private static final Logger logger = LoggerFactory.getLogger(RefreshTokenServiceImpl.class);
 
     private final StringRedisTemplate redis;
     private final AccountRepository accountRepository;
@@ -45,38 +44,33 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 "refresh:" + token,
                 String.valueOf(userId),
                 ttl,
-                TimeUnit.SECONDS
-        );
+                TimeUnit.SECONDS);
 
         // device -> token
         redis.opsForValue().set(
                 key(userId, deviceId),
                 token,
                 ttl,
-                TimeUnit.SECONDS
-        );
+                TimeUnit.SECONDS);
 
         // user -> device
         redis.opsForSet().add(
                 "user:" + userId + ":devices",
-                deviceId
-        );
+                deviceId);
         redis.expire(
                 "user:" + userId + ":devices",
                 ttl,
-                TimeUnit.SECONDS
-        );
+                TimeUnit.SECONDS);
 
         return token;
     }
-
 
     @Override
     public AccountRes verify(String refreshToken) {
         String userId = redis.opsForValue().get("refresh:" + refreshToken);
 
         if (userId == null)
-            throw new RuntimeException("Invalid refresh token");
+            throw new TokenValidException();
 
         Account acc = accountRepository.findById(Integer.parseInt(userId))
                 .orElseThrow(TokenValidException::new);
@@ -85,30 +79,27 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 acc.getId(),
                 acc.getEmail(),
                 acc.getUsername(),
-                acc.getPhone(),
                 acc.getStatus(),
-                acc.getRole(),
+                acc.getRole().name(),
                 acc.getCreatedAt());
     }
 
     @Override
     public void revoke(String refreshToken, String deviceId) {
         String userId = redis.opsForValue().get("refresh:" + refreshToken);
-        if (userId == null) return;
+        if (userId == null)
+            return;
 
         redis.delete("refresh:" + refreshToken);
         redis.delete(key(Integer.parseInt(userId), deviceId));
         redis.opsForSet().remove(
                 "user:" + userId + ":devices",
-                deviceId
-        );
+                deviceId);
     }
-
 
     @Override
     public void revokeAll(int userId) {
-        Set<String> devices =
-                redis.opsForSet().members("user:" + userId + ":devices");
+        Set<String> devices = redis.opsForSet().members("user:" + userId + ":devices");
 
         if (devices != null) {
             for (String deviceId : devices) {
@@ -130,7 +121,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 }
 
-
-//refresh:{token}                         -> userId
-//user:{userId}:devices                   -> SET(deviceId)
-//user:{userId}:device:{deviceId}:refresh -> token
+// refresh:{token} -> userId
+// user:{userId}:devices -> SET(deviceId)
+// user:{userId}:device:{deviceId}:refresh -> token

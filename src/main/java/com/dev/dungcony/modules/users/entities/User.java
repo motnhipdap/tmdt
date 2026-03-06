@@ -1,12 +1,13 @@
 package com.dev.dungcony.modules.users.entities;
 
+import com.dev.dungcony.commons.entities.BaseEntity;
+import com.dev.dungcony.modules.auth.entities.Account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Setter
@@ -14,42 +15,27 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_users")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue
     @Column(columnDefinition = "CHAR(36)")
     private UUID id;
 
-    @NotBlank(message = "name not blank")
+    @NotBlank(message = "firstName not blank")
     @Column(name = "f_name", nullable = false)
     private String firstName;
 
-    @NotBlank(message = "name not blank")
+    @NotBlank(message = "lastName not blank")
     @Column(name = "l_name", nullable = false)
     private String lastName;
+
+    @Column(name = "phone", unique = true, length = 10)
+    private String phone;
 
     @Column(name = "img")
     private String img;
 
-    @Column(name = "created_at")
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
     @Column(name = "acc_id")
-    private int accId;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
-
+    private Integer accountId;
 }

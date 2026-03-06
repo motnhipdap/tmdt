@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
+import com.dev.dungcony.commons.exceptions.ConflictException;
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
 import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
@@ -15,11 +16,13 @@ import com.dev.dungcony.modules.auth.services.interfaces.JwtService;
 import com.dev.dungcony.modules.auth.services.interfaces.RefreshTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -45,8 +48,13 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             accRepository.save(account);
-        } catch (DataIntegrityViolationException e) {
-            throw new EmailExistException();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // Race condition: another request registered with same email/username between
+            // our check and save
+            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+            if (msg.contains("username"))
+                throw new UsernameExistsException();
+            throw new ConflictException("email or username already taken");
         }
     }
 
@@ -58,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         if (acc == null || !passwordEncoder.matches(password, acc.getPassword()))
             throw new InvalidCredentialsException();
 
-        String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole());
+        String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole().name());
         String refreshToken = refreshTokenService.create(acc.getId(), deviceId);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)

@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.products.entities;
 
+import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -9,13 +10,12 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_products")
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -54,14 +54,6 @@ public class Product {
     @Column(name = "rated")
     private Float rated;
 
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "created_at")
-    private Instant createdAt;
-
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "updated_at")
-    private Instant updateAt;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -78,15 +70,4 @@ public class Product {
     @Column(name = "img")
     private String img;
 
-    @PrePersist
-    protected void onCreate() {
-        Instant now = Instant.now();
-        this.createdAt = now;
-        this.updateAt = now;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateAt = Instant.now();
-    }
 }

@@ -22,6 +22,10 @@
 
     <properties>
         <java.version>21</java.version>
+        <!-- Override via CLI: mvn flyway:migrate -Dflyway.db.url=... or set env vars in CI -->
+        <flyway.db.url>jdbc:mysql://localhost:3307/dungcony</flyway.db.url>
+        <flyway.db.username>root</flyway.db.username>
+        <flyway.db.password>123456</flyway.db.password>
     </properties>
 
     <dependencies>
@@ -174,9 +178,9 @@
                 </dependencies>
 
                 <configuration>
-                    <url>jdbc:mysql://localhost:3307/dungcony</url>
-                    <user>root</user>
-                    <password>123456</password>
+                    <url>${flyway.db.url}</url>
+                    <user>${flyway.db.username}</user>
+                    <password>${flyway.db.password}</password>
                     <locations>
                         <location>filesystem:src/main/resources/db/migration</location>
                     </locations>

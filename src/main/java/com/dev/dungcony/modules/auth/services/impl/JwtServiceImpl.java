@@ -6,16 +6,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class JwtServiceImpl implements JwtService {
-    private static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
     private final Key key;
     private final JwtConfig jwtConfig;
@@ -30,7 +30,7 @@ public class JwtServiceImpl implements JwtService {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000);
 
-        logger.info(now.getTime() + " " + expiration.getTime() + " " + username + " " + role);
+        log.debug("Generating token for user: {} (id={}), role: {}", username, id, role);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
@@ -45,7 +45,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateToken(int id, String email) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration());
+        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000L);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
@@ -62,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
             Claims claims = extractAllClaims(token);
             return claims.get("username", String.class);
         } catch (Exception e) {
-            logger.error("Error extracting username from token: {}", e.getMessage());
+            log.error("Error extracting username from token: {}", e.getMessage());
             return null;
         }
     }
@@ -75,7 +75,7 @@ public class JwtServiceImpl implements JwtService {
             String subject = claims.getSubject();
             return Integer.parseInt(subject);
         } catch (Exception e) {
-            logger.error("Error extracting user ID from token: {}", e.getMessage());
+            log.error("Error extracting user ID from token: {}", e.getMessage());
             return null;
         }
     }
@@ -86,7 +86,7 @@ public class JwtServiceImpl implements JwtService {
             Claims claims = extractAllClaims(token);
             return claims.get("role", String.class);
         } catch (Exception e) {
-            logger.error("Error extracting role from token: {}", e.getMessage());
+            log.error("Error extracting role from token: {}", e.getMessage());
             return null;
         }
     }
@@ -97,7 +97,7 @@ public class JwtServiceImpl implements JwtService {
             Claims claims = extractAllClaims(token);
             return claims.get("email", String.class);
         } catch (Exception e) {
-            logger.error("Error extracting email from token: {}", e.getMessage());
+            log.error("Error extracting email from token: {}", e.getMessage());
             return null;
         }
     }
@@ -108,7 +108,7 @@ public class JwtServiceImpl implements JwtService {
             extractAllClaims(token);
             return !isTokenExpired(token);
         } catch (Exception e) {
-            logger.error("Token validation failed: {}", e.getMessage());
+            log.error("Token validation failed: {}", e.getMessage());
             return false;
         }
     }
@@ -120,7 +120,7 @@ public class JwtServiceImpl implements JwtService {
             Date expiration = claims.getExpiration();
             return expiration.before(new Date());
         } catch (Exception e) {
-            logger.error("Error checking token expiration: {}", e.getMessage());
+            log.error("Error checking token expiration: {}", e.getMessage());
             return true;
         }
     }

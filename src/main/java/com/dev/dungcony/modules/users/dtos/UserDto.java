@@ -6,10 +6,9 @@ import java.util.UUID;
 
 public record UserDto(
         UUID id,
-        String fistName,
+        String firstName,
         String lastName,
-        String img
-) {
+        String img) {
     public UserDto(User u) {
         this(u.getId(), u.getFirstName(), u.getLastName(), u.getImg());
     }
@@ -18,7 +17,7 @@ public record UserDto(
         User user = new User();
         if (id != null)
             user.setId(id);
-        user.setFirstName(fistName);
+        user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setImg(img);
         return user;

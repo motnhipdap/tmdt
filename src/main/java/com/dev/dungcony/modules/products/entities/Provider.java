@@ -1,21 +1,18 @@
 package com.dev.dungcony.modules.products.entities;
 
+import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-
-import java.time.Instant;
-
 
 @Setter
 @Getter
 @Entity
 @Table(name = "tbl_providers")
-public class Provider {
+public class Provider extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -47,14 +44,6 @@ public class Provider {
     @Column(name = "status", length = 20)
     private ProviderStatus status = ProviderStatus.ACTIVE;
 
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "created_at")
-    private Instant createAt;
-
-    @ColumnDefault("CURRENT_TIMESTAMP(3)")
-    @Column(name = "updated_at")
-    private Instant updateAt;
-
     @Size(max = 255)
     @Column(name = "logo")
     private String logo;
@@ -63,15 +52,4 @@ public class Provider {
     @Column(name = "version", nullable = false)
     private Long version;
 
-    @PrePersist
-    protected void onCreate() {
-        Instant now = Instant.now();
-        this.createAt = now;
-        this.updateAt = now;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateAt = Instant.now();
-    }
 }

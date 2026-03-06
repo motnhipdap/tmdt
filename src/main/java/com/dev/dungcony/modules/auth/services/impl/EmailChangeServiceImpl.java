@@ -11,17 +11,16 @@ import com.dev.dungcony.modules.auth.services.interfaces.EmailChangeService;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class EmailChangeServiceImpl implements EmailChangeService {
-
-    private static final Logger logger = LoggerFactory.getLogger(EmailChangeServiceImpl.class);
 
     private final int OTP_LENGTH = 6;
     private final AccountRepository accountRepo;
@@ -47,7 +46,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
                 Env.expiration_change_email);
 
         emailService.send(acc.getEmail(), "OTP yêu cầu thay đổi email - dungcony", otp);
-        logger.info("Email change request sent to: {}", acc.getEmail());
+        log.info("Email change request sent to: {}", acc.getEmail());
     }
 
     @Override

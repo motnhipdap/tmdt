@@ -1,5 +1,4 @@
 spring:
-
   application:
     name: dungcony
 
@@ -23,7 +22,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
 
   devtools:
     restart:
@@ -39,7 +37,7 @@ logging:
     name: logs/app.log
 
 jwt:
-  expiration: 300      # 5p
+  expiration: 300 # 5p
   refresh-expiration: 604800 # 7 ngày (s)
 
 server:
@@ -53,61 +51,3 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: method
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

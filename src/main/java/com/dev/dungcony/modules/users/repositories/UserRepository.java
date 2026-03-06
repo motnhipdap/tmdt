@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    //findBy + <FieldName> + <Condition>
+public interface UserRepository extends JpaRepository<User, UUID> {
+    // findBy + <FieldName> + <Condition>
     // @Query("""
-    //    select u from User u
-    //    where u.point > :point
-    //    and u.address like %:addr%
-    //""")
-    //    List<User> findActiveUsers(
-    //            @Param("point") int point,
-    //            @Param("addr") String addr
-    //    );
+    // select u from User u
+    // where u.point > :point
+    // and u.address like %:addr%
+    // """)
+    // List<User> findActiveUsers(
+    // @Param("point") int point,
+    // @Param("addr") String addr
+    // );
     Optional<User> findByFirstName(String fname);
 
     Optional<User> findByLastName(String lname);
@@ -28,5 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByImgIsNotNull();
 
-    Optional<User> findByAccId(int accId);
+    Optional<User> findByAccount_Id(int accountId);
 }

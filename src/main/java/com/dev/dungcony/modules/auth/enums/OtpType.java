@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.auth.dtos;
+package com.dev.dungcony.modules.auth.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;

@@ -5,12 +5,11 @@ CREATE TABLE tbl_accounts
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     username   VARCHAR(50)  NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
-    role       VARCHAR(20)  NOT NULL DEFAULT 'customer',
+    role       enum ('customer', 'admin','employee') DEFAULT 'customer',
     email      VARCHAR(100) NOT NULL UNIQUE,
-    phone      VARCHAR(15) UNIQUE,
-    status     VARCHAR(10)  NOT NULL DEFAULT 'active',
-    created_at TIMESTAMP(3)          DEFAULT CURRENT_TIMESTAMP(3),
-    updated_at TIMESTAMP(3)          DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+    status     ENUM ('active','inactive','banned')   DEFAULT 'active',
+    created_at TIMESTAMP(3)                          DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at TIMESTAMP(3)                          DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
 );
 
 CREATE TABLE tbl_users
@@ -19,10 +18,11 @@ CREATE TABLE tbl_users
     f_name     VARCHAR(255) NOT NULL,
     l_name     VARCHAR(255) NOT NULL,
     img        VARCHAR(255),
+    phone      VARCHAR(15) UNIQUE,
     created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
     updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    acc_id     INT UNSIGNED,
-    CONSTRAINT fk_users_account FOREIGN KEY (acc_id) REFERENCES tbl_accounts (id) ON DELETE SET NULL
+    acc_id     INT UNSIGNED not null unique,
+    CONSTRAINT fk_users_account FOREIGN KEY (acc_id) REFERENCES tbl_accounts (id) ON DELETE cascade
 );
 CREATE INDEX idx_users_acc_id ON tbl_users (acc_id);
 
