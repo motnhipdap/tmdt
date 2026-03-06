@@ -46,6 +46,8 @@ jwt:
 
 server:
   host: localhost
+  port: ${PORT:8080}
+  address: 0.0.0.0
 
 # ===== Swagger / OpenAPI =====
 springdoc:
