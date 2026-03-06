@@ -2,14 +2,14 @@ package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.modules.auth.TestConfig;
-import com.dev.dungcony.modules.auth.services.interfaces.EmailChangeService;
+import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,13 +40,11 @@ class EmailUpdateControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private EmailChangeService emailChangeService;
+    private AccountService accountService;
 
     @MockitoBean
     private com.dev.dungcony.modules.auth.services.interfaces.JwtService jwtService;
 
-    @MockitoBean
-    private com.dev.dungcony.modules.auth.services.interfaces.AccountService accountService;
 
     private AccountDetails accountDetails;
     private Authentication authentication;
@@ -63,7 +61,7 @@ class EmailUpdateControllerTest {
     @WithMockUser(username = "testuser")
     void updateReq_SendOtpToOldEmail_Success() throws Exception {
         // Arrange
-        doNothing().when(emailChangeService).startChangeEmail(anyInt());
+        doNothing().when(accountService).startChangeEmail(anyInt());
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/email/update/send-old-email")
@@ -72,7 +70,7 @@ class EmailUpdateControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("send otp req update email successfully"));
 
-        verify(emailChangeService, times(1)).startChangeEmail(1);
+        verify(accountService, times(1)).startChangeEmail(1);
     }
 
     @Test
@@ -81,7 +79,7 @@ class EmailUpdateControllerTest {
     void verifyOldEmail_Success() throws Exception {
         // Arrange
         String otp = "123456";
-        doNothing().when(emailChangeService).verifyOldEmailOtp(anyInt(), anyString());
+        doNothing().when(accountService).verifyOldEmailOtp(anyInt(), anyString());
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/email/update/verify-old-email")
@@ -92,7 +90,7 @@ class EmailUpdateControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("successfully"));
 
-        verify(emailChangeService, times(1)).verifyOldEmailOtp(1, "\"" + otp + "\"");
+        verify(accountService, times(1)).verifyOldEmailOtp(1, "\"" + otp + "\"");
     }
 
     @Test
@@ -101,7 +99,7 @@ class EmailUpdateControllerTest {
     void sendNewEmail_Success() throws Exception {
         // Arrange
         String newEmail = "newemail@example.com";
-        doNothing().when(emailChangeService).submitNewEmail(anyInt(), anyString());
+        doNothing().when(accountService).submitNewEmail(anyInt(), anyString());
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/email/update/send-new-email")
@@ -112,7 +110,7 @@ class EmailUpdateControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("send to email successfully"));
 
-        verify(emailChangeService, times(1)).submitNewEmail(eq(1), anyString());
+        verify(accountService, times(1)).submitNewEmail(eq(1), anyString());
     }
 
     @Test
@@ -121,7 +119,7 @@ class EmailUpdateControllerTest {
     void success_VerifyNewEmailOtp_Success() throws Exception {
         // Arrange
         String otp = "123456";
-        doNothing().when(emailChangeService).verifyNewEmailOtp(anyInt(), anyString());
+        doNothing().when(accountService).verifyNewEmailOtp(anyInt(), anyString());
 
         // Act & Assert
         mockMvc.perform(put("/v1/api/email/update/success")
@@ -132,6 +130,6 @@ class EmailUpdateControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("email update successfully"));
 
-        verify(emailChangeService, times(1)).verifyNewEmailOtp(eq(1), anyString());
+        verify(accountService, times(1)).verifyNewEmailOtp(eq(1), anyString());
     }
 }

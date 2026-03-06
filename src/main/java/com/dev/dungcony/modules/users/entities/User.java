@@ -1,7 +1,6 @@
 package com.dev.dungcony.modules.users.entities;
 
 import com.dev.dungcony.commons.entities.BaseEntity;
-import com.dev.dungcony.modules.auth.entities.Account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

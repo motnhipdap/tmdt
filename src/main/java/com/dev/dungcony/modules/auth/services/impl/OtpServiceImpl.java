@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.auth.services.impl;
 import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
-import com.dev.dungcony.modules.auth.helpers.Help;
+import com.dev.dungcony.modules.auth.helpers.Generate;
 import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
 import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
@@ -21,6 +21,7 @@ public class OtpServiceImpl implements OtpService {
     private final EmailService emailService;
     private final OtpRegisRepository otpRegisRepo;
     private final PasswordEncoder passwordEncoder;
+    private final Generate generate;
 
     private final int OTP_LENGTH = 6;
 
@@ -29,16 +30,11 @@ public class OtpServiceImpl implements OtpService {
         if (otpRegisRepo.getValue(key(email, type)) != null)
             otpRegisRepo.delete(key(email, type));
 
-        String otp = Help.createOTP(OTP_LENGTH);
+        String otp = generate.otp(OTP_LENGTH);
         emailService.send(email, "OTP - dungcony", emailService.buildOtpContent(otp));
         otpRegisRepo.cache(key(email, type), passwordEncoder.encode(otp));
     }
 
-    @Override
-    public void sendResetPass(String email) {
-        String newPass = Help.createOTP(OTP_LENGTH);
-        emailService.send(email, "NEW PASSWORD - dungcony", emailService.buildResetPassContent(newPass));
-    }
 
     @Override
     public boolean verifyOTP(VerifyOtpReq req) {

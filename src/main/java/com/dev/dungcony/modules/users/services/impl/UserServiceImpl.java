@@ -1,7 +1,6 @@
 package com.dev.dungcony.modules.users.services.impl;
 
 import com.dev.dungcony.commons.exceptions.NotFoundException;
-import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.users.dtos.UserDto;
 import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
@@ -27,9 +26,7 @@ public class UserServiceImpl implements UserService {
         UUID uuid = UUID.randomUUID();
         user.setId(uuid);
 
-        Account accountRef = new Account();
-        accountRef.setId(accId);
-        user.setAccount(accountRef);
+        user.setAccountId(accId);
 
         userRepository.save(user);
 
@@ -38,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(int accId) {
-        User user = userRepository.findByAccount_Id(accId)
+        User user = userRepository.findByAccountId(accId)
                 .orElseThrow(() -> new NotFoundException("user profile has not been created"));
 
         return new UserDto(user);
@@ -52,7 +49,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(uuid)
                 .orElseThrow(() -> new NotFoundException("not found user with id " + uuid));
 
-        if (user.getAccount() == null || user.getAccount().getId() != accId)
+        if (user.getAccountId() == null || user.getAccountId() != accId)
             user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setImg(dto.img());

@@ -25,12 +25,11 @@ public class JwtServiceImpl implements JwtService {
         this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
     }
 
+    // ========================= Generate =========================
     @Override
     public String generateToken(int id, String username, String role) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000);
-
-        log.debug("Generating token for user: {} (id={}), role: {}", username, id, role);
+        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000L);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(id))
@@ -38,7 +37,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.HS512) // HS512 cho HMAC-SHA512
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -52,9 +51,11 @@ public class JwtServiceImpl implements JwtService {
                 .claim("email", email)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.HS512) // HS512 cho HMAC-SHA512
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
+    // ========================= Extract =========================
 
     @Override
     public String extractUsername(String token) {
@@ -71,7 +72,6 @@ public class JwtServiceImpl implements JwtService {
     public Integer extractUserId(String token) {
         try {
             Claims claims = extractAllClaims(token);
-            // Subject chứa user ID
             String subject = claims.getSubject();
             return Integer.parseInt(subject);
         } catch (Exception e) {
@@ -101,6 +101,8 @@ public class JwtServiceImpl implements JwtService {
             return null;
         }
     }
+
+    // ========================= Validate =========================
 
     @Override
     public boolean validateToken(String token) {

@@ -18,7 +18,7 @@ public class EmailChangeRedisRepositoryImpl implements EmailChangeRedisRepositor
 
     @Override
     public boolean exists(int userId) {
-        return Boolean.TRUE.equals(redis.hasKey(key(userId)));
+        return redis.hasKey(key(userId));
     }
 
     @Override

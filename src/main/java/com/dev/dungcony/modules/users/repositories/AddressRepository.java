@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {
     @Modifying
-    @Query("delete from tbl_address a where a.id = :id")
+    @Query("delete from Address a where a.id = :id")
     int deleteByIdReturnCount(@Param("id") int id);
-
 }

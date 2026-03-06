@@ -53,7 +53,6 @@ public class Account extends BaseEntity {
                 ", username='" + username + '\'' +
                 ", role=" + role +
                 ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
                 ", status=" + status +
                 '}';
     }

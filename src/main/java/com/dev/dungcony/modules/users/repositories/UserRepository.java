@@ -18,15 +18,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     // @Param("point") int point,
     // @Param("addr") String addr
     // );
-    Optional<User> findByFirstName(String fname);
 
     Optional<User> findByLastName(String lname);
-
-    Optional<User> findById(UUID id);
 
     List<User> findByImgIsNull();
 
     List<User> findByImgIsNotNull();
 
-    Optional<User> findByAccount_Id(int accountId);
+    Optional<User> findByAccountId(Integer accountId);
 }

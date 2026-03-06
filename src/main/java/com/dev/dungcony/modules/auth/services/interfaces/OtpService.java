@@ -6,8 +6,6 @@ import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 public interface OtpService {
     void send(String email, OtpType otpType);
 
-    void sendResetPass(String email);
 
     boolean verifyOTP(VerifyOtpReq req);
-
 }

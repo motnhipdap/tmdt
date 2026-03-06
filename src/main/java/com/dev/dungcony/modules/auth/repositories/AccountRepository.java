@@ -14,15 +14,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      */
     Optional<Account> findByEmail(String email);
 
-    /**
-     * Tìm account theo username
-     */
     Optional<Account> findByUsername(String username);
-
-    /**
-     * Tìm account theo phone
-     */
-    Optional<Account> findByPhone(String phone);
 
     /**
      * Kiểm tra email đã tồn tại
@@ -33,9 +25,4 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      * Kiểm tra username đã tồn tại
      */
     boolean existsByUsername(String username);
-
-    /**
-     * Kiểm tra phone đã tồn tại
-     */
-    boolean existsByPhone(String phone);
 }
