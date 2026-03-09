@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.commons.exceptions.ConflictException;
 import com.dev.dungcony.modules.auth.config.JwtConfig;
+import com.dev.dungcony.modules.auth.dtos.AccDto;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
 import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
@@ -96,9 +97,9 @@ public class AuthImpl implements AuthService {
     }
 
     @Override
-    public LoginRes refreshToken(String refreshToken, Integer accId) {
-        AccountRes acc = refreshTokenService.verify(refreshToken);
-        String token = jwtService.generateToken(accId, acc.username(), acc.role());
+    public LoginRes refreshToken(String refreshToken) {
+        AccDto acc = refreshTokenService.verify(refreshToken);
+        String token = jwtService.generateToken(acc.id(), acc.username(), acc.role());
 
         return new LoginRes(token, jwtConfig.getExpiration());
     }

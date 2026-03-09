@@ -33,4 +33,9 @@ public class AccountCheckValidImpl implements AccountCheckValidService {
         if (!acc.getUsername().equals(username) || !acc.getEmail().equals(email))
             throw new InvalidCredentialsException("email or username invalid");
     }
+
+    @Override
+    public void checkPassword(int accId, String password) {
+
+    }
 }

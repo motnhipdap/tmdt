@@ -53,5 +53,4 @@ public class AccountUpdateimpl implements AccountUpdateService {
     public void updateStatus(int accId, Status newStatus) {
 
     }
-
 }
