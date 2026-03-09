@@ -144,4 +144,17 @@ public class AccountServiceImpl implements AccountService {
 
         redisRepo.delete(userId);
     }
+
+
+    @Override
+    public void verifyEmailChange(String email) {
+        
+    }
+
+    @Override
+    public void verifyEmailRegis(String email) {
+        int cntRows = accRepo.verifyEmail(email);
+        if (cntRows == 0)
+            throw new IllegalArgumentException("Email not found");
+    }
 }

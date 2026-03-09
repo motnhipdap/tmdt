@@ -3,7 +3,6 @@ package com.dev.dungcony.modules.auth.controllers;
 import com.dev.dungcony.modules.auth.TestConfig;
 import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.dtos.req.SendOtpReq;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
 import com.fasterxml.jackson.databind.ObjectMapper;

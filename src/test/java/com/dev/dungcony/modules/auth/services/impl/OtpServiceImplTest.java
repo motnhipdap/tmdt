@@ -1,7 +1,6 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;

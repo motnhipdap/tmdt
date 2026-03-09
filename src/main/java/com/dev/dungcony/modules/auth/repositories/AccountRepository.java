@@ -35,5 +35,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             set a.verify = true
             where a.email = :email
             """)
-    boolean verifyEmail(@Param("email") String email);
+    int verifyEmail(@Param("email") String email);
 }

@@ -1,8 +1,7 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpForgotPasswordReq;
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.helpers.Generate;
 import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
@@ -37,7 +36,12 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public boolean verifyOtpRegister(VerifyOtpRegisterReq req) {
+    public void sendOtpChangeEmail(String email) {
+        send(email, OtpType.CHANGE_EMAIL);
+    }
+
+    @Override
+    public boolean verifyOtpRegister(VerifyOtpReq req) {
         String value = otpRegisRepo.getValue(key(req.email(), OtpType.REGISTER));
         log.info("value regis: {}", value);
 
@@ -52,7 +56,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public boolean verifyOtpForgotPassword(VerifyOtpForgotPasswordReq req) {
+    public boolean verifyOtpForgotPassword(VerifyOtpReq req) {
         String value = otpRegisRepo.getValue(key(req.email(), OtpType.FORGOT_PASSWORD));
         log.info("value forgot: {}", value);
 
@@ -65,6 +69,24 @@ public class OtpServiceImpl implements OtpService {
         otpRegisRepo.delete(key(req.email(), OtpType.FORGOT_PASSWORD));
         return true;
     }
+
+    @Override
+    public boolean verifyOtpEmailChange(VerifyOtpReq req) {
+        String value = otpRegisRepo.getValue(key(req.email(), OtpType.CHANGE_EMAIL));
+        log.info("value emailchange: {}", value);
+
+        if (value == null)
+            throw new OtpExpireException();
+        if (!passwordEncoder.matches(req.otp(), value))
+            return false;
+
+        log.info("otpemailchange verify success");
+        otpRegisRepo.delete(key(req.email(), OtpType.CHANGE_EMAIL));
+        return true;
+    }
+
+
+    // ========================= Private Methods =========================
 
     private String key(String email, OtpType type) {
         return type.getValue() + ":" + email + ":";

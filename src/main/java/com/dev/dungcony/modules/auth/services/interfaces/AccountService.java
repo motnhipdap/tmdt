@@ -24,5 +24,7 @@ public interface AccountService {
     void verifyNewEmailOtp(int userId, String otp);
 
     //
-    void verifyEmail(String email);
+    void verifyEmailRegis(String email);
+
+    void verifyEmailChange(String email);
 }
