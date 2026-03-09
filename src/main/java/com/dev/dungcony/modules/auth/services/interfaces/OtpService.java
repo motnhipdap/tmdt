@@ -1,11 +1,15 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpForgotPasswordReq;
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 
 public interface OtpService {
-    void send(String email, OtpType otpType);
+    void sendOtpForgotPassword(String email);
 
+    void sendOtpRegister(String email);
 
-    boolean verifyOTP(VerifyOtpReq req);
+    boolean verifyOtpRegister(VerifyOtpRegisterReq req);
+
+    boolean verifyOtpForgotPassword(VerifyOtpForgotPasswordReq req);
 }

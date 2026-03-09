@@ -37,11 +37,11 @@ public class AccountServiceImpl implements AccountService {
         Account acc = accRepo.findById(id).orElseThrow(TokenValidException::new);
         log.info("Retrieving profile for account: {}", acc.getUsername());
         return new AccountRes(
-                acc.getId(),
                 acc.getEmail(),
                 acc.getUsername(),
                 acc.getStatus(),
-                acc.getRole().name(),
+                acc.getRole(),
+                acc.getVerify(),
                 acc.getCreatedAt());
     }
 

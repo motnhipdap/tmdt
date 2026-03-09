@@ -1,7 +1,7 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
@@ -112,7 +112,7 @@ class OtpServiceImplTest {
         String otp = "123456";
         String encodedOtp = "encodedOtp";
         String key = testOtpType.getValue() + ":" + testEmail + ":";
-        VerifyOtpReq req = new VerifyOtpReq(testEmail, otp, testOtpType);
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq(testEmail, otp, testOtpType);
 
         when(otpRegisRepository.getValue(key)).thenReturn(encodedOtp);
         when(passwordEncoder.matches(otp, encodedOtp)).thenReturn(true);
@@ -136,7 +136,7 @@ class OtpServiceImplTest {
         String wrongOtp = "654321";
         String encodedOtp = "encodedOtp";
         String key = testOtpType.getValue() + ":" + testEmail + ":";
-        VerifyOtpReq req = new VerifyOtpReq(testEmail, wrongOtp, testOtpType);
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq(testEmail, wrongOtp, testOtpType);
 
         when(otpRegisRepository.getValue(key)).thenReturn(encodedOtp);
         when(passwordEncoder.matches(wrongOtp, encodedOtp)).thenReturn(false);
@@ -157,7 +157,7 @@ class OtpServiceImplTest {
         // Arrange
         String otp = "123456";
         String key = testOtpType.getValue() + ":" + testEmail + ":";
-        VerifyOtpReq req = new VerifyOtpReq(testEmail, otp, testOtpType);
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq(testEmail, otp, testOtpType);
 
         when(otpRegisRepository.getValue(key)).thenReturn(null);
 

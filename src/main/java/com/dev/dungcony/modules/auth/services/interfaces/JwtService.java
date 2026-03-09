@@ -1,11 +1,12 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
+import com.dev.dungcony.modules.auth.enums.Role;
 import io.jsonwebtoken.Claims;
 
 public interface JwtService {
 
     // generate
-    String generateToken(int id, String username, String role);
+    String generateToken(int id, String username, Role role);
 
     String generateToken(int id, String email);
 
@@ -14,7 +15,7 @@ public interface JwtService {
 
     Integer extractUserId(String token);
 
-    String extractRole(String token);
+    Role extractRole(String token);
 
     String extractEmail(String token);
 

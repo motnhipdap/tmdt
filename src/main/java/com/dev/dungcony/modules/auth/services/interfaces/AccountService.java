@@ -22,4 +22,7 @@ public interface AccountService {
     void submitNewEmail(int userId, String newEmail);
 
     void verifyNewEmailOtp(int userId, String otp);
+
+    //
+    void verifyEmail(String email);
 }

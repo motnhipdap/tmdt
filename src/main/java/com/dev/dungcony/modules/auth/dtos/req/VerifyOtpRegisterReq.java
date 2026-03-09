@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record VerifyOtpReq(
+public record VerifyOtpRegisterReq(
         @NotBlank(message = "email not blank") @Email(message = "incorrect format") String email,
-        @NotBlank(message = "otp not blank") String otp,
-        @NotNull(message = "type not null") OtpType type) {
+        @NotBlank(message = "otp not blank") String otp) {
 }

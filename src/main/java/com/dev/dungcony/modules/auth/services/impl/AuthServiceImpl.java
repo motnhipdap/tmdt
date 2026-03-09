@@ -35,11 +35,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void register(RegisReq req) {
-        if (accRepository.existsByEmail(req.email()))
-            throw new EmailExistException();
-        if (accRepository.existsByUsername(req.username()))
-            throw new UsernameExistsException();
+    public AccountRes register(RegisReq req) {
+
+        Account acc = accRepository.findByEmail(req.email()).orElse(null);
+        if (acc != null) {
+            if (acc.getVerify())
+                throw new EmailExistException();
+        }
+
+        acc = accRepository.findByUsername(req.username()).orElse(null);
+        if (acc != null) {
+            if (acc.getVerify())
+                throw new UsernameExistsException();
+        }
 
         Account account = new Account();
         account.setEmail(req.email());
@@ -48,6 +56,14 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             accRepository.save(account);
+            return new AccountRes(
+                    account.getEmail(),
+                    account.getUsername(),
+                    account.getStatus(),
+                    account.getRole(),
+                    account.getVerify(),
+                    account.getCreatedAt()
+            );
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             // Race condition: another request registered with same email/username between
             // our check and save
@@ -66,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         if (acc == null || !passwordEncoder.matches(password, acc.getPassword()))
             throw new InvalidCredentialsException();
 
-        String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole().name());
+        String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole());
         String refreshToken = refreshTokenService.create(acc.getId(), deviceId);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
@@ -80,10 +96,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginRes refreshToken(String refreshToken) {
-
+    public LoginRes refreshToken(String refreshToken, Integer accId) {
         AccountRes acc = refreshTokenService.verify(refreshToken);
-        String token = jwtService.generateToken(acc.id(), acc.username(), acc.role());
+        String token = jwtService.generateToken(accId, acc.username(), acc.role());
 
         return new LoginRes(token, jwtConfig.getExpiration());
     }

@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.config.JwtConfig;
+import com.dev.dungcony.modules.auth.enums.Role;
 import com.dev.dungcony.modules.auth.services.interfaces.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +28,7 @@ public class JwtServiceImpl implements JwtService {
 
     // ========================= Generate =========================
     @Override
-    public String generateToken(int id, String username, String role) {
+    public String generateToken(int id, String username, Role role) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000L);
 
@@ -81,10 +82,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String extractRole(String token) {
+    public Role extractRole(String token) {
         try {
             Claims claims = extractAllClaims(token);
-            return claims.get("role", String.class);
+            String role = claims.get("role", String.class);
+            return Role.valueOf(role);
         } catch (Exception e) {
             log.error("Error extracting role from token: {}", e.getMessage());
             return null;

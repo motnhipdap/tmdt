@@ -1,7 +1,8 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpForgotPasswordReq;
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.helpers.Generate;
 import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
@@ -26,7 +27,50 @@ public class OtpServiceImpl implements OtpService {
     private final int OTP_LENGTH = 6;
 
     @Override
-    public void send(String email, OtpType type) {
+    public void sendOtpForgotPassword(String email) {
+        send(email, OtpType.FORGOT_PASSWORD);
+    }
+
+    @Override
+    public void sendOtpRegister(String email) {
+        send(email, OtpType.REGISTER);
+    }
+
+    @Override
+    public boolean verifyOtpRegister(VerifyOtpRegisterReq req) {
+        String value = otpRegisRepo.getValue(key(req.email(), OtpType.REGISTER));
+        log.info("value regis: {}", value);
+
+        if (value == null)
+            throw new OtpExpireException();
+        if (!passwordEncoder.matches(req.otp(), value))
+            return false;
+
+        log.info("otpregis verify success");
+        otpRegisRepo.delete(key(req.email(), OtpType.REGISTER));
+        return true;
+    }
+
+    @Override
+    public boolean verifyOtpForgotPassword(VerifyOtpForgotPasswordReq req) {
+        String value = otpRegisRepo.getValue(key(req.email(), OtpType.FORGOT_PASSWORD));
+        log.info("value forgot: {}", value);
+
+        if (value == null)
+            throw new OtpExpireException();
+        if (!passwordEncoder.matches(req.otp(), value))
+            return false;
+
+        log.info("otpforgot verify success");
+        otpRegisRepo.delete(key(req.email(), OtpType.FORGOT_PASSWORD));
+        return true;
+    }
+
+    private String key(String email, OtpType type) {
+        return type.getValue() + ":" + email + ":";
+    }
+
+    private void send(String email, OtpType type) {
         if (otpRegisRepo.getValue(key(email, type)) != null)
             otpRegisRepo.delete(key(email, type));
 
@@ -35,25 +79,5 @@ public class OtpServiceImpl implements OtpService {
         otpRegisRepo.cache(key(email, type), passwordEncoder.encode(otp));
     }
 
-
-    @Override
-    public boolean verifyOTP(VerifyOtpReq req) {
-        String value = otpRegisRepo.getValue(key(req.email(), req.type()));
-        log.info("value: {}", value);
-
-        if (value == null)
-            throw new OtpExpireException();
-        if (!passwordEncoder.matches(req.otp(), value))
-            return false;
-
-        log.info("otp verify success");
-        otpRegisRepo.delete(key(req.email(), req.type()));
-        return true;
-
-    }
-
-    private String key(String email, OtpType type) {
-        return type.getValue() + ":" + email + ":";
-    }
 
 }

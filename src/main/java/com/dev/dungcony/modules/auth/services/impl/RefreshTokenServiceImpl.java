@@ -76,11 +76,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(TokenValidException::new);
 
         return new AccountRes(
-                acc.getId(),
                 acc.getEmail(),
                 acc.getUsername(),
                 acc.getStatus(),
-                acc.getRole().name(),
+                acc.getRole(),
+                acc.getVerify(),
                 acc.getCreatedAt());
     }
 

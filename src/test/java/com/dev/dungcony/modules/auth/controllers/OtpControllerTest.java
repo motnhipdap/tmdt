@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.auth.controllers;
 import com.dev.dungcony.modules.auth.TestConfig;
 import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.dtos.req.SendOtpReq;
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
+import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpRegisterReq;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
 import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,8 +84,8 @@ class OtpControllerTest {
     @DisplayName("Verify OTP - Success")
     void verifyOtp_Success() throws Exception {
         // Arrange
-        VerifyOtpReq req = new VerifyOtpReq("test@example.com", "123456", OtpType.REGISTER);
-        when(otpService.verifyOTP(any(VerifyOtpReq.class))).thenReturn(true);
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq("test@example.com", "123456", OtpType.REGISTER);
+        when(otpService.verifyOTP(any(VerifyOtpRegisterReq.class))).thenReturn(true);
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/auth/verify-otp")
@@ -96,15 +96,15 @@ class OtpControllerTest {
                 .andExpect(jsonPath("$.message").value("otp verify res"))
                 .andExpect(jsonPath("$.data").value(true));
 
-        verify(otpService, times(1)).verifyOTP(any(VerifyOtpReq.class));
+        verify(otpService, times(1)).verifyOTP(any(VerifyOtpRegisterReq.class));
     }
 
     @Test
     @DisplayName("Verify OTP - Wrong OTP")
     void verifyOtp_WrongOtp() throws Exception {
         // Arrange
-        VerifyOtpReq req = new VerifyOtpReq("test@example.com", "654321", OtpType.REGISTER);
-        when(otpService.verifyOTP(any(VerifyOtpReq.class))).thenReturn(false);
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq("test@example.com", "654321", OtpType.REGISTER);
+        when(otpService.verifyOTP(any(VerifyOtpRegisterReq.class))).thenReturn(false);
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/auth/verify-otp")
@@ -114,15 +114,15 @@ class OtpControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value(false));
 
-        verify(otpService, times(1)).verifyOTP(any(VerifyOtpReq.class));
+        verify(otpService, times(1)).verifyOTP(any(VerifyOtpRegisterReq.class));
     }
 
     @Test
     @DisplayName("Verify OTP - Expired OTP")
     void verifyOtp_ExpiredOtp() throws Exception {
         // Arrange
-        VerifyOtpReq req = new VerifyOtpReq("test@example.com", "123456", OtpType.REGISTER);
-        when(otpService.verifyOTP(any(VerifyOtpReq.class))).thenThrow(new OtpExpireException());
+        VerifyOtpRegisterReq req = new VerifyOtpRegisterReq("test@example.com", "123456", OtpType.REGISTER);
+        when(otpService.verifyOTP(any(VerifyOtpRegisterReq.class))).thenThrow(new OtpExpireException());
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/auth/verify-otp")
@@ -130,7 +130,7 @@ class OtpControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isGone());
 
-        verify(otpService, times(1)).verifyOTP(any(VerifyOtpReq.class));
+        verify(otpService, times(1)).verifyOTP(any(VerifyOtpRegisterReq.class));
     }
 
     @Test
