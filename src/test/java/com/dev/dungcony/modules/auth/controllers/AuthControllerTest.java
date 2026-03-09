@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.modules.auth.TestConfig;
+import com.dev.dungcony.modules.auth.controllers.store.AuthController;
 import com.dev.dungcony.modules.auth.dtos.req.LoginReq;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
 import com.dev.dungcony.modules.auth.dtos.res.LoginRes;

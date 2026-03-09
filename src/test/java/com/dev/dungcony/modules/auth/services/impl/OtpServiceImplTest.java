@@ -2,7 +2,6 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
-import com.dev.dungcony.modules.auth.repositories.OtpRegisRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +30,7 @@ class OtpServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private OtpServiceImpl otpService;
+    private OtpImpl otpService;
 
     private String testEmail;
     private OtpType testOtpType;

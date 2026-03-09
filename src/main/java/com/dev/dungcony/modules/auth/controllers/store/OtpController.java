@@ -1,8 +1,7 @@
-package com.dev.dungcony.modules.auth.controllers;
+package com.dev.dungcony.modules.auth.controllers.store;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.auth.dtos.req.SendOtpReq;
-import com.dev.dungcony.modules.auth.services.interfaces.OtpService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

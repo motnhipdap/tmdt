@@ -8,8 +8,8 @@ import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.helpers.Generate;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.repositories.EmailChangeRedisRepository;
-import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
+import com.dev.dungcony.modules.auth.services.interfaces.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +26,7 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final EmailChangeRedisRepository redisRepo;
     private final EmailService emailService;
+    private final RedisService redisService;
     private final Generate generate;
 
     private final int OTP_LENGTH = 6;
@@ -46,29 +47,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // ========================= Check =========================
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return accRepo.existsByEmail(email);
-    }
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return accRepo.existsByUsername(username);
-    }
-
-    // ========================= Password =========================
-    @Override
-    @Transactional
-    public boolean updatePassword(int id, String oldPassword, String newPassword) {
-        Account acc = accRepo.findById(id).orElseThrow(TokenValidException::new);
-        if (!passwordEncoder.matches(oldPassword, acc.getPassword()))
-            return false;
-        acc.setPassword(passwordEncoder.encode(newPassword));
-        accRepo.save(acc);
-        log.info("Password updated for account: {}", acc.getUsername());
-        return true;
-    }
 
     // ========================= Email Change =========================
 
@@ -145,10 +123,9 @@ public class AccountServiceImpl implements AccountService {
         redisRepo.delete(userId);
     }
 
-
     @Override
     public void verifyEmailChange(String email) {
-        
+        redisService.
     }
 
     @Override

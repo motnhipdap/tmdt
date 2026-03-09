@@ -34,4 +34,9 @@ public class GenerateImpl implements Generate {
         return sb.toString();
     }
 
+    @Override
+    public String key(String email, String type) {
+        return type + ":" + email + ":";
+    }
+
 }

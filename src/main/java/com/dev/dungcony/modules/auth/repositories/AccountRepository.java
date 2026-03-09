@@ -36,4 +36,15 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             where a.email = :email
             """)
     int verifyEmail(@Param("email") String email);
+
+    @Modifying
+    @Query("""
+            update Account a
+            set a.verify = :is_verify
+            where a.id = :acc_id
+            """)
+    int updateVerify(
+            @Param("acc_id") Integer accid,
+            @Param("is_verify") boolean isVerify);
+
 }

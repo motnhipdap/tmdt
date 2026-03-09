@@ -50,7 +50,7 @@ class AuthServiceImplTest {
     private RefreshTokenService refreshTokenService;
 
     @InjectMocks
-    private AuthServiceImpl authService;
+    private AuthImpl authService;
 
     private Account testAccount;
     private RegisReq testRegisReq;

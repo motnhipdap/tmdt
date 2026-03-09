@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.modules.auth.TestConfig;
-import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
+import com.dev.dungcony.modules.auth.controllers.store.EmailUpdateController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,8 +1,7 @@
-package com.dev.dungcony.modules.auth.controllers;
+package com.dev.dungcony.modules.auth.controllers.store;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.auth.services.interfaces.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

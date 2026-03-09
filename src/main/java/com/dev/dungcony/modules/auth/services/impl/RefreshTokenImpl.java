@@ -5,6 +5,7 @@ import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
+import com.dev.dungcony.modules.auth.services.interfaces.RedisService;
 import com.dev.dungcony.modules.auth.services.interfaces.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +20,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RefreshTokenServiceImpl implements RefreshTokenService {
+public class RefreshTokenImpl implements RefreshTokenService {
 
     private final StringRedisTemplate redis;
     private final AccountRepository accountRepository;
     private final JwtConfig jwtConfig;
 
     @Override
-    public String create(int userId, String deviceId) {
+    public String create(int accId, String deviceId) {
         long ttl = jwtConfig.getRefreshExpiration();
 
         // revoke token cũ của device (nếu có)
         String oldToken = redis.opsForValue()
-                .get(key(userId, deviceId));
+                .get(key(accId, deviceId));
 
         if (oldToken != null) {
             redis.delete("refresh:" + oldToken);
@@ -39,26 +40,26 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         String token = UUID.randomUUID().toString();
 
-        // token -> user
+         token -> user
         redis.opsForValue().set(
                 "refresh:" + token,
-                String.valueOf(userId),
+                String.valueOf(accId),
                 ttl,
                 TimeUnit.SECONDS);
 
         // device -> token
         redis.opsForValue().set(
-                key(userId, deviceId),
+                key(accId, deviceId),
                 token,
                 ttl,
                 TimeUnit.SECONDS);
 
         // user -> device
         redis.opsForSet().add(
-                "user:" + userId + ":devices",
+                "user:" + accId + ":devices",
                 deviceId);
         redis.expire(
-                "user:" + userId + ":devices",
+                "user:" + accId + ":devices",
                 ttl,
                 TimeUnit.SECONDS);
 
@@ -67,12 +68,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public AccountRes verify(String refreshToken) {
-        String userId = redis.opsForValue().get("refresh:" + refreshToken);
+        String accId = redis.opsForValue().get("refresh:" + refreshToken);
 
-        if (userId == null)
+        if (accId == null)
             throw new TokenValidException();
 
-        Account acc = accountRepository.findById(Integer.parseInt(userId))
+        Account acc = accountRepository.findById(Integer.parseInt(accId))
                 .orElseThrow(TokenValidException::new);
 
         return new AccountRes(
@@ -86,41 +87,41 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void revoke(String refreshToken, String deviceId) {
-        String userId = redis.opsForValue().get("refresh:" + refreshToken);
-        if (userId == null)
+        String accId = redis.opsForValue().get("refresh:" + refreshToken);
+        if (accId == null)
             return;
 
         redis.delete("refresh:" + refreshToken);
-        redis.delete(key(Integer.parseInt(userId), deviceId));
+        redis.delete(key(Integer.parseInt(accId), deviceId));
         redis.opsForSet().remove(
-                "user:" + userId + ":devices",
+                "user:" + accId + ":devices",
                 deviceId);
     }
 
     @Override
-    public void revokeAll(int userId) {
-        Set<String> devices = redis.opsForSet().members("user:" + userId + ":devices");
+    public void revokeAll(int accId) {
+        Set<String> devices = redis.opsForSet().members("user:" + accId + ":devices");
 
         if (devices != null) {
             for (String deviceId : devices) {
                 String token = redis.opsForValue()
-                        .get(key(userId, deviceId));
+                        .get(key(accId, deviceId));
 
                 if (token != null) {
                     redis.delete("refresh:" + token);
                 }
-                redis.delete(key(userId, deviceId));
+                redis.delete(key(accId, deviceId));
             }
         }
 
-        redis.delete("user:" + userId + ":devices");
+        redis.delete("user:" + accId + ":devices");
     }
 
-    private String key(int userId, String deviceId) {
-        return "user:" + userId + ":device:" + deviceId + ":refresh";
+    private String key(int accId, String deviceId) {
+        return "user:" + accId + ":device:" + deviceId + ":refresh";
     }
 }
 
-// refresh:{token} -> userId
-// user:{userId}:devices -> SET(deviceId)
-// user:{userId}:device:{deviceId}:refresh -> token
+// refresh:{token} -> accId
+// user:{accId}:devices -> SET(deviceId)
+// user:{accId}:device:{deviceId}:refresh -> token
