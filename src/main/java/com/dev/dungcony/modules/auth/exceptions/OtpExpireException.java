@@ -1,11 +1,11 @@
 package com.dev.dungcony.modules.auth.exceptions;
 
 import com.dev.dungcony.commons.exceptions.AppException;
+import com.dev.dungcony.commons.exceptions.UnauthorException;
 import org.springframework.http.HttpStatus;
 
-public class OtpExpireException extends AppException {
-
+public class OtpExpireException extends UnauthorException {
     public OtpExpireException() {
-        super(HttpStatus.GONE, "410", "Otp đã hết hạn");
+        super("otp-exp", "Otp đã hết hạn");
     }
 }

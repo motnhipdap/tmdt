@@ -1,12 +1,13 @@
 package com.dev.dungcony.modules.auth.exceptions;
 
 import com.dev.dungcony.commons.exceptions.AppException;
+import com.dev.dungcony.commons.exceptions.UnauthorException;
 import org.springframework.http.HttpStatus;
 
-public class TokenExpireException extends AppException {
+public class TokenExpireException extends UnauthorException {
 
     public TokenExpireException() {
-        super(HttpStatus.UNAUTHORIZED, "auth_token_expire", "time limit");
+        super("auth_token_expire", "time limit");
     }
 
 }

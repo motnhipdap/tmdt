@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/v1/api/auth/**",
+                                "/v1/api/account/check/exists-email",
+                                "/v1/api/account/check/exists-email",
                                 "/v1/api/test/**",
                                 "/",
                                 "/error",
@@ -57,6 +59,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 // Actuator health check
                                 "/actuator/health"
+
                         ).permitAll()
                         .requestMatchers("/v1/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/v1/api/user/**").authenticated()

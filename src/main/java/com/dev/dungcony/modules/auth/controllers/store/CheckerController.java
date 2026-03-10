@@ -3,8 +3,9 @@ package com.dev.dungcony.modules.auth.controllers.store;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.auth.services.interfaces.AccountCheckValidService;
+import com.dev.dungcony.modules.auth.services.interfaces.AccountCheckService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,22 +16,23 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/auth/check")
+@RequestMapping("v1/api/account/check")
+@Tag(name = "check", description = "Các API kiểm tra thông tin tài khoản như email, username, password")
 public class CheckerController {
-    private final AccountCheckValidService accountCheckValidService;
+    private final AccountCheckService accountCheckService;
 
     @Operation(summary = "Kiểm tra email đã tồn tại chưa")
     @GetMapping("/exists-email")
     public ResponseEntity<ApiRes<Boolean>> checkEmail(@Valid @RequestParam String email) {
         return ResponseEntity.ok()
-                .body(ApiRes.success("check email", accountCheckValidService.existsByEmail(email)));
+                .body(ApiRes.success("check email", accountCheckService.existsByEmail(email)));
     }
 
     @Operation(summary = "Kiểm tra username đã tồn tại chưa")
     @GetMapping("/exists-username")
     public ResponseEntity<ApiRes<Boolean>> checkUsername(@Valid @RequestParam String username) {
         return ResponseEntity.ok()
-                .body(ApiRes.success("check username", accountCheckValidService.existsByUsername(username)));
+                .body(ApiRes.success("check username", accountCheckService.existsByUsername(username)));
     }
 
     @PostMapping("/password")
@@ -38,10 +40,9 @@ public class CheckerController {
             @AuthenticationPrincipal AccountDetails detail,
             @RequestBody String password) {
 
-        accountCheckValidService.checkPassword(detail.getId(), password);
+        accountCheckService.checkPassword(detail.getId(), password);
 
         return ResponseEntity.ok()
                 .body(ApiRes.success("password correct"));
     }
-
 }

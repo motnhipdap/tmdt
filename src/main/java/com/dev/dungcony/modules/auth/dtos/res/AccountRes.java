@@ -8,13 +8,8 @@ import java.time.Instant;
 public record AccountRes(
         String email,
         String username,
-        Status status,
-        Role role,
         Boolean verify,
-        Instant createdAt) {
-
-    @Override
-    public String toString() {
-        return email + " " + username + " " + status + " " + createdAt;
-    }
+        Role role,
+        Status status
+) {
 }

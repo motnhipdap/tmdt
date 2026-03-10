@@ -46,5 +46,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     int updateVerify(
             @Param("acc_id") Integer accid,
             @Param("is_verify") boolean isVerify);
-
+    
 }

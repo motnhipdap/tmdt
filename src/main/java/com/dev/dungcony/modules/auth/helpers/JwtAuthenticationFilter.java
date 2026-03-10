@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.auth.helpers;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
+import com.dev.dungcony.modules.auth.enums.Role;
 import com.dev.dungcony.modules.auth.services.interfaces.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -64,7 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 5. Extract thông tin từ token
             String username = jwtService.extractUsername(token);
             Integer userId = jwtService.extractUserId(token);
-            String role = jwtService.extractRole(token);
+            String email = jwtService.extractEmail(token);
+            Role role = jwtService.extractRole(token);
 
             logger.debug("Extracted from token - username: {}, userId: {}, role: {}", username, userId, role);
 
@@ -73,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            AccountDetails accountDetails = new AccountDetails(userId, username, role);
+            AccountDetails accountDetails = new AccountDetails(userId, username, email, role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     accountDetails,

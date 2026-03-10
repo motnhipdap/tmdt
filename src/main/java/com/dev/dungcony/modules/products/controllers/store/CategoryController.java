@@ -15,39 +15,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/public/category")
+@RequestMapping("/v1/api/public/category")
 @Tag(name = "category", description = "public API để lấy thông tin danh mục")
 public class CategoryController {
 
-        private final CategoryGetService service;
+    private final CategoryGetService service;
 
-        @Operation(summary = "lấy toàn bộ danh mục", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
-        @GetMapping("/get-all")
-        public ResponseEntity<ApiRes<?>> getAll() {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "list category",
-                                                service.getAll()));
-        }
+    @Operation(summary = "lấy toàn bộ danh mục", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
+    @GetMapping("/get-all")
+    public ResponseEntity<ApiRes<?>> getAll() {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "list category",
+                        service.getAll()));
+    }
 
-        @Operation(summary = "lấy danh sách danh mục con", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
-        @GetMapping("/get-children/{code}")
-        public ResponseEntity<ApiRes<?>> getAllChildren(
-                        @PathVariable String code) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "list category",
-                                                service.getAllChildren(code)));
-        }
+    @Operation(summary = "lấy danh sách danh mục con", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
+    @GetMapping("/get-children/{code}")
+    public ResponseEntity<ApiRes<?>> getAllChildren(
+            @PathVariable String code) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "list category",
+                        service.getAllChildren(code)));
+    }
 
-        @Operation(summary = "lấy thông tin danh mục", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
-        @GetMapping("/get/{code}")
-        public ResponseEntity<ApiRes<?>> getByCode(
-                        @PathVariable String code) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "category",
-                                                service.getByCode(code)));
-        }
+    @Operation(summary = "lấy thông tin danh mục", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
+    @GetMapping("/get/{code}")
+    public ResponseEntity<ApiRes<?>> getByCode(
+            @PathVariable String code) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "category",
+                        service.getByCode(code)));
+    }
 
 }

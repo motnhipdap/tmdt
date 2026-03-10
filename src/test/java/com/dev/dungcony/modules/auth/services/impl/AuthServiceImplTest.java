@@ -3,11 +3,10 @@ package com.dev.dungcony.modules.auth.services.impl;
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
 import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
-import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
 import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
-import com.dev.dungcony.modules.auth.exceptions.InvalidCredentialsException;
+import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.exceptions.UsernameExistsException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.JwtService;
@@ -167,7 +166,7 @@ class AuthServiceImplTest {
         when(accountRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(InvalidCredentialsException.class, () -> authService.login(username, password));
+        assertThrows(InvalidUsernameOrPassword.class, () -> authService.login(username, password));
         verify(accountRepository, times(1)).findByUsername(username);
         verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
@@ -183,7 +182,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.matches(password, testAccount.getPassword())).thenReturn(false);
 
         // Act & Assert
-        assertThrows(InvalidCredentialsException.class, () -> authService.login(username, password));
+        assertThrows(InvalidUsernameOrPassword.class, () -> authService.login(username, password));
         verify(accountRepository, times(1)).findByUsername(username);
         verify(passwordEncoder, times(1)).matches(password, testAccount.getPassword());
         verify(jwtService, never()).generateToken(anyInt(), anyString(), anyString());

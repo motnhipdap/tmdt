@@ -7,8 +7,9 @@ public record AccDto(
         int id,
         String email,
         String username,
-        Role role,
+        String password,
         Boolean verified,
+        Role role,
         Status status
 ) {
 }

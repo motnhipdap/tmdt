@@ -1,10 +1,10 @@
 package com.dev.dungcony.modules.auth.exceptions;
 
-import org.springframework.http.HttpStatus;
+import com.dev.dungcony.commons.exceptions.ConflictException;
 
-public class EmailExistException extends AuthException {
+public class EmailExistException extends ConflictException {
 
     public EmailExistException() {
-        super(HttpStatus.CONFLICT, "Auth_conflict_email", "Email already exists");
+        super("Conflict_email", "Email already exists");
     }
 }

@@ -1,9 +1,9 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
 public interface EmailService {
-    void send(String email, String subject, String body);
+    void sendNewPassword(String email, String newPassword);
 
-    String buildOtpContent(String otp);
+    void sendOtpRegis(String email, String otp);
 
-    String buildResetPassContent(String newPas);
+    void sendOtpChangeEmail(String email, String otp);
 }

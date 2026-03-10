@@ -1,20 +1,14 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-import com.dev.dungcony.commons.exceptions.ConflictException;
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 import com.dev.dungcony.modules.auth.dtos.AccDto;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
-import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
-import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
+import com.dev.dungcony.modules.auth.dtos.res.AcessTokenRes;
 import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
-import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
-import com.dev.dungcony.modules.auth.exceptions.InvalidCredentialsException;
 import com.dev.dungcony.modules.auth.exceptions.UsernameExistsException;
-import com.dev.dungcony.modules.auth.repositories.AccountRepository;
-import com.dev.dungcony.modules.auth.services.interfaces.AuthService;
-import com.dev.dungcony.modules.auth.services.interfaces.JwtService;
-import com.dev.dungcony.modules.auth.services.interfaces.RefreshTokenService;
+import com.dev.dungcony.modules.auth.helpers.Generate;
+import com.dev.dungcony.modules.auth.services.interfaces.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,63 +22,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthImpl implements AuthService {
 
-    private final AccountRepository accRepository;
+    private final AccountGetService accGetService;
+    private final AccountCheckService accountCheckService;
+    private final AccountCreateService accountCreateService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JwtConfig jwtConfig;
     private final RefreshTokenService refreshTokenService;
 
+    private final Generate generate;
+
     @Transactional
     @Override
-    public AccountRes register(RegisReq req) {
+    public void register(RegisReq req) {
+        if (accountCheckService.existsByEmail(req.email()))
+            throw new EmailExistException();
+        if (accountCheckService.existsByUsername(req.username()))
+            throw new UsernameExistsException();
 
-        Account acc = accRepository.findByEmail(req.email()).orElse(null);
-        if (acc != null) {
-            if (acc.getVerify())
-                throw new EmailExistException();
-        }
-
-        acc = accRepository.findByUsername(req.username()).orElse(null);
-        if (acc != null) {
-            if (acc.getVerify())
-                throw new UsernameExistsException();
-        }
-
-        Account account = new Account();
-        account.setEmail(req.email());
-        account.setUsername(req.username());
-        account.setPassword(passwordEncoder.encode(req.password()));
-
-        try {
-            accRepository.save(account);
-            return new AccountRes(
-                    account.getEmail(),
-                    account.getUsername(),
-                    account.getStatus(),
-                    account.getRole(),
-                    account.getVerify(),
-                    account.getCreatedAt()
-            );
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            // Race condition: another request registered with same email/username between
-            // our check and save
-            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
-            if (msg.contains("username"))
-                throw new UsernameExistsException();
-            throw new ConflictException("email or username already taken");
-        }
+        accountCreateService.createAccount(req.email(), req.username(), passwordEncoder.encode(req.password()));
     }
 
     @Override
     public LoginResult login(String username, String password, String deviceId) {
 
-        Account acc = accRepository.findByUsername(username).orElse(null);
+        AccDto acc = accGetService.getByUsername(username);
 
-        if (acc == null || !passwordEncoder.matches(password, acc.getPassword()))
-            throw new InvalidCredentialsException();
-
-        String token = jwtService.generateToken(acc.getId(), acc.getUsername(), acc.getRole());
-        String refreshToken = refreshTokenService.create(acc.getId(), deviceId);
+        String acessToken = jwtService.generateToken(acc.id(), acc.username(), acc.role());
+        String refreshToken = refreshTokenService.create(acc.id(), deviceId);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -93,15 +58,15 @@ public class AuthImpl implements AuthService {
                 .maxAge(jwtConfig.getRefreshExpiration())
                 .build();
 
-        return new LoginResult(token, JwtConfig.headerPrefix, jwtConfig.getExpiration(), refreshCookie.toString());
+        return new LoginResult(acessToken, JwtConfig.headerPrefix, jwtConfig.getExpiration(), refreshCookie.toString());
     }
 
     @Override
-    public LoginRes refreshToken(String refreshToken) {
+    public AcessTokenRes refreshToken(String refreshToken) {
         AccDto acc = refreshTokenService.verify(refreshToken);
         String token = jwtService.generateToken(acc.id(), acc.username(), acc.role());
 
-        return new LoginRes(token, jwtConfig.getExpiration());
+        return new AcessTokenRes(token, jwtConfig.getExpiration());
     }
 
     @Override

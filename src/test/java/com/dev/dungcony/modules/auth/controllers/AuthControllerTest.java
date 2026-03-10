@@ -4,10 +4,9 @@ import com.dev.dungcony.modules.auth.TestConfig;
 import com.dev.dungcony.modules.auth.controllers.store.AuthController;
 import com.dev.dungcony.modules.auth.dtos.req.LoginReq;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
-import com.dev.dungcony.modules.auth.dtos.res.LoginRes;
 import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
-import com.dev.dungcony.modules.auth.exceptions.InvalidCredentialsException;
+import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.services.interfaces.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +86,7 @@ class AuthControllerTest {
     @DisplayName("Login - Invalid Credentials")
     void login_InvalidCredentials() throws Exception {
         // Arrange
-        when(authService.login(anyString(), anyString())).thenThrow(new InvalidCredentialsException());
+        when(authService.login(anyString(), anyString())).thenThrow(new InvalidUsernameOrPassword());
 
         // Act & Assert
         mockMvc.perform(post("/v1/api/auth/login")

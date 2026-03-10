@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
-public interface AccountCheckValidService {
+public interface AccountCheckService {
     boolean existsByEmail(String email);
 
     boolean existsByUsername(String username);

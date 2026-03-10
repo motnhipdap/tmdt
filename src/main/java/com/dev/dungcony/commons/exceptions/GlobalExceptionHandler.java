@@ -1,8 +1,7 @@
 package com.dev.dungcony.commons.exceptions;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,11 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiRes<Void>> handleAppException(AppException e) {
         return ResponseEntity
@@ -77,14 +74,14 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<ApiRes<Void>> handleVersionException(Exception e) {
+    public ResponseEntity<ApiRes<Void>> handleVersionException() {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(ApiRes.error("was updated by another user, please reload"));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiRes<Void>> handleException(Exception e) {
+    public ResponseEntity<ApiRes<Void>> handleException() {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiRes.error("Server Error"));

@@ -2,7 +2,6 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 import com.dev.dungcony.modules.auth.dtos.AccDto;
-import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
@@ -85,8 +84,9 @@ public class RefreshTokenImpl implements RefreshTokenService {
                 acc.getId(),
                 acc.getEmail(),
                 acc.getUsername(),
-                acc.getRole(),
+                acc.getPassword(),
                 acc.getVerify(),
+                acc.getRole(),
                 acc.getStatus()
         );
     }

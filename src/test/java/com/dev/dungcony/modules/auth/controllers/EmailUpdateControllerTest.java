@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.auth.controllers;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.modules.auth.TestConfig;
-import com.dev.dungcony.modules.auth.controllers.store.EmailUpdateController;
+import com.dev.dungcony.modules.auth.controllers.store.UpdateController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = EmailUpdateController.class)
+@WebMvcTest(controllers = UpdateController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(TestConfig.class)
 @DisplayName("EmailUpdateController Unit Tests")
