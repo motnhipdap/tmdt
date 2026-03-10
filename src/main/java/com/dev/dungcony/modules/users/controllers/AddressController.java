@@ -4,12 +4,14 @@ import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.users.dtos.AddressDto;
 import com.dev.dungcony.modules.users.dtos.req.AddressAddReq;
 import com.dev.dungcony.modules.users.services.interfaces.AddressService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Users")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -37,7 +39,7 @@ public class AddressController {
     public ResponseEntity<ApiRes<Void>> deleteAddress(
             @Valid @RequestParam Integer id
     ) {
-        
+
         addressService.deleteAddress(id);
 
         return ResponseEntity.ok()

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/public/auth/regis")
-@Tag(name = "2. Đăng ký", description = "Đăng ký tài khoản và xác thực OTP qua email")
+@Tag(name = "Auth")
 public class RegisController {
 
     private final AuthService authService;

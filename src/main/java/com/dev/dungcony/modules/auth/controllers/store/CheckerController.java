@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/account/check")
-@Tag(name = "5. Kiểm tra tài khoản", description = "Kiểm tra email, username đã tồn tại chưa — dùng khi điền form đăng ký realtime")
+@Tag(name = "Auth")
 public class CheckerController {
 
     private final AccountCheckService accountCheckService;

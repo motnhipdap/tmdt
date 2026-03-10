@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("v1/api/admin/category")
-@Tag(name = "category", description = "quản lý danh mục")
+@Tag(name = "Products")
 public class AdminCategoryController {
     private final CategoryCommandService categoryCommandService;
 

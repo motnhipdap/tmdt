@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/public/auth/forgot-password")
-@Tag(name = "3. Quên mật khẩu", description = "Lấy lại mật khẩu qua email")
+@Tag(name = "Auth")
 public class ForgotPasswordController {
 
     private final ForgotPasswordService forgotPasswordService;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/public/category")
-@Tag(name = "category", description = "public API để lấy thông tin danh mục")
+@Tag(name = "Products")
 public class CategoryController {
 
     private final CategoryGetService service;

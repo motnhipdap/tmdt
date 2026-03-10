@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/account/update")
-@Tag(name = "4. Cập nhật tài khoản", description = "Cập nhật email và mật khẩu — Yêu cầu đăng nhập (Bearer token)")
+@Tag(name = "Auth")
 @SecurityRequirement(name = "bearerAuth")
 public class UpdateController {
 

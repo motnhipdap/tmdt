@@ -13,33 +13,33 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("v1/api/admin/product")
-@Tag(name = "Product", description = "Quản lý sản phẩm")
+@Tag(name = "Products")
 public class AdminProductController {
 
-        private final ProductCommandService productCommandService;
+    private final ProductCommandService productCommandService;
 
-        @PostMapping("/product/add-new")
-        public ResponseEntity<ApiRes<?>> addNew(
-                        @RequestBody ProductAddReq req) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("Add new product successfully",
-                                                productCommandService.addNew(req)));
-        }
+    @PostMapping("/product/add-new")
+    public ResponseEntity<ApiRes<?>> addNew(
+            @RequestBody ProductAddReq req) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Add new product successfully",
+                        productCommandService.addNew(req)));
+    }
 
-        @PutMapping("/product/update")
-        public ResponseEntity<ApiRes<?>> update(
-                        @RequestBody ProductUpdateReq req) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("Update product successfully", productCommandService.update(req)));
-        }
+    @PutMapping("/product/update")
+    public ResponseEntity<ApiRes<?>> update(
+            @RequestBody ProductUpdateReq req) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Update product successfully", productCommandService.update(req)));
+    }
 
-        @DeleteMapping("/product/{code}")
-        public ResponseEntity<Void> delete(
-                        @PathVariable String code) {
-                productCommandService.delete(code);
-                return ResponseEntity
-                                .ok()
-                                .build();
-        }
+    @DeleteMapping("/product/{code}")
+    public ResponseEntity<Void> delete(
+            @PathVariable String code) {
+        productCommandService.delete(code);
+        return ResponseEntity
+                .ok()
+                .build();
+    }
 
 }

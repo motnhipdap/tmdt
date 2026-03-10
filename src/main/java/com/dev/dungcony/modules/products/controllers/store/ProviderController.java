@@ -15,34 +15,34 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("v1/api/public/provider")
-@Tag(name = "provider", description = "public API để lấy thông tin nhà cung cấp")
+@Tag(name = "Products")
 public class ProviderController {
-        private final ProviderGetService providerGetService;
+    private final ProviderGetService providerGetService;
 
-        @GetMapping("/get-by-code/{code}")
-        public ResponseEntity<ApiRes<?>> getByCode(
-                        @PathVariable String code) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "provider",
-                                                providerGetService.getByCode(code)));
-        }
+    @GetMapping("/get-by-code/{code}")
+    public ResponseEntity<ApiRes<?>> getByCode(
+            @PathVariable String code) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "provider",
+                        providerGetService.getByCode(code)));
+    }
 
-        @GetMapping("/get-by-name/{name}")
-        public ResponseEntity<ApiRes<?>> getByName(
-                        @PathVariable String name) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "provider",
-                                                providerGetService.getByName(name)));
-        }
+    @GetMapping("/get-by-name/{name}")
+    public ResponseEntity<ApiRes<?>> getByName(
+            @PathVariable String name) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "provider",
+                        providerGetService.getByName(name)));
+    }
 
-        @GetMapping("/gets")
-        public ResponseEntity<ApiRes<?>> gets() {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success(
-                                                "provider",
-                                                providerGetService.getAll()));
-        }
+    @GetMapping("/gets")
+    public ResponseEntity<ApiRes<?>> gets() {
+        return ResponseEntity.ok()
+                .body(ApiRes.success(
+                        "provider",
+                        providerGetService.getAll()));
+    }
 
 }

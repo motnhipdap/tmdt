@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("v1/api/admin/provider")
-@Tag(name = "provider", description = "Quản lý nhà cung cấp")
+@Tag(name = "Products")
 public class AdminProviderController {
 
     private final ProviderCommandService providerCommandService;

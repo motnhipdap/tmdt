@@ -4,6 +4,7 @@ import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,53 +15,54 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+@Tag(name = "Promotions")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/api/admin/promotions")
 public class AdminController {
 
-        private final PromotionService promotionService;
+    private final PromotionService promotionService;
 
-        @GetMapping("/get-all")
-        public ResponseEntity<ApiRes<?>> getAll(
-                        @ParameterObject Pageable pageable) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("list promotion", promotionService.getAll(pageable)));
-        }
+    @GetMapping("/get-all")
+    public ResponseEntity<ApiRes<?>> getAll(
+            @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("list promotion", promotionService.getAll(pageable)));
+    }
 
-        @PostMapping("/add-new")
-        public ResponseEntity<Void> addNew(
-                        @Valid @RequestBody PromoAddReq req) {
-                String promotionCode = promotionService.addNew(req);
-                URI uri = URI.create("/v1/api/promotions/code/" + promotionCode);
+    @PostMapping("/add-new")
+    public ResponseEntity<Void> addNew(
+            @Valid @RequestBody PromoAddReq req) {
+        String promotionCode = promotionService.addNew(req);
+        URI uri = URI.create("/v1/api/promotions/code/" + promotionCode);
 
-                return ResponseEntity
-                                .created(uri)
-                                .build();
-        }
+        return ResponseEntity
+                .created(uri)
+                .build();
+    }
 
-        @PutMapping("/update")
-        public ResponseEntity<ApiRes<?>> update(
-                        @Valid @RequestBody PromoUpdateReq req) {
-                promotionService.update(req);
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("Promotion updated successfully", null));
-        }
+    @PutMapping("/update")
+    public ResponseEntity<ApiRes<?>> update(
+            @Valid @RequestBody PromoUpdateReq req) {
+        promotionService.update(req);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Promotion updated successfully", null));
+    }
 
-        @DeleteMapping("/{code}")
-        public ResponseEntity<Void> deleteByCode(
-                        @PathVariable String code) {
-                promotionService.delete(code);
-                return ResponseEntity.noContent().build();
-        }
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteByCode(
+            @PathVariable String code) {
+        promotionService.delete(code);
+        return ResponseEntity.noContent().build();
+    }
 
-        @PatchMapping("/{code}/soft-delete")
-        public ResponseEntity<ApiRes<?>> softDeleteByCode(
-                        @PathVariable String code) {
-                promotionService.softDelete(code);
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("Promotion soft-deleted successfully", null));
-        }
+    @PatchMapping("/{code}/soft-delete")
+    public ResponseEntity<ApiRes<?>> softDeleteByCode(
+            @PathVariable String code) {
+        promotionService.softDelete(code);
+        return ResponseEntity.ok()
+                .body(ApiRes.success("Promotion soft-deleted successfully", null));
+    }
 
 }
