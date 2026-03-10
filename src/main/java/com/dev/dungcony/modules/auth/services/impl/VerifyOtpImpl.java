@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpEmailChangeReq;
 import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.enums.OtpType;
 import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
@@ -37,18 +36,18 @@ public class VerifyOtpImpl implements VerifyOtpService {
     }
 
     @Override
-    public void verifyOtpEmailChange(int accid, VerifyOtpEmailChangeReq req) {
-        String value = redisService.getValue(generate.key(req.username(), OtpType.CHANGE_EMAIL.getValue()));
+    public void verifyOtpEmailChange(int accid, String username, String newEmail, String otp) {
+        String value = redisService.getValue(generate.key(username, OtpType.CHANGE_EMAIL.getValue()));
         log.info("value emailchange: {}", value);
 
         if (value == null)
             throw new OtpExpireException();
-        if (!passwordEncoder.matches(req.otp(), value))
+        if (!passwordEncoder.matches(otp, value))
             throw new OtpIsInvalidException();
 
         log.info("otpemailchange verify success");
 
-        accountUpdateService.updateEmail(accid, req.newEmail());
-        redisService.delete(generate.key(req.username(), OtpType.CHANGE_EMAIL.getValue()));
+        accountUpdateService.updateEmail(accid, newEmail);
+        redisService.delete(generate.key(username, OtpType.CHANGE_EMAIL.getValue()));
     }
 }

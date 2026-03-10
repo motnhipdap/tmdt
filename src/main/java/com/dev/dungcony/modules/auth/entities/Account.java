@@ -42,7 +42,7 @@ public class Account extends BaseEntity {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "verify", nullable = false, unique = true)
+    @Column(name = "verify", nullable = false)
     private Boolean verify = false;
 
     @Enumerated(EnumType.STRING)

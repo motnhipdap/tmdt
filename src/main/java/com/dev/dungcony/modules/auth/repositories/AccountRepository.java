@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.auth.repositories;
 
 import com.dev.dungcony.modules.auth.entities.Account;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,11 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      */
     boolean existsByEmail(String email);
 
-    /**
-     * Kiểm tra username đã tồn tại
-     */
-    boolean existsByUsername(String username);
-
     @Modifying
     @Query("""
             update Account a
@@ -46,5 +42,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     int updateVerify(
             @Param("acc_id") Integer accid,
             @Param("is_verify") boolean isVerify);
-    
+
 }

@@ -1,9 +1,9 @@
 package com.dev.dungcony.modules.auth.services.interfaces;
 
 public interface AccountCheckService {
-    boolean existsByEmail(String email);
+    void existsByEmail(String email);
 
-    boolean existsByUsername(String username);
+    void existsByUsername(String username);
 
     void emailAndUsernameIsTrue(int accId, String email, String username);
 

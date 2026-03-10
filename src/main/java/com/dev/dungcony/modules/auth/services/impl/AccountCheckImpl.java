@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 
 import com.dev.dungcony.modules.auth.entities.Account;
+import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
 import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.exceptions.TokenExpireException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
@@ -19,13 +20,26 @@ public class AccountCheckImpl implements AccountCheckService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public boolean existsByEmail(String email) {
-        return accRepo.existsByEmail(email);
+    public void existsByEmail(String email) {
+        Account acc = accRepo.findByEmail(email).orElse(null);
+        if (acc == null)
+            throw new EmailExistException();
+        else {
+            if (acc.getVerify() == false)
+                accRepo.delete(acc);
+        }
     }
 
     @Override
-    public boolean existsByUsername(String username) {
-        return accRepo.existsByUsername(username);
+    public void existsByUsername(String username) {
+
+        Account acc = accRepo.findByUsername(username).orElse(null);
+        if (acc == null)
+            throw new EmailExistException();
+        else {
+            if (acc.getVerify() == false)
+                accRepo.delete(acc);
+        }
     }
 
     @Override

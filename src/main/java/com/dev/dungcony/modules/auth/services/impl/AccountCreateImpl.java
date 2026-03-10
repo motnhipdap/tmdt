@@ -5,7 +5,6 @@ import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountCreateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class AccountCreateImpl implements AccountCreateService {
 
     private final AccountRepository accRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createAccount(String email, String username, String password) {
@@ -22,7 +20,7 @@ public class AccountCreateImpl implements AccountCreateService {
         Account account = new Account();
         account.setEmail(email);
         account.setUsername(username);
-        account.setPassword(passwordEncoder.encode(password));
+        account.setPassword(password); // password đã được encode từ caller
 
         accRepository.save(account);
     }

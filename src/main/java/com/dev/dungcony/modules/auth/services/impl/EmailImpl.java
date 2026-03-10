@@ -21,17 +21,17 @@ public class EmailImpl implements EmailService {
 
     @Override
     public void sendNewPassword(String email, String newPassword) {
-        send(email, buildResetPassContent(newPassword), newPassword);
+        send(email, "Mật khẩu mới của bạn", buildResetPassContent(newPassword));
     }
 
     @Override
     public void sendOtpChangeEmail(String email, String otp) {
-        send(email, buildEmailChangeContent(otp), otp);
+        send(email, "Mã OTP xác nhận thay đổi email", buildEmailChangeContent(otp));
     }
 
     @Override
     public void sendOtpRegis(String email, String otp) {
-        send(email, buildOtpContent(otp), otp);
+        send(email, "Mã OTP đăng ký tài khoản", buildOtpContent(otp));
     }
 
 

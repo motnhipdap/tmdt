@@ -23,16 +23,18 @@ public class CheckerController {
 
     @Operation(summary = "Kiểm tra email đã tồn tại chưa")
     @GetMapping("/exists-email")
-    public ResponseEntity<ApiRes<Boolean>> checkEmail(@Valid @RequestParam String email) {
+    public ResponseEntity<ApiRes<Void>> checkEmail(@Valid @RequestParam String email) {
+        accountCheckService.existsByEmail(email);
         return ResponseEntity.ok()
-                .body(ApiRes.success("check email", accountCheckService.existsByEmail(email)));
+                .body(ApiRes.success("check email"));
     }
 
     @Operation(summary = "Kiểm tra username đã tồn tại chưa")
     @GetMapping("/exists-username")
-    public ResponseEntity<ApiRes<Boolean>> checkUsername(@Valid @RequestParam String username) {
+    public ResponseEntity<ApiRes<Void>> checkUsername(@Valid @RequestParam String username) {
+        accountCheckService.existsByUsername(username);
         return ResponseEntity.ok()
-                .body(ApiRes.success("check username", accountCheckService.existsByUsername(username)));
+                .body(ApiRes.success("check username"));
     }
 
     @PostMapping("/password")

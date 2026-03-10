@@ -42,7 +42,6 @@ public class AccountUpdateimpl implements AccountUpdateService {
     public void updateEmail(int accId, String newEmail) {
         Account acc = accRepo.findById(accId).orElseThrow(TokenValidException::new);
         acc.setEmail(newEmail);
-        acc.setVerify(false);
         accRepo.save(acc);
         log.info("Email updated for account: {}", acc.getUsername());
     }

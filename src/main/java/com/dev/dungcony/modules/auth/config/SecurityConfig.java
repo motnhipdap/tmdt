@@ -47,9 +47,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/v1/api/auth/**",
+                                "/v1/api/public/auth/**",
                                 "/v1/api/account/check/exists-email",
-                                "/v1/api/account/check/exists-email",
+                                "/v1/api/account/check/exists-username",
                                 "/v1/api/test/**",
                                 "/",
                                 "/error",
