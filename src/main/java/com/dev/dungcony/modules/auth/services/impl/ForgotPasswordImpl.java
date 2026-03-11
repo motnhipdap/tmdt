@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountUpdateService;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
 import com.dev.dungcony.modules.auth.services.interfaces.ForgotPasswordService;
-
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
