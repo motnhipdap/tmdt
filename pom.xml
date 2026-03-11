@@ -203,6 +203,16 @@
             </plugin>
 
 
+            <!-- SUREFIRE (suppress Mockito self-attach warning on JDK 21) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                    <useFile>false</useFile>
+                </configuration>
+            </plugin>
+
             <!-- COMPILER -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

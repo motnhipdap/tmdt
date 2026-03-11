@@ -1,12 +1,11 @@
 package com.dev.dungcony.modules.users.dtos.req;
 
-import java.util.UUID;
-
-public record AddressAddReq(
-                UUID uuid,
+public record AddressUpdateReq(
+                Integer id,
                 String country,
                 String province,
                 String district,
                 String street,
                 String detail) {
+
 }

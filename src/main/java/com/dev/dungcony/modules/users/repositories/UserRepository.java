@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByLastName(String lname);
 
+    Optional<User> findByFirstName(String fname);
+
     List<User> findByImgIsNull();
 
     List<User> findByImgIsNotNull();

@@ -29,11 +29,8 @@ public class User extends BaseEntity {
     @Column(name = "l_name", nullable = false)
     private String lastName;
 
-    @Column(name = "phone", unique = true, length = 10)
-    private String phone;
-
-    @Column(name = "img")
-    private String img;
+    @Column(name = "avatar")
+    private String avatar;
 
     @Column(name = "acc_id")
     private Integer accountId;

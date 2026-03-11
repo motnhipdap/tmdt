@@ -1,0 +1,50 @@
+package com.dev.dungcony.modules.users.services.impl;
+
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.dev.dungcony.modules.users.dtos.UserRes;
+import com.dev.dungcony.modules.users.dtos.req.UserUpdateReq;
+import com.dev.dungcony.modules.users.entities.User;
+import com.dev.dungcony.modules.users.exceptions.UserNotFound;
+import com.dev.dungcony.modules.users.exceptions.UserUnAuthor;
+import com.dev.dungcony.modules.users.mappers.UserMapper;
+import com.dev.dungcony.modules.users.repositories.UserRepository;
+import com.dev.dungcony.modules.users.services.interfaces.UserUpdateService;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class UserUpdateImpl implements UserUpdateService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    @Transactional
+    public UserRes updateUser(int accId, UserUpdateReq req) {
+
+        UUID uuid = req.id();
+        User user = userRepository.findById(uuid)
+                .orElseThrow(UserNotFound::new);
+
+        if (user.getAccountId() == null || user.getAccountId() != accId)
+            throw new UserUnAuthor();
+
+        if (req.firstName() != null)
+            user.setFirstName(req.firstName());
+        if (req.lastName() != null)
+            user.setLastName(req.lastName());
+        if (req.avatar() != null)
+            user.setAvatar(req.avatar());
+
+        userRepository.save(user);
+
+        return UserMapper.toUserDto(user);
+    }
+
+}

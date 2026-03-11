@@ -1,10 +1,13 @@
 package com.dev.dungcony.modules.users.services.impl;
 
-import com.dev.dungcony.commons.exceptions.NotFoundException;
-import com.dev.dungcony.modules.users.dtos.AddressDto;
+import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.req.AddressUpdateReq;
 import com.dev.dungcony.modules.users.dtos.req.AddressAddReq;
 import com.dev.dungcony.modules.users.entities.Address;
 import com.dev.dungcony.modules.users.entities.User;
+import com.dev.dungcony.modules.users.exceptions.AddressIdConflict;
+import com.dev.dungcony.modules.users.exceptions.AddressNotFound;
+import com.dev.dungcony.modules.users.mappers.AddressMapper;
 import com.dev.dungcony.modules.users.repositories.AddressRepository;
 import com.dev.dungcony.modules.users.services.interfaces.AddressService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +24,14 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public AddressDto addAddress(AddressAddReq req) {
-        Address address = req.address().toEntity();
+    public AddressRes addNew(AddressAddReq req) {
+        Address address = new Address();
+        address.setCountry(req.country());
+        address.setProvince(req.province());
+        address.setDistrict(req.district());
+        address.setStreet(req.street());
+        address.setDetail(req.detail());
+
         User user = new User();
         user.setId(req.uuid());
 
@@ -30,26 +39,41 @@ public class AddressServiceImpl implements AddressService {
 
         addressRepository.save(address);
 
-        return new AddressDto(address);
+        return AddressMapper.toDto(address);
     }
 
     @Override
-    public AddressDto updateAddress(AddressDto req) {
+    public AddressRes update(AddressUpdateReq req) {
+
         Address address = addressRepository.findById(req.id())
-                .orElseThrow(() -> new NotFoundException("id address khong hop le"));
+                .orElseThrow(AddressNotFound::new);
+        if (req.country() != null)
+            address.setCountry(req.country());
 
-        Address addressUpdate = req.toEntity();
-        addressUpdate.setUser(address.getUser());
+        if (req.province() != null)
+            address.setProvince(req.province());
 
-        addressRepository.save(addressUpdate);
+        if (req.district() != null)
+            address.setDistrict(req.district());
 
-        return new AddressDto(addressUpdate);
+        if (req.street() != null)
+            address.setStreet(req.street());
+
+        if (req.detail() != null)
+            address.setDetail(req.detail());
+
+        addressRepository.save(address);
+
+        return AddressMapper.toDto(address);
     }
 
     @Override
-    public void deleteAddress(int id) {
+    public void delete(int id) {
         if (addressRepository.deleteByIdReturnCount(id) == 0) {
-            throw new NotFoundException("id address khong hop le");
+            throw new AddressIdConflict();
         }
+
+        addressRepository.deleteById(id);
     }
+
 }

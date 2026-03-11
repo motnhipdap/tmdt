@@ -1,12 +1,14 @@
 package com.dev.dungcony.modules.users.services.interfaces;
 
-import com.dev.dungcony.modules.users.dtos.AddressDto;
+import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.req.AddressUpdateReq;
 import com.dev.dungcony.modules.users.dtos.req.AddressAddReq;
 
 public interface AddressService {
-    AddressDto addAddress(AddressAddReq req);
 
-    AddressDto updateAddress(AddressDto dto);
+    AddressRes addNew(AddressAddReq req);
 
-    void deleteAddress(int id);
+    AddressRes update(AddressUpdateReq dto);
+
+    void delete(int id);
 }
