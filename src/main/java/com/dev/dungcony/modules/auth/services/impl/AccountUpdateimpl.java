@@ -6,6 +6,7 @@ import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountUpdateService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Service
+@Transactional
 public class AccountUpdateimpl implements AccountUpdateService {
     private final AccountRepository accRepo;
     private final PasswordEncoder passwordEncoder;

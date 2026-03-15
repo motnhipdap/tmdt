@@ -5,10 +5,14 @@ import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.mappers.ProviderMapper;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
 import com.dev.dungcony.modules.products.services.interfaces.ProviderGetService;
+import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -34,5 +38,21 @@ public class ProviderGetServiceImpl implements ProviderGetService {
     @Override
     public List<ProviderRes> getAll() {
         return providerRepository.findAll().stream().map(providerMapper::toRes).toList();
+    }
+
+    @Override
+    public List<ProviderRes> getAllNew() {
+        ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
+        ZonedDateTime startOfDay = ZonedDateTime.now(zone).toLocalDate().atStartOfDay(zone);
+        Instant start = startOfDay.toInstant();
+        Instant end = startOfDay.plusDays(1).toInstant();
+        return providerRepository.findAllCreatedBetween(start, end)
+                .stream().map(providerMapper::toRes).toList();
+    }
+
+    @Override
+    public List<ProviderRes> getAllFamous() {
+        return providerRepository.findAllByStatus(ProviderStatus.FAMOUS)
+                .stream().map(providerMapper::toRes).toList();
     }
 }

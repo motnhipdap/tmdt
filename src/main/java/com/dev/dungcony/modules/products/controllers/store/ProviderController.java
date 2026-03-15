@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("v1/api/public/provider")
+@RequestMapping("/v1/api/public/provider")
 @Tag(name = "Products")
 public class ProviderController {
     private final ProviderGetService providerGetService;

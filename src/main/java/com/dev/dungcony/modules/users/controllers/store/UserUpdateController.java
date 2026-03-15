@@ -13,15 +13,15 @@ import com.dev.dungcony.modules.users.dtos.req.UserUpdateReq;
 import com.dev.dungcony.modules.users.services.interfaces.UserUpdateService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Users")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/user/update")
+@RequestMapping("/v1/api/user/update")
 public class UserUpdateController {
 
     private final UserUpdateService userUpdate;

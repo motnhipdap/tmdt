@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/address")
+@RequestMapping("/v1/api/address")
 public class AddressController {
 
         private final AddressService addressService;

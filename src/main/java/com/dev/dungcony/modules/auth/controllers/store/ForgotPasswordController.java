@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/public/auth/forgot-password")
+@RequestMapping("/v1/api/public/auth/forgot-password")
 @Tag(name = "Auth")
 public class ForgotPasswordController {
 

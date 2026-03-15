@@ -11,4 +11,8 @@ public interface ProviderGetService {
     ProviderRes getByName(String name);
 
     List<ProviderRes> getAll();
+
+    List<ProviderRes> getAllNew();
+
+    List<ProviderRes> getAllFamous();
 }

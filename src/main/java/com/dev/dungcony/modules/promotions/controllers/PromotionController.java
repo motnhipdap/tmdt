@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/promotions")
+@RequestMapping("/v1/api/promotions")
 public class PromotionController {
 
     private final PromotionService promotionService;

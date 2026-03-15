@@ -13,15 +13,15 @@ import com.dev.dungcony.modules.users.dtos.req.UserCreateReq;
 import com.dev.dungcony.modules.users.services.interfaces.UserCreateService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Users")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/user/create")
+@RequestMapping("/v1/api/user/create")
 public class UserCreateController {
 
     private final UserCreateService userService;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("v1/api/admin/category")
+@RequestMapping("/v1/api/admin/category")
 @Tag(name = "Products")
 public class AdminCategoryController {
     private final CategoryCommandService categoryCommandService;

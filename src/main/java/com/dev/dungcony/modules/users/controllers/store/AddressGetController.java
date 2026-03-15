@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/address/get")
+@RequestMapping("/v1/api/address/get")
 public class AddressGetController {
 
     private final AddressGetService addrGet;

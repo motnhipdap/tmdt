@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("v1/api/public/product")
+@RequestMapping("/v1/api/public/product")
 @Tag(name = "Products")
 public class ProductController {
     private final ProductGetService productQueryService;

@@ -24,6 +24,7 @@ public class AuthImpl implements AuthService {
     private final AccountGetService accGetService;
     private final AccountCheckService accountCheckService;
     private final AccountCreateService accountCreateService;
+    private final SendOtpService sendOtpService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JwtConfig jwtConfig;
@@ -33,14 +34,19 @@ public class AuthImpl implements AuthService {
     @Override
     public void register(RegisReq req) {
 
+        log.info("Registering account with email: {}, username: {}", req.email(), req.username());
+
         accountCheckService.existsByEmail(req.email());
         accountCheckService.existsByUsername(req.username());
 
         accountCreateService.createAccount(req.email(), req.username(), passwordEncoder.encode(req.password()));
+        sendOtpService.sendOtpRegister(req.email());
     }
 
     @Override
     public LoginResult login(String username, String password, String deviceId) {
+
+        log.info("Logging in account with username: {}", username);
 
         AccDto acc = accGetService.getByUsername(username);
 
@@ -52,6 +58,8 @@ public class AuthImpl implements AuthService {
 
         if (acc.status() != Status.ACTIVE)
             throw new InvalidUsernameOrPassword(); // account bị khóa
+
+        log.info("Login successful for account: {}", acc.username());
 
         String acessToken = jwtService.generateToken(acc.id(), acc.username(), acc.role());
         String refreshToken = refreshTokenService.create(acc.id(), deviceId);

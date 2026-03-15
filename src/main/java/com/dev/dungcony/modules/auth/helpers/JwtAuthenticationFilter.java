@@ -102,9 +102,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@SuppressWarnings("null") HttpServletRequest request) {
         String path = request.getServletPath();
+        String method = request.getMethod();
+
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            return true;
+        }
+
         // Skip filter cho các public endpoints
-        return path.startsWith("/v1/api/auth/") ||
+        return path.startsWith("/v1/api/public/auth/") ||
+                path.startsWith("/v1/api/account/check/exists-email") ||
+                path.startsWith("/v1/api/account/check/exists-username") ||
+                path.startsWith("/v1/api/test/") ||
                 path.equals("/") ||
-                path.startsWith("/error");
+                path.startsWith("/error") ||
+                path.startsWith("/swagger-ui/") ||
+                path.equals("/swagger-ui.html") ||
+                path.startsWith("/v3/api-docs/") ||
+                path.equals("/actuator/health");
     }
 }

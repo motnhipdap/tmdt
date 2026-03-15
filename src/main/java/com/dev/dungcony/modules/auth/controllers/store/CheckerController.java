@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/account/check")
+@RequestMapping("/v1/api/account/check")
 @Tag(name = "Auth")
 public class CheckerController {
 

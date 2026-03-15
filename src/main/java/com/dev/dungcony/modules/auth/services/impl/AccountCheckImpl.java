@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
-
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
 import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
@@ -22,23 +21,22 @@ public class AccountCheckImpl implements AccountCheckService {
     @Override
     public void existsByEmail(String email) {
         Account acc = accRepo.findByEmail(email).orElse(null);
-        if (acc == null)
-            throw new EmailExistException();
-        else {
-            if (acc.getVerify() == false)
+        if (acc != null) {
+            if (!acc.getVerify())
                 accRepo.delete(acc);
+            else
+                throw new EmailExistException();
         }
     }
 
     @Override
     public void existsByUsername(String username) {
-
         Account acc = accRepo.findByUsername(username).orElse(null);
-        if (acc == null)
-            throw new EmailExistException();
-        else {
-            if (acc.getVerify() == false)
+        if (acc != null) {
+            if (!acc.getVerify())
                 accRepo.delete(acc);
+            else
+                throw new EmailExistException();
         }
     }
 

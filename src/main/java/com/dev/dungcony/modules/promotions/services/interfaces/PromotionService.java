@@ -24,8 +24,5 @@ public interface PromotionService {
 
     Optional<PromotionDetailRes> getByCode(String code);
 
-    /**
-     * Lấy danh sách global promotions đang active tại thời điểm now.
-     */
     List<PromotionSummaryRes> getGlobalPromotions(Instant now);
 }

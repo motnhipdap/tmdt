@@ -23,9 +23,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByFirstName(String fname);
 
-    List<User> findByImgIsNull();
+    List<User> findByAvatarIsNull();
 
-    List<User> findByImgIsNotNull();
+    List<User> findByAvatarIsNotNull();
 
     Optional<User> findByAccountId(Integer accountId);
 }

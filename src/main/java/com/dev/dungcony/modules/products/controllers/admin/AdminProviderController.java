@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("v1/api/admin/provider")
+@RequestMapping("/v1/api/admin/provider")
 @Tag(name = "Products")
 public class AdminProviderController {
 

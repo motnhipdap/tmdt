@@ -19,7 +19,7 @@ import java.net.URI;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/api/admin/promotions")
+@RequestMapping("/v1/api/admin/promotions")
 public class AdminController {
 
     private final PromotionService promotionService;

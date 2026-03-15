@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)  // Nếu validate fail thì trả về 400
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // Nếu validate fail thì trả về 400
     public String handleBindException(BindException e) {
         // Trả về message của lỗi đầu tiên
         String errorMessage = "Request không hợp lệ";
@@ -39,11 +40,9 @@ public class GlobalExceptionHandler {
         return errorMessage;
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiRes<Map<String, String>>> handleValidation(
-            MethodArgumentNotValidException ex
-    ) {
+            MethodArgumentNotValidException ex) {
 
         Map<String, String> errors = new HashMap<>();
 
@@ -55,9 +54,14 @@ public class GlobalExceptionHandler {
                 .body(ApiRes.error("Validation failed", errors));
     }
 
-
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ApiRes<Void>> handleDatabaseError(DataAccessException ex) {
+        if (isDuplicateKeyError(ex)) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(ApiRes.error("Email hoặc username đã tồn tại"));
+        }
+
         log.error("Database error", ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -65,13 +69,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiRes<Void>> handleDuplicateKey() {
+    public ResponseEntity<ApiRes<Void>> handleDuplicateKey(DataIntegrityViolationException ex) {
+        log.warn("Data integrity violation", ex);
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(ApiRes.error("Có lỗi xảy ra"));
+                .body(ApiRes.error("Email hoặc username đã tồn tại"));
     }
-
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<ApiRes<Void>> handleVersionException() {
@@ -85,5 +89,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiRes.error("Server Error"));
+    }
+
+    private boolean isDuplicateKeyError(DataAccessException ex) {
+        if (ex instanceof DataIntegrityViolationException) {
+            return true;
+        }
+
+        String message = ex.getMostSpecificCause() != null
+                ? ex.getMostSpecificCause().getMessage()
+                : ex.getMessage();
+
+        if (message == null) {
+            return false;
+        }
+
+        String normalized = message.toLowerCase(Locale.ROOT);
+        return normalized.contains("duplicate key")
+                || normalized.contains("unique constraint")
+                || normalized.contains("sqlstate: 23505")
+                || normalized.contains("tbl_accounts_username_key")
+                || normalized.contains("tbl_accounts_email_key");
     }
 }
