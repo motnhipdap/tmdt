@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +70,33 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                         """)
         Page<ProductSummaryRes> findAllByCategoryCode(
                         @Param("categoryCode") String categoryCode,
+                        Pageable pageable);
+
+        @Query("""
+                            SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
+                                p.code,
+                                p.name,
+                                p.price,
+                                p.rated,
+                                p.img,
+                                p.category.code
+                            )
+                            FROM Product p
+                            WHERE p.status = :status
+                              AND (:minPrice IS NULL OR p.price >= :minPrice)
+                              AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+                              AND (:categoryCode IS NULL OR p.category.path LIKE CONCAT(
+                                   (SELECT r.path FROM Category r WHERE r.code = :categoryCode), '%'))
+                              AND (:keyword IS NULL
+                                   OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                                   OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
+                        """)
+        Page<ProductSummaryRes> filterProducts(
+                        @Param("status") ProductStatus status,
+                        @Param("categoryCode") String categoryCode,
+                        @Param("minPrice") BigDecimal minPrice,
+                        @Param("maxPrice") BigDecimal maxPrice,
+                        @Param("keyword") String keyword,
                         Pageable pageable);
 
         boolean existsByCategoryId(Integer id);

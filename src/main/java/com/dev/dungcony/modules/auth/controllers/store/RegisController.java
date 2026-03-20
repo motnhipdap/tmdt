@@ -40,7 +40,7 @@ public class RegisController {
                         - `username`: 3–50 ký tự, chưa tồn tại trong hệ thống
                         - `password`: 8–50 ký tự
                         """)
-        @PostMapping("/")
+        @PostMapping("")
         public ResponseEntity<ApiRes<Void>> register(@Valid @RequestBody RegisReq req) {
                 log.info("Register req: {}", req);
                 authService.register(req);

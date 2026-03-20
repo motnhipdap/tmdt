@@ -43,7 +43,7 @@ public class Item {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "AVAILABLE")
+    @Column(name = "status")
     private ItemStatus status;
 
     public Item(ItemId id, int quantity) {

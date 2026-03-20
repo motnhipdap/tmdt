@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +99,31 @@ public class ProductGetServiceImpl implements ProductGetService {
         Page<ProductSummaryRes> page = productRepository.getAllByKeyword(
                 ProductStatus.ACTIVE,
                 keyword.trim(),
+                pageable);
+
+        return enrichWithDiscounts(page);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductSummaryRes> filter(String categoryCode, BigDecimal minPrice, BigDecimal maxPrice,
+            String keyword, Pageable pageable) {
+
+        if (categoryCode != null && !categoryCode.isBlank()) {
+            categoryRepository.findByCode(categoryCode)
+                    .filter(c -> c.getStatus() == CategoryStatus.ACTIVE)
+                    .orElseThrow(CategoryNotFoundException::new);
+        }
+
+        String trimmedKeyword = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String trimmedCategory = (categoryCode != null && !categoryCode.isBlank()) ? categoryCode.trim() : null;
+
+        Page<ProductSummaryRes> page = productRepository.filterProducts(
+                ProductStatus.ACTIVE,
+                trimmedCategory,
+                minPrice,
+                maxPrice,
+                trimmedKeyword,
                 pageable);
 
         return enrichWithDiscounts(page);
