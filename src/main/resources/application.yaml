@@ -18,10 +18,6 @@ spring:
           starttls:
             enable: true
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-
   devtools:
     restart:
       enabled: true

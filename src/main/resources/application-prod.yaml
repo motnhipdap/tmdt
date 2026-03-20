@@ -5,6 +5,8 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: false
     open-in-view: false
 

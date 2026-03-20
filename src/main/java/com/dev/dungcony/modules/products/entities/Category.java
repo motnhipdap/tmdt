@@ -49,7 +49,7 @@ public class Category extends BaseEntity {
     private Category parent;
 
     @NotNull
-    @ColumnDefault("1")
+    @ColumnDefault("true")
     @Column(name = "is_leaf", nullable = false)
     private Boolean isLeaf;
 
