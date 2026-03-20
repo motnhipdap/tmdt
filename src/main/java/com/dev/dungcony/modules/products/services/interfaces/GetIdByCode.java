@@ -1,4 +1,4 @@
-package com.dev.dungcony.commons.interfaces;
+package com.dev.dungcony.modules.products.services.interfaces;
 
 import java.util.List;
 import java.util.Map;

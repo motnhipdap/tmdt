@@ -6,7 +6,6 @@ public class AddressNotFound extends NotFoundException {
 
     public AddressNotFound() {
         super("Address not found");
-        // TODO Auto-generated constructor stub
     }
 
 }

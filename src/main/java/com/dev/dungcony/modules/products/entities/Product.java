@@ -36,10 +36,6 @@ public class Product extends BaseEntity {
     private String description;
 
     @ColumnDefault("0")
-    @Column(name = "quantity")
-    private int quantity;
-
-    @ColumnDefault("0")
     @Column(name = "quantity_sold")
     private int quantitySold;
 
@@ -68,6 +64,9 @@ public class Product extends BaseEntity {
 
     @Size(max = 255)
     @Column(name = "img")
-    private String img;
+    private String img; // thumbail
 
+    @Size(max = 255)
+    @Column(name = "video")
+    private String video;
 }

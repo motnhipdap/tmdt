@@ -66,10 +66,12 @@ public class AuthImpl implements AuthService {
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .path("/v1/api/auth/refresh")
+                .secure(jwtConfig.isRefreshCookieSecure())
+                .path(jwtConfig.getRefreshCookiePath())
+                .sameSite("Lax")
                 .maxAge(jwtConfig.getRefreshExpiration())
                 .build();
+        log.info("Generated refresh token for" + refreshToken.toString());
 
         return new LoginResult(acessToken, JwtConfig.headerPrefix, jwtConfig.getExpiration(), refreshCookie.toString());
     }

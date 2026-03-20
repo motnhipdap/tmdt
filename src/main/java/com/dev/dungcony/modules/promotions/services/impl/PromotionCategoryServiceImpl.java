@@ -1,12 +1,12 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
+import com.dev.dungcony.modules.products.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotions.entities.Promotion;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategory;
 import com.dev.dungcony.modules.promotions.entities.PromotionCategoryId;
 import com.dev.dungcony.modules.promotions.enums.PromotionStatus;
 import com.dev.dungcony.modules.promotions.repositories.PromotionCategoryRepository;
-import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -18,5 +18,11 @@ public class JwtConfig {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpiration;
 
+    @Value("${jwt.refresh-cookie.secure:false}")
+    private boolean refreshCookieSecure;
+
+    @Value("${jwt.refresh-cookie.path:/v1/api/public/auth}")
+    private String refreshCookiePath;
+
     public static final String headerPrefix = "Bearer ";
 }

@@ -1,11 +1,12 @@
-package com.dev.dungcony.modules.products.services.impl;
+package com.dev.dungcony.modules.products.services.impl.category;
 
 import com.dev.dungcony.modules.products.dtos.res.CategoryRes;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.exceptions.CategoryNotFoundException;
 import com.dev.dungcony.modules.products.mappers.CategoryMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
-import com.dev.dungcony.modules.products.services.interfaces.CategoryGetService;
+import com.dev.dungcony.modules.products.services.interfaces.category.CategoryGetService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

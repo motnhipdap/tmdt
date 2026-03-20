@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.services.interfaces;
+package com.dev.dungcony.modules.products.services.interfaces.provider;
 
 import com.dev.dungcony.modules.products.dtos.req.ProviderAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProviderUpdateReq;

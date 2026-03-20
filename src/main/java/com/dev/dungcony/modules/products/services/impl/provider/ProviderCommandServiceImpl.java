@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.services.impl;
+package com.dev.dungcony.modules.products.services.impl.provider;
 
 import com.dev.dungcony.modules.products.dtos.req.ProviderAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProviderUpdateReq;
@@ -9,7 +9,8 @@ import com.dev.dungcony.modules.products.exceptions.ProviderConflictException;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.mappers.ProviderMapper;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
-import com.dev.dungcony.modules.products.services.interfaces.ProviderCommandService;
+import com.dev.dungcony.modules.products.services.interfaces.provider.ProviderCommandService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

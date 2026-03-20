@@ -2,11 +2,15 @@ package com.dev.dungcony.modules.products.mappers;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
+import com.dev.dungcony.modules.products.dtos.ItemDto;
 import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.entities.Category;
 import com.dev.dungcony.modules.products.entities.Product;
 import com.dev.dungcony.modules.products.entities.Provider;
+
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,13 +24,20 @@ public class ProductMapper {
      * Entity → ProductDetailRes không có discount (cho create/update response).
      */
     public ProductDetailRes toDetailRes(Product p) {
-        return toDetailRes(p, null);
+        return toDetailRes(p, null, null);
     }
 
     /**
-     * Entity → ProductDetailRes với discount info (cho get detail response).
+     * Entity → ProductDetailRes với discount info, không có items.
      */
     public ProductDetailRes toDetailRes(Product p, DiscountInfoDto discount) {
+        return toDetailRes(p, null, discount);
+    }
+
+    /**
+     * Entity → ProductDetailRes với discount info và items.
+     */
+    public ProductDetailRes toDetailRes(Product p, List<ItemDto> items, DiscountInfoDto discount) {
         CategorySummaryDto catDto = null;
         Category c = p.getCategory();
         if (c != null) {
@@ -47,11 +58,11 @@ public class ProductMapper {
                 discount != null ? discount.finalPrice() : p.getPrice(),
                 discount != null ? discount.discountType() : "NONE",
                 discount != null ? discount.discountValue() : 0,
-                p.getQuantity(),
                 p.getQuantitySold(),
                 p.getRated(),
                 p.getImg(),
                 p.getStatus(),
+                items,
                 p.getCreatedAt(),
                 p.getUpdatedAt(),
                 catDto,

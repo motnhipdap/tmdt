@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.services.impl;
+package com.dev.dungcony.modules.products.services.impl.product;
 
 import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;
@@ -17,7 +17,8 @@ import com.dev.dungcony.modules.products.mappers.ProductMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
-import com.dev.dungcony.modules.products.services.interfaces.ProductCommandService;
+import com.dev.dungcony.modules.products.services.interfaces.product.ProductCommandService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         product.setCode(generateProductCode(provider.getName(), req.name()));
         product.setDescription(req.description());
         product.setPrice(req.price());
-        product.setQuantity(req.quantity());
         product.setImg(req.imgUrl());
 
         productRepository.save(product);
@@ -111,8 +111,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
             product.setDescription(req.description());
         if (req.price() != null)
             product.setPrice(req.price());
-        if (req.quantity() != null)
-            product.setQuantity(req.quantity());
         if (req.imgUrl() != null)
             product.setImg(req.imgUrl());
 
@@ -130,13 +128,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
         if (product.getStatus() == ProductStatus.DELETED)
             throw new ProductConflictException("cannot add quantity to deleted product");
-
-        int newQuantity = product.getQuantity() + quantity;
-        if (newQuantity < 0)
-            throw new ProductConflictException("quantity cannot be negative, current: "
-                    + product.getQuantity() + ", requested change: " + quantity);
-
-        product.setQuantity(newQuantity);
     }
 
     // check if category is leaf, only leaf category can contain product

@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.services.interfaces;
+package com.dev.dungcony.modules.products.services.interfaces.category;
 
 import com.dev.dungcony.modules.products.dtos.res.CategoryRes;
 

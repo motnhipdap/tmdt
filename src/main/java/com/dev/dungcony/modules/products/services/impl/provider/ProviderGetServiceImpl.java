@@ -1,10 +1,10 @@
-package com.dev.dungcony.modules.products.services.impl;
+package com.dev.dungcony.modules.products.services.impl.provider;
 
 import com.dev.dungcony.modules.products.dtos.res.ProviderRes;
 import com.dev.dungcony.modules.products.exceptions.ProviderNotFoundException;
 import com.dev.dungcony.modules.products.mappers.ProviderMapper;
 import com.dev.dungcony.modules.products.repositories.ProviderRepository;
-import com.dev.dungcony.modules.products.services.interfaces.ProviderGetService;
+import com.dev.dungcony.modules.products.services.interfaces.provider.ProviderGetService;
 import com.dev.dungcony.modules.products.enums.ProviderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

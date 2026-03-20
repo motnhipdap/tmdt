@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.products.services.interfaces;
+package com.dev.dungcony.modules.products.services.interfaces.product;
 
 import com.dev.dungcony.modules.products.dtos.req.ProductAddReq;
 import com.dev.dungcony.modules.products.dtos.req.ProductUpdateReq;

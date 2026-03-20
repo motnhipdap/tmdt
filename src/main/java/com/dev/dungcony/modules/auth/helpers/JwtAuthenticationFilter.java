@@ -114,6 +114,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/v1/api/account/check/exists-username") ||
                 path.startsWith("/v1/api/test/") ||
                 path.equals("/") ||
+                path.equals("/log") ||
                 path.startsWith("/error") ||
                 path.startsWith("/swagger-ui/") ||
                 path.equals("/swagger-ui.html") ||

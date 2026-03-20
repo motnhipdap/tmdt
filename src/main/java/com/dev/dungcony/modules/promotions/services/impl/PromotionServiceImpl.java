@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
+import com.dev.dungcony.modules.products.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotions.dtos.req.PromoUpdateReq;
@@ -14,7 +15,6 @@ import com.dev.dungcony.modules.promotions.enums.PromotionType;
 import com.dev.dungcony.modules.promotions.exceptions.InvalidPromotionException;
 import com.dev.dungcony.modules.promotions.exceptions.PromotionNotFoundException;
 import com.dev.dungcony.modules.promotions.repositories.PromotionRepository;
-import com.dev.dungcony.commons.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;

@@ -2,31 +2,33 @@ package com.dev.dungcony.modules.products.dtos.res;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 import com.dev.dungcony.modules.products.dtos.CategorySummaryDto;
+import com.dev.dungcony.modules.products.dtos.ItemDto;
 import com.dev.dungcony.modules.products.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.products.enums.ProductStatus;
 
 public record ProductDetailRes(
-        String name,
-        String productCode,
-        String description,
+                String name,
+                String productCode,
+                String description,
 
-        BigDecimal originalPrice,
-        BigDecimal finalPrice,
-        String discountType,
-        int discountValue,
+                BigDecimal originalPrice,
+                BigDecimal finalPrice,
+                String discountType,
+                int discountValue,
 
-        Integer quantity,
-        Integer sold,
+                Integer sold,
 
-        Float rating,
+                Float rating,
 
-        String imgUrl,
-        ProductStatus status,
+                String imgUrl,
+                ProductStatus status,
+                List<ItemDto> items,
 
-        Instant createdAt,
-        Instant updatedAt,
-        CategorySummaryDto category,
-        ProviderSummaryDto provider) {
+                Instant createdAt,
+                Instant updatedAt,
+                CategorySummaryDto category,
+                ProviderSummaryDto provider) {
 }

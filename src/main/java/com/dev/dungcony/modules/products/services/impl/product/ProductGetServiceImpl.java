@@ -1,6 +1,7 @@
-package com.dev.dungcony.modules.products.services.impl;
+package com.dev.dungcony.modules.products.services.impl.product;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
+import com.dev.dungcony.modules.products.dtos.ItemDto;
 import com.dev.dungcony.modules.products.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.products.entities.Product;
@@ -11,9 +12,11 @@ import com.dev.dungcony.modules.products.exceptions.ProductNotFoundException;
 import com.dev.dungcony.modules.products.mappers.ProductMapper;
 import com.dev.dungcony.modules.products.repositories.CategoryRepository;
 import com.dev.dungcony.modules.products.repositories.ProductRepository;
-import com.dev.dungcony.modules.products.services.interfaces.ProductGetService;
-import com.dev.dungcony.commons.interfaces.PromotionCalculator;
-import com.dev.dungcony.commons.interfaces.PromotionCalculator.ProductPriceInput;
+import com.dev.dungcony.modules.products.services.interfaces.item.ItemGetService;
+import com.dev.dungcony.modules.products.services.interfaces.product.ProductGetService;
+import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCalculator;
+import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCalculator.ProductPriceInput;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,8 @@ public class ProductGetServiceImpl implements ProductGetService {
     private final CategoryRepository categoryRepository;
     private final PromotionCalculator promotionCalculator;
     private final ProductMapper productMapper;
+
+    private final ItemGetService itemGetService;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,7 +60,10 @@ public class ProductGetServiceImpl implements ProductGetService {
         DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
                 product.getCode(), categoryCode, product.getPrice());
 
-        return productMapper.toDetailRes(product, discount);
+        // Lấy danh sách items (nếu có) để hiển thị chi tiết
+        List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
+
+        return productMapper.toDetailRes(product, items, discount);
     }
 
     @Override

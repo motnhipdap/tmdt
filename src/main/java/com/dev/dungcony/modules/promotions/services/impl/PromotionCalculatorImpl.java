@@ -1,8 +1,8 @@
 package com.dev.dungcony.modules.promotions.services.impl;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
-import com.dev.dungcony.commons.interfaces.PromotionCalculator;
 import com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes;
+import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCalculator;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionCategoryService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionProductService;
 import com.dev.dungcony.modules.promotions.services.interfaces.PromotionService;
@@ -26,6 +26,7 @@ import java.util.*;
  * Hỗ trợ cả tính đơn lẻ (1 product) và batch (nhiều products) để tránh N+1
  * query.
  */
+
 @Slf4j
 @RequiredArgsConstructor
 @Service

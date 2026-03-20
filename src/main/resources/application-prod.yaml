@@ -24,6 +24,9 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+  refresh-cookie:
+    secure: true
+    path: /v1/api/public/auth
 
 management:
   endpoints:

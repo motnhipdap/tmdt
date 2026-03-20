@@ -1,4 +1,4 @@
-package com.dev.dungcony.commons.interfaces;
+package com.dev.dungcony.modules.promotions.services.interfaces;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 
