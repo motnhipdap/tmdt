@@ -7,6 +7,7 @@ CREATE TABLE tbl_accounts
     password   VARCHAR(255) NOT NULL,
     role       VARCHAR(10)  NOT NULL DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'ADMIN', 'EMPLOYEE')),
     email      VARCHAR(100) NOT NULL UNIQUE,
+    phone      VARCHAR(15)  UNIQUE,
     status     VARCHAR(10)  NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'BANNED')),
     created_at TIMESTAMP(3)          DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(3)          DEFAULT CURRENT_TIMESTAMP
@@ -18,7 +19,6 @@ CREATE TABLE tbl_users
     f_name     VARCHAR(255) NOT NULL,
     l_name     VARCHAR(255) NOT NULL,
     img        VARCHAR(255),
-    phone      VARCHAR(15) UNIQUE,
     created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     acc_id     INT          NOT NULL UNIQUE,
@@ -81,7 +81,6 @@ CREATE TABLE tbl_products
     name          VARCHAR(50) NOT NULL,
     code          VARCHAR(10) NOT NULL UNIQUE,
     description   VARCHAR(255),
-    quantity      INT                  DEFAULT 0,
     quantity_sold INT                  DEFAULT 0,
     price         DECIMAL(19, 2)       DEFAULT 0,
     status        VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
@@ -101,6 +100,23 @@ CREATE INDEX idx_product_provider ON tbl_products (provider_id);
 CREATE INDEX idx_product_status_price ON tbl_products (status, price);
 CREATE INDEX idx_product_status_rated ON tbl_products (status, rated);
 CREATE INDEX idx_product_sold ON tbl_products (quantity_sold);
+
+
+create table tbl_size(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(20) NOT NULL UNIQUE,
+    height DECIMAL(5, 2) NOT NULL,
+    width DECIMAL(5, 2) NOT NULL
+);
+
+create table tbl_items(
+    product_id INT NOT NULL,
+    size_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (product_id, size_id),
+    CONSTRAINT fk_item_product FOREIGN KEY (product_id) REFERENCES tbl_products (id) ON DELETE CASCADE,
+    CONSTRAINT fk_item_size FOREIGN KEY (size_id) REFERENCES tbl_size (id) ON DELETE CASCADE
+);
 
 CREATE TABLE tbl_promotions
 (
@@ -138,3 +154,39 @@ CREATE TABLE tbl_promotion_category
 );
 CREATE INDEX idx_promotion_category_category ON tbl_promotion_category (category_id);
 
+create table tbl_carts
+(
+    id SERIAL PRIMARY KEY,
+    user_id CHAR(36) NOT NULL UNIQUE,
+    created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_cart_user FOREIGN KEY (user_id) REFERENCES tbl_users (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_cart_user ON tbl_carts (user_id);
+
+CREATE TABLE tbl_cart_items
+(
+    cart_id    INT NOT NULL,
+    product_id INT NOT NULL,
+    size_id    INT NOT NULL,
+    quantity   INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (cart_id, product_id, size_id),
+    CONSTRAINT fk_cart_item_cart FOREIGN KEY (cart_id) REFERENCES tbl_carts (id) ON DELETE CASCADE,
+    CONSTRAINT fk_cart_item_product FOREIGN KEY (product_id) REFERENCES tbl_products (id) ON DELETE CASCADE,
+    CONSTRAINT fk_cart_item_size FOREIGN KEY (size_id) REFERENCES tbl_size (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_cart_item_product ON tbl_cart_items (product_id);
+CREATE INDEX idx_cart_item_size ON tbl_cart_items (size_id);
+
+CREATE TABLE tbl_orders
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    CHAR(36) NOT NULL,
+    total_price DECIMAL(19, 2) NOT NULL DEFAULT 0,
+    status     VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES tbl_users (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_order_user ON tbl_orders (user_id);
+CREATE INDEX idx_order_status ON tbl_orders (status);

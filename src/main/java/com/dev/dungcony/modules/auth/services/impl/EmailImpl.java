@@ -34,7 +34,6 @@ public class EmailImpl implements EmailService {
         send(email, "Mã OTP đăng ký tài khoản", buildOtpContent(otp));
     }
 
-
     private void send(String email, String subject, String body) {
         try {
             mailSender.send(getMail(
@@ -51,13 +50,13 @@ public class EmailImpl implements EmailService {
     private String buildOtpContent(String otp) {
         return """
                 Xin chào,
-                
+
                 Mã OTP của bạn là: %s
-                
+
                 Mã này sẽ hết hạn sau 5 phút.
-                
+
                 Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(otp);
@@ -66,32 +65,30 @@ public class EmailImpl implements EmailService {
     private String buildResetPassContent(String newPas) {
         return """
                 Xin chào,
-                
+
                 Pass mới của bạn là: %s
-                
+
                 Hãy đổi mật khẩu khi nhận được tin nhắn này
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(newPas);
     }
 
-
     private String buildEmailChangeContent(String otp) {
         return """
                 Xin chào,
-                
+
                 Nếu đây là yêu cầu của bạn, mã OTP để xác nhận thay đổi email là: %s
-                
+
                 Mã này sẽ hết hạn sau 5 phút.
-                
+
                 Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(otp);
     }
-
 
     private SimpleMailMessage getMail(String email, String subject, String text) {
         SimpleMailMessage mail = new SimpleMailMessage();

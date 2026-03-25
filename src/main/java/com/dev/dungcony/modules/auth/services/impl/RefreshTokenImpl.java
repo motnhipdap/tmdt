@@ -44,21 +44,18 @@ public class RefreshTokenImpl implements RefreshTokenService {
         redis.cache(
                 refreshKey(token),
                 String.valueOf(accId),
-                ttl
-        );
+                ttl);
 
         // device -> token
         redis.cache(
                 deviceKey(accId, deviceId),
                 token,
-                ttl
-        );
+                ttl);
 
         // account -> device
         redis.addToSet(
                 devicesKey(accId),
-                deviceId
-        );
+                deviceId);
 
         redis.expire(devicesKey(accId), ttl);
 
@@ -87,8 +84,7 @@ public class RefreshTokenImpl implements RefreshTokenService {
                 acc.getPassword(),
                 acc.getVerify(),
                 acc.getRole(),
-                acc.getStatus()
-        );
+                acc.getStatus());
     }
 
     /**
@@ -109,8 +105,7 @@ public class RefreshTokenImpl implements RefreshTokenService {
 
         redis.removeFromSet(
                 devicesKey(accountId),
-                deviceId
-        );
+                deviceId);
     }
 
     /**

@@ -11,7 +11,7 @@ import com.dev.dungcony.modules.users.mappers.UserMapper;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
 import com.dev.dungcony.modules.users.services.interfaces.UserCreateService;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
