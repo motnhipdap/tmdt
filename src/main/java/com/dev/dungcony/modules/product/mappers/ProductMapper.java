@@ -1,0 +1,71 @@
+package com.dev.dungcony.modules.product.mappers;
+
+import com.dev.dungcony.commons.dtos.DiscountInfoDto;
+import com.dev.dungcony.modules.product.dtos.CategorySummaryDto;
+import com.dev.dungcony.modules.product.dtos.ItemDto;
+import com.dev.dungcony.modules.product.dtos.ProviderSummaryDto;
+import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
+import com.dev.dungcony.modules.product.entities.Category;
+import com.dev.dungcony.modules.product.entities.Product;
+import com.dev.dungcony.modules.product.entities.Provider;
+
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+/**
+ * Mapper chuyển đổi giữa Product entity và các DTO response.
+ * Không bao gồm internal id — client dùng code làm định danh.
+ */
+@Component
+public class ProductMapper {
+
+    /**
+     * Entity → ProductDetailRes không có discount (cho create/update response).
+     */
+    public ProductDetailRes toDetailRes(Product p) {
+        return toDetailRes(p, null, null);
+    }
+
+    /**
+     * Entity → ProductDetailRes với discount info, không có items.
+     */
+    public ProductDetailRes toDetailRes(Product p, DiscountInfoDto discount) {
+        return toDetailRes(p, null, discount);
+    }
+
+    /**
+     * Entity → ProductDetailRes với discount info và items.
+     */
+    public ProductDetailRes toDetailRes(Product p, List<ItemDto> items, DiscountInfoDto discount) {
+        CategorySummaryDto catDto = null;
+        Category c = p.getCategory();
+        if (c != null) {
+            catDto = new CategorySummaryDto(c.getName(), c.getCode());
+        }
+
+        ProviderSummaryDto provDto = null;
+        Provider pv = p.getProvider();
+        if (pv != null) {
+            provDto = new ProviderSummaryDto(pv.getName(), pv.getCode());
+        }
+
+        return new ProductDetailRes(
+                p.getName(),
+                p.getCode(),
+                p.getDescription(),
+                p.getPrice(),
+                discount != null ? discount.finalPrice() : p.getPrice(),
+                discount != null ? discount.discountType() : "NONE",
+                discount != null ? discount.discountValue() : 0,
+                p.getQuantitySold(),
+                p.getRated(),
+                p.getImg(),
+                p.getStatus(),
+                items,
+                p.getCreatedAt(),
+                p.getUpdatedAt(),
+                catDto,
+                provDto);
+    }
+}
