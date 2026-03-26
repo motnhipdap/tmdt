@@ -14,6 +14,8 @@ public interface ItemRepository extends JpaRepository<Item, ItemId> {
 
     List<Item> findByIdSizeId(Integer sizeId);
 
+    Optional<Item> findItemById(ItemId id);
+
     @Query("""
             select i
             from Item i
@@ -29,4 +31,6 @@ public interface ItemRepository extends JpaRepository<Item, ItemId> {
             where i.product.code = :productCode
             """)
     List<Integer> findSizesByProductCode(String productCode);
+
+
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
+                SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -36,7 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
      * Đã fix: trước đây không sử dụng tham số :key trong query.
      */
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
+                SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -55,7 +55,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             Pageable pageable);
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
+                SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
@@ -66,7 +66,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 FROM Product p
                 JOIN p.category c
                 JOIN Category root ON root.code = :categoryCode
-                WHERE p.status = com.dev.dungcony.modules.products.enums.ProductStatus.ACTIVE
+                WHERE p.status = com.dev.dungcony.modules.product.enums.ProductStatus.ACTIVE
                   AND c.path LIKE CONCAT(root.path, '%')
             """)
     Page<ProductSummaryRes> findAllByCategoryCode(
@@ -74,20 +74,21 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             Pageable pageable);
 
     @Query("""
-                SELECT new com.dev.dungcony.modules.products.dtos.res.ProductSummaryRes(
+                SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
                     p.price,
                     p.rated,
                     p.img,
-                    p.category.code
+                    c.code
                 )
                 FROM Product p
+                LEFT JOIN p.category c
+                LEFT JOIN Category root ON root.code = :categoryCode
                 WHERE p.status = :status
                   AND (:minPrice IS NULL OR p.price >= :minPrice)
                   AND (:maxPrice IS NULL OR p.price <= :maxPrice)
-                  AND (:categoryCode IS NULL OR p.category.path LIKE CONCAT(
-                       (SELECT r.path FROM Category r WHERE r.code = :categoryCode), '%'))
+                  AND (:categoryCode IS NULL OR c.path LIKE CONCAT(root.path, '%'))
                   AND (:keyword IS NULL
                        OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                        OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
@@ -98,6 +99,23 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("keyword") String keyword,
+            Pageable pageable);
+
+    @Query("""
+                SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
+                    p.code,
+                    p.name,
+                    p.price,
+                    p.rated,
+                    p.img,
+                    p.category.code
+                )
+                FROM Product p
+                WHERE p.status = :status
+                ORDER BY p.quantitySold DESC, p.createdAt DESC
+            """)
+    Page<ProductSummaryRes> findBestSellerProducts(
+            @Param("status") ProductStatus status,
             Pageable pageable);
 
     boolean existsByCategoryId(Integer id);

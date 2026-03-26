@@ -21,4 +21,6 @@ public interface ProductGetService {
 
     Page<ProductSummaryRes> filter(String categoryCode, BigDecimal minPrice, BigDecimal maxPrice,
                                    String keyword, Pageable pageable);
+
+    Page<ProductSummaryRes> getAllBestSeller(Pageable pageable);
 }

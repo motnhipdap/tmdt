@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.dev.dungcony.modules.cart.repositories.CartCustomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.dungcony.modules.cart.entities.CartItem;
-import com.dev.dungcony.modules.cart.exceptions.CartNotFoundException;
-import com.dev.dungcony.modules.cart.repositories.CartItemRepository;
 import com.dev.dungcony.modules.order.dtos.req.CreateOrderReq;
 import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.entities.Order;
@@ -33,17 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderCommandServiceImpl implements OrderCommandService {
 
     private final OrderRepository orderRepository;
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    private final CartCustomRepository cartCustomRepo;
     private final OrderMapper orderMapper;
 
     @Override
     @Transactional
     public OrderRes createOrderFromCart(UUID userId, CreateOrderReq req) {
-        Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
-
-        List<CartItem> selectedItems = cartItemRepository.findSelectedByCartId(cart.getId());
+        List<CartItem> selectedItems = cartCustomRepo.findSelectedByUserId(userId);
 
         if (selectedItems.isEmpty()) {
             throw new OrderCannotCreateException("No items selected in cart");
@@ -87,8 +82,8 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         orderRepository.save(order);
 
         for (CartItem cartItem : selectedItems) {
-            cartItemRepository.deleteByCartIdAndProductIdAndSizeId(
-                    cart.getId(),
+            cartCustomRepo.deleteByCartIdAndProductIdAndSizeId(
+                    userId,
                     cartItem.getProduct().getId(),
                     cartItem.getSize().getId());
         }

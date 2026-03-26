@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record UpdateCartItemReq(
-        UUID id,
+        @NotNull UUID id,
         @NotBlank String productCode,
         @NotNull ProductSize size,
         @NotNull @Min(1) Integer quantity) {

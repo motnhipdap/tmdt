@@ -31,7 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class ProductGetServiceImpl implements ProductGetService {
+public class ProductGetImpl implements ProductGetService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final PromotionCalculator promotionCalculator;
@@ -39,40 +39,17 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     private final ItemGetService itemGetService;
 
+
     @Override
     public Integer getIdByCode(String code) {
-        Product product = productRepository.findByCodeWithCategoryAndProvider(code)
-                .orElseThrow(() -> new ProductNotFoundException("product not found"));
-
-        // Không trả về product đã bị xóa
-        if (product.getStatus() == ProductStatus.DELETED) {
-            throw new ProductNotFoundException("product not found");
-        }
-
-        // Ẩn sản phẩm nếu category bị ẩn
-        if (product.getCategory() != null && product.getCategory().getStatus() == CategoryStatus.HIDDEN) {
-            throw new ProductNotFoundException("product not found");
-        }
-
-        return product.getId();
+        return findByCode(code).getId();
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductDetailRes getByCode(String code) {
 
-        Product product = productRepository.findByCodeWithCategoryAndProvider(code)
-                .orElseThrow(() -> new ProductNotFoundException("product not found"));
-
-        // Không trả về product đã bị xóa
-        if (product.getStatus() == ProductStatus.DELETED) {
-            throw new ProductNotFoundException("product not found");
-        }
-
-        // Ẩn sản phẩm nếu category bị ẩn
-        if (product.getCategory() != null && product.getCategory().getStatus() == CategoryStatus.HIDDEN) {
-            throw new ProductNotFoundException("product not found");
-        }
+        Product product = findByCode(code);
 
         // Tính discount cho sản phẩm
         String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
@@ -147,6 +124,16 @@ public class ProductGetServiceImpl implements ProductGetService {
         return enrichWithDiscounts(page);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductSummaryRes> getAllBestSeller(Pageable pageable) {
+        Page<ProductSummaryRes> page = productRepository.findBestSellerProducts(
+                ProductStatus.BESTSELLER,
+                pageable);
+
+        return enrichWithDiscounts(page);
+    }
+
     // ============ PRIVATE HELPERS ============
     private Page<ProductSummaryRes> enrichWithDiscounts(Page<ProductSummaryRes> page) {
         List<ProductSummaryRes> content = page.getContent();
@@ -172,5 +159,23 @@ public class ProductGetServiceImpl implements ProductGetService {
                     DiscountInfoDto.noDiscount(p.price()));
             return p.withDiscount(discount);
         });
+    }
+
+
+    private Product findByCode(String code) {
+        Product product = productRepository.findByCodeWithCategoryAndProvider(code)
+                .orElseThrow(() -> new ProductNotFoundException("product not found"));
+
+        // Không trả về product đã bị xóa
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ProductNotFoundException("product not found");
+        }
+
+        // Ẩn sản phẩm nếu category bị ẩn
+        if (product.getCategory() != null && product.getCategory().getStatus() == CategoryStatus.HIDDEN) {
+            throw new ProductNotFoundException("product not found");
+        }
+
+        return product;
     }
 }

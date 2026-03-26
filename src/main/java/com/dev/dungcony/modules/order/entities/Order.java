@@ -54,21 +54,12 @@ public class Order extends BaseEntity {
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
-    @Size(max = 255)
-    @Column(name = "shipping_address")
-    private String shippingAddress;
-
-    @Size(max = 15)
-    @Column(name = "phone", length = 15)
-    private String phone;
+    @Column(name = "address_id")
+    private Integer addressId;
 
     @Size(max = 500)
     @Column(name = "note", length = 500)
     private String note;
-
-    @Size(max = 100)
-    @Column(name = "receiver_name", length = 100)
-    private String receiverName;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
