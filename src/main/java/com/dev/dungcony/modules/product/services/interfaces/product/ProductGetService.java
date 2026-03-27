@@ -14,7 +14,9 @@ public interface ProductGetService {
 
     ProductSummaryRes getById(int id);
 
-    ProductDto getByCode(String code);
+    ProductDto getDtoByCode(String code);
+
+    ProductDetailRes getDetailByCode(String code);
 
     Page<ProductSummaryRes> getAll(Pageable pageable);
 

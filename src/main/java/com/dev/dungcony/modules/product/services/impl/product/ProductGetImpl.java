@@ -60,7 +60,7 @@ public class ProductGetImpl implements ProductGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDto getByCode(String code) {
+    public ProductDto getDtoByCode(String code) {
 
         Product product = findByCode(code);
 
@@ -73,6 +73,22 @@ public class ProductGetImpl implements ProductGetService {
         List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
 
         return productMapper.toDto(product, items, discount);
+    }
+
+    @Override
+    public ProductDetailRes getDetailByCode(String code) {
+
+        Product product = findByCode(code);
+
+        // Tính discount cho sản phẩm
+        String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
+        DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
+                product.getCode(), categoryCode, product.getPrice());
+
+        // Lấy danh sách items (nếu có) để hiển thị chi tiết
+        List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
+
+        return productMapper.toDetailRes(product, items, discount);
     }
 
     @Override

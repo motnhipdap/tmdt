@@ -13,8 +13,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemI
 
     @Query("""
             SELECT oi FROM OrderItem oi
-            JOIN FETCH oi.product
-            JOIN FETCH oi.size
             WHERE oi.order.id = :orderId
             """)
     List<OrderItem> findAllByOrderIdWithDetails(@Param("orderId") Integer orderId);

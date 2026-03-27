@@ -15,5 +15,5 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
     @Query("delete from Address a where a.id = :id")
     int deleteByIdReturnCount(@Param("id") int id);
 
-    List<Address> findByUserId(UUID userId);
+    List<Address> findByReceiverUserId(UUID userId);
 }

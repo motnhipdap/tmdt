@@ -5,17 +5,16 @@ import com.dev.dungcony.modules.order.entities.Order;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.exceptions.OrderConflictException;
 import com.dev.dungcony.modules.order.exceptions.OrderNotFoundException;
-import com.dev.dungcony.modules.order.mappers.OrderMapper;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderUpdateService;
-import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
+import com.dev.dungcony.modules.users.dtos.res.UserRes;
+import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +23,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
 
     private final OrderRepository orderRepository;
+    private final UserGetService userGetService;
 
     @Override
     @Transactional
@@ -58,6 +58,21 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
         order.setStatus(OrderStatus.CONFIRMED);
         log.info("Order confirm: {} by user: {}", orderCode, userId);
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderStatus(String orderCode, OrderStatus nextStatus) {
+        Order order = orderRepository.findByCode(orderCode)
+                .orElseThrow(OrderNotFoundException::new);
+
+        OrderStatus currentStatus = order.getStatus();
+        if (currentStatus == nextStatus) {
+            return;
+        }
+
+        validateStatusTransition(currentStatus, nextStatus);
+        order.setStatus(nextStatus);
     }
 
 

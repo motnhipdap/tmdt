@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @Table(name = "tbl_recivers")
-public class Reciever {
+public class Receiver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +20,13 @@ public class Reciever {
     private Integer id;
 
     @Size(max = 100)
-    @Column(name = "name", lenAth = 100)
-    private String receiverName;
+    @Column(name = "f_name", length = 100)
+    private String firstName;
+
+
+    @Size(max = 100)
+    @Column(name = "l_name", length = 100)
+    private String lastName;
 
     @Size(max = 10)
     @Column(name = "phone", nullable = false)
@@ -29,7 +34,11 @@ public class Reciever {
 
 
     //-----FK-----//
-    @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @OneToOne(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }

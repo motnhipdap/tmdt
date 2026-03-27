@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 
-import com.dev.dungcony.modules.users.entities.Reciever;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

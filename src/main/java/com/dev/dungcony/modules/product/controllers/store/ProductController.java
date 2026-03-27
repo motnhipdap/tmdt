@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/api/public/product")
 @Tag(name = "Products")
 public class ProductController {
-    private final ProductGetService productQueryService;
+    private final ProductGetService productGetService;
 
     @Operation(summary = "Lấy danh sách sản phẩm", description = "Phân trang, hỗ trợ sort: ?page=0&size=10&sort=price,asc")
     @GetMapping("/get-all")
     public ResponseEntity<ApiRes<PageRes<ProductSummaryRes>>> getAll(
             @ParameterObject Pageable pageable) {
 
-        Page<ProductSummaryRes> productPage = productQueryService.getAll(pageable);
+        Page<ProductSummaryRes> productPage = productGetService.getAll(pageable);
 
         return ResponseEntity.ok()
                 .body(ApiRes.success(
@@ -46,7 +46,7 @@ public class ProductController {
     public ResponseEntity<ApiRes<PageRes<ProductSummaryRes>>> getBestSeller(
             @ParameterObject Pageable pageable) {
 
-        Page<ProductSummaryRes> productPage = productQueryService.getAllBestSeller(pageable);
+        Page<ProductSummaryRes> productPage = productGetService.getAllBestSeller(pageable);
 
         return ResponseEntity.ok()
                 .body(ApiRes.success(
@@ -59,7 +59,7 @@ public class ProductController {
     public ResponseEntity<ApiRes<ProductDetailRes>> getById(
             @Parameter(description = "Mã sản phẩm") @RequestParam("code") String code) {
         return ResponseEntity.ok()
-                .body(ApiRes.success("product", productQueryService.getByCode(code)));
+                .body(ApiRes.success("product", productGetService.getDetailByCode(code)));
     }
 
     @Operation(summary = "Tìm kiếm sản phẩm", description = "Tìm theo tên hoặc mô tả sản phẩm")
@@ -67,7 +67,7 @@ public class ProductController {
     public ResponseEntity<ApiRes<PageRes<ProductSummaryRes>>> search(
             @Parameter(description = "Từ khóa tìm kiếm") @RequestParam("keyword") String keyword,
             @ParameterObject Pageable pageable) {
-        Page<ProductSummaryRes> productPage = productQueryService.searchByKeyword(keyword, pageable);
+        Page<ProductSummaryRes> productPage = productGetService.searchByKeyword(keyword, pageable);
         return ResponseEntity.ok()
                 .body(ApiRes.success("search results",
                         PageRes.from(productPage)));
@@ -83,7 +83,7 @@ public class ProductController {
             @Parameter(description = "Từ khóa tìm kiếm") @RequestParam(value = "keyword", required = false) String keyword,
             @ParameterObject Pageable pageable) {
 
-        Page<ProductSummaryRes> productPage = productQueryService.filter(
+        Page<ProductSummaryRes> productPage = productGetService.filter(
                 categoryCode, minPrice, maxPrice, keyword, pageable);
 
         return ResponseEntity.ok()

@@ -3,17 +3,21 @@ package com.dev.dungcony.modules.users.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
 @Table(name = "tbl_address")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "receiver_id", nullable = false, unique = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Receiver receiver;
 
     @NotBlank(message = "country not not")
     @Column(name = "country", nullable = false, length = 20)

@@ -6,13 +6,13 @@ import java.util.List;
 
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
-import com.dev.dungcony.modules.users.dtos.RecieverDto;
+import com.dev.dungcony.modules.users.dtos.ReceiverDto;
 
 public record OrderRes(
         String orderCode,
         OrderStatus status,
         BigDecimal totalAmount,
-        RecieverDto reciever,
+        ReceiverDto reciever,
         String note,
         List<OrderItemDto> items,
         Instant createdAt,

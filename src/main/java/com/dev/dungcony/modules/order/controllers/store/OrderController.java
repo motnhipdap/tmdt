@@ -3,7 +3,6 @@ package com.dev.dungcony.modules.order.controllers.store;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,16 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.commons.dtos.PageRes;
 import com.dev.dungcony.modules.order.dtos.req.CreateOrderReq;
 import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
+import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import com.dev.dungcony.modules.order.services.interfaces.OrderGetService;
-import com.dev.dungcony.modules.users.entities.User;
-import com.dev.dungcony.modules.users.repositories.UserRepository;
+import com.dev.dungcony.modules.order.services.interfaces.OrderUpdateService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +29,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.UUID;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -38,62 +38,56 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Orders")
 public class OrderController {
 
-    private final OrderCommandService orderCommandService;
+    private final OrderCreateService orderCreateService;
     private final OrderGetService orderGetService;
-    private final UserRepository userRepository;
+    private final OrderUpdateService orderUpdateService;
 
     @Operation(summary = "Tạo đơn hàng từ giỏ hàng", description = "Tạo đơn hàng từ các sản phẩm đã chọn trong giỏ")
     @PostMapping("/create")
     public ResponseEntity<ApiRes<OrderRes>> createOrder(
-            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @Valid @RequestBody CreateOrderReq req) {
-        OrderRes order = orderCommandService.createOrderFromCart(getUserId(account), req);
+        OrderRes order = orderCreateService.createOrder(userId, req);
         return ResponseEntity.ok(ApiRes.success("Order created successfully", order));
     }
 
     @Operation(summary = "Lấy danh sách đơn hàng")
     @GetMapping("/my-orders")
     public ResponseEntity<ApiRes<PageRes<OrderSummaryRes>>> getMyOrders(
-            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrders(getUserId(account), pageable))));
+                        PageRes.from(orderGetService.getUserOrders(userId, pageable))));
     }
 
     @Operation(summary = "Lấy danh sách đơn hàng theo trạng thái")
     @GetMapping("/my-orders/status")
     public ResponseEntity<ApiRes<PageRes<OrderSummaryRes>>> getMyOrdersByStatus(
-            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @Parameter(description = "Trạng thái đơn hàng") @RequestParam("status") OrderStatus status,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrdersByStatus(getUserId(account), status, pageable))));
+                        PageRes.from(orderGetService.getUserOrdersByStatus(userId, status, pageable))));
     }
 
     @Operation(summary = "Xem chi tiết đơn hàng")
     @GetMapping("/{orderCode}")
     public ResponseEntity<ApiRes<OrderRes>> getOrderDetail(
-            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @PathVariable String orderCode) {
         return ResponseEntity.ok(
                 ApiRes.success("Order detail",
-                        orderGetService.getOrderByCode(getUserId(account), orderCode)));
+                        orderGetService.getOrderByCode(userId, orderCode)));
     }
 
     @Operation(summary = "Hủy đơn hàng", description = "Chỉ hủy được đơn hàng ở trạng thái PENDING")
     @PatchMapping("/{orderCode}/cancel")
     public ResponseEntity<ApiRes<Void>> cancelOrder(
-            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @PathVariable String orderCode) {
-        orderCommandService.cancelOrder(getUserId(account), orderCode);
+        orderUpdateService.cancelOrder(userId, orderCode);
         return ResponseEntity.ok(ApiRes.success("Order cancelled"));
-    }
-
-    private java.util.UUID getUserId(AccountDetails account) {
-        User user = userRepository.findByAccountId(account.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getId();
     }
 }

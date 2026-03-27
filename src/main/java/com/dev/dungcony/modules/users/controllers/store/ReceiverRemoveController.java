@@ -1,0 +1,48 @@
+package com.dev.dungcony.modules.users.controllers.store;
+
+import com.dev.dungcony.commons.dtos.AccountDetails;
+import com.dev.dungcony.commons.dtos.ApiRes;
+import com.dev.dungcony.modules.users.services.interfaces.ReceiverRemoveService;
+import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
+
+@Tag(name = "Receiver")
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/v1/api/user/receiver/remove")
+public class ReceiverRemoveController {
+
+    private final ReceiverRemoveService receiverRemoveService;
+    private final UserGetService userGetService;
+
+    @Operation(summary = "Remove receiver by id")
+    @DeleteMapping
+    public ResponseEntity<ApiRes<Void>> removeById(
+            @AuthenticationPrincipal AccountDetails details,
+            @RequestParam Integer receiverId) {
+        receiverRemoveService.removeReceiverUserById(getUserId(details), receiverId);
+        return ResponseEntity.ok(ApiRes.success("deleted"));
+    }
+
+    @Operation(summary = "Remove all my receivers")
+    @DeleteMapping("/all")
+    public ResponseEntity<ApiRes<Void>> removeAllByUser(
+            @AuthenticationPrincipal AccountDetails details) {
+        receiverRemoveService.removeAllByUser(getUserId(details));
+        return ResponseEntity.ok(ApiRes.success("deleted"));
+    }
+
+    private UUID getUserId(AccountDetails details) {
+        return userGetService.getUserByAccId(details.getId()).id();
+    }
+}

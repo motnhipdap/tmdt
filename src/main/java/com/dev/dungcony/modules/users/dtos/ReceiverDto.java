@@ -1,8 +1,10 @@
 package com.dev.dungcony.modules.users.dtos;
 
-public record RecieverDto(
+public record ReceiverDto(
+        int id,
         AddressDto addr,
-        String name,
+        String fName,
+        String lName,
         String phone
 ) {
 }

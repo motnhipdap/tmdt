@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -34,4 +36,7 @@ public class User extends BaseEntity {
 
     @Column(name = "acc_id")
     private Integer accountId;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Receiver> receivers = new ArrayList<>();
 }

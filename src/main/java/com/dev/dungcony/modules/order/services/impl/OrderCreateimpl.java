@@ -13,10 +13,9 @@ import com.dev.dungcony.modules.order.mappers.OrderMapper;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
-import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
-import com.dev.dungcony.modules.users.dtos.RecieverDto;
+import com.dev.dungcony.modules.users.dtos.ReceiverDto;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +45,7 @@ public class OrderCreateimpl implements OrderCreateService {
             throw new OrderCannotCreateException("Order items are required");
         }
 
-        RecieverDto reciver = recieverGetService.getById(req.recieverid());
+        ReceiverDto reciver = recieverGetService.getById(userId, req.recieverid());
 
         Order order = new Order();
         order.setUserId(userId);
@@ -63,7 +61,7 @@ public class OrderCreateimpl implements OrderCreateService {
                 throw new OrderCannotCreateException("Quantity must be greater than 0");
             }
 
-            ProductDto product = productGetService.getByCode(itemDto.productCode());
+            ProductDto product = productGetService.getDtoByCode(itemDto.productCode());
             int sizeId = sizeCacheService.getIdBySize(itemDto.size());
             OrderItem orderItem = getOrderItem(itemDto, product, sizeId);
 

@@ -18,6 +18,7 @@ import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.services.interfaces.OrderGetService;
+import com.dev.dungcony.modules.order.services.interfaces.OrderUpdateService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Orders (Admin)")
 public class AdminOrderController {
 
-    private final OrderCommandService orderCommandService;
+    private final OrderUpdateService orderUpdateService;
     private final OrderGetService orderGetService;
 
     @Operation(summary = "Lấy tất cả đơn hàng", description = "Phân trang, hỗ trợ sort")
@@ -68,7 +69,7 @@ public class AdminOrderController {
     @PatchMapping("/update-status")
     public ResponseEntity<ApiRes<Void>> updateStatus(
             @Valid @RequestBody UpdateOrderStatusReq req) {
-        orderCommandService.updateOrderStatus(req.orderCode(), req.status());
+        orderUpdateService.updateOrderStatus(req.orderCode(), req.status());
         return ResponseEntity.ok(ApiRes.success("Order status updated to " + req.status()));
     }
 }

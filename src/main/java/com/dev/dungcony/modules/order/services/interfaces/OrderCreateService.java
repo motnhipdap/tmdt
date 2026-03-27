@@ -6,5 +6,5 @@ import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import java.util.UUID;
 
 public interface OrderCreateService {
-    OrderRes createOrder(UUID userId, CreateOrderReq req);
+    OrderRes createOrder(UUID uId, CreateOrderReq req);
 }
