@@ -1,6 +1,7 @@
 this is a backend e-commer
 
 Rules:
+- luôn bắt đầu từ entites và kh được thay đổi các thuộc tính
 - Use Monolith multi-module
 - Use clean architecture.
 - Follow SOLID principles.

@@ -7,9 +7,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.dev.dungcony.modules.auth.enums.Role;
+import com.dev.dungcony.modules.users.exceptions.UserProfileNotCreated;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class AccountDetails implements UserDetails {
 
@@ -19,12 +21,24 @@ public class AccountDetails implements UserDetails {
     @Getter
     private final String email;
     private final Role role;
+    @Getter
+    private final UUID userUuid;
 
-    public AccountDetails(Integer id, String username, String email, Role role) {
+    /**
+     * Trả về userUuid, throw UserProfileNotCreated nếu profile chưa được tạo.
+     * Dùng trong các endpoint yêu cầu user đã có profile (cart, order...).
+     */
+    public UUID requireUserUuid() {
+        if (userUuid == null) throw new UserProfileNotCreated();
+        return userUuid;
+    }
+
+    public AccountDetails(Integer id, String username, String email, Role role, UUID userUuid) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
+        this.userUuid = userUuid;
     }
 
     @Override

@@ -21,7 +21,8 @@ public class SendOtpImpl implements SendOtpService {
     private final AccountCheckService accountCheckService;
     private final Generate generate;
 
-    private final int OTP_LENGTH = 6;
+    private static final int OTP_LENGTH = 6;
+    private static final long OTP_TTL_SECONDS = 300;
 
     @Override
     public void sendOtpRegister(String email) {
@@ -30,7 +31,7 @@ public class SendOtpImpl implements SendOtpService {
 
         String otp = generate.otp(OTP_LENGTH);
         emailService.sendOtpRegis(email, otp);
-        redisService.cache(generate.key(email, OtpType.REGISTER.getValue()), passwordEncoder.encode(otp));
+        redisService.cache(generate.key(email, OtpType.REGISTER.getValue()), passwordEncoder.encode(otp), OTP_TTL_SECONDS);
     }
 
     @Override
@@ -43,6 +44,6 @@ public class SendOtpImpl implements SendOtpService {
 
         String otp = generate.otp(OTP_LENGTH);
         emailService.sendOtpChangeEmail(email, otp);
-        redisService.cache(cacheKey, passwordEncoder.encode(otp));
+        redisService.cache(cacheKey, passwordEncoder.encode(otp), OTP_TTL_SECONDS);
     }
 }

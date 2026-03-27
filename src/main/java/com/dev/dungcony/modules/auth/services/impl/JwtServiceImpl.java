@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -28,18 +29,22 @@ public class JwtServiceImpl implements JwtService {
 
     // ========================= Generate =========================
     @Override
-    public String generateToken(int id, String username, Role role) {
+    public String generateToken(int id, String username, Role role, UUID userUuid) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 1000L);
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .setSubject(String.valueOf(id))
                 .claim("username", username)
                 .claim("role", role)
                 .setIssuedAt(now)
-                .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+                .setExpiration(expiration);
+
+        if (userUuid != null) {
+            builder.claim("userUuid", userUuid.toString());
+        }
+
+        return builder.signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
     @Override
@@ -77,6 +82,18 @@ public class JwtServiceImpl implements JwtService {
             return Integer.parseInt(subject);
         } catch (Exception e) {
             log.error("Error extracting user ID from token: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public UUID extractUserUuid(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            String raw = claims.get("userUuid", String.class);
+            return raw != null ? UUID.fromString(raw) : null;
+        } catch (Exception e) {
+            log.error("Error extracting userUuid from token: {}", e.getMessage());
             return null;
         }
     }

@@ -29,7 +29,7 @@ public class ReceiverRemoveImpl implements ReceiverRemoveService {
         Receiver r = recieverRepository.findById(rId)
                 .orElseThrow(ReceiverNotFound::new);
 
-        if (r.getUser().getId() != uId)
+        if (!r.getUser().getId().equals(uId))
             throw new ReceiverIdConflict();
 
         recieverRepository.delete(r);

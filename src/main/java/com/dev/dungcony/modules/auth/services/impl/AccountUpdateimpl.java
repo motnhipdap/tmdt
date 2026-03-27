@@ -64,6 +64,10 @@ public class AccountUpdateimpl implements AccountUpdateService {
 
     @Override
     public void updateStatus(int accId, Status newStatus) {
-
+        Account acc = accRepo.findById(accId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accId));
+        acc.setStatus(newStatus);
+        accRepo.save(acc);
+        log.info("Status updated to {} for account: {}", newStatus, acc.getUsername());
     }
 }

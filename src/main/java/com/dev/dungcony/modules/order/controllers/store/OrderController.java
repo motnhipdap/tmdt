@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.order.controllers.store;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.commons.dtos.PageRes;
 import com.dev.dungcony.modules.order.dtos.req.CreateOrderReq;
@@ -29,8 +31,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.UUID;
-
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -45,49 +45,49 @@ public class OrderController {
     @Operation(summary = "Tạo đơn hàng từ giỏ hàng", description = "Tạo đơn hàng từ các sản phẩm đã chọn trong giỏ")
     @PostMapping("/create")
     public ResponseEntity<ApiRes<OrderRes>> createOrder(
-            @RequestParam("user_id") UUID userId,
+            @AuthenticationPrincipal AccountDetails account,
             @Valid @RequestBody CreateOrderReq req) {
-        OrderRes order = orderCreateService.createOrder(userId, req);
+        OrderRes order = orderCreateService.createOrder(account.requireUserUuid(), req);
         return ResponseEntity.ok(ApiRes.success("Order created successfully", order));
     }
 
     @Operation(summary = "Lấy danh sách đơn hàng")
     @GetMapping("/my-orders")
     public ResponseEntity<ApiRes<PageRes<OrderSummaryRes>>> getMyOrders(
-            @RequestParam("user_id") UUID userId,
+            @AuthenticationPrincipal AccountDetails account,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrders(userId, pageable))));
+                        PageRes.from(orderGetService.getUserOrders(account.requireUserUuid(), pageable))));
     }
 
     @Operation(summary = "Lấy danh sách đơn hàng theo trạng thái")
     @GetMapping("/my-orders/status")
     public ResponseEntity<ApiRes<PageRes<OrderSummaryRes>>> getMyOrdersByStatus(
-            @RequestParam("user_id") UUID userId,
+            @AuthenticationPrincipal AccountDetails account,
             @Parameter(description = "Trạng thái đơn hàng") @RequestParam("status") OrderStatus status,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrdersByStatus(userId, status, pageable))));
+                        PageRes.from(orderGetService.getUserOrdersByStatus(account.requireUserUuid(), status, pageable))));
     }
 
     @Operation(summary = "Xem chi tiết đơn hàng")
     @GetMapping("/{orderCode}")
     public ResponseEntity<ApiRes<OrderRes>> getOrderDetail(
-            @RequestParam("user_id") UUID userId,
+            @AuthenticationPrincipal AccountDetails account,
             @PathVariable String orderCode) {
         return ResponseEntity.ok(
                 ApiRes.success("Order detail",
-                        orderGetService.getOrderByCode(userId, orderCode)));
+                        orderGetService.getOrderByCode(account.requireUserUuid(), orderCode)));
     }
 
     @Operation(summary = "Hủy đơn hàng", description = "Chỉ hủy được đơn hàng ở trạng thái PENDING")
     @PatchMapping("/{orderCode}/cancel")
     public ResponseEntity<ApiRes<Void>> cancelOrder(
-            @RequestParam("user_id") UUID userId,
+            @AuthenticationPrincipal AccountDetails account,
             @PathVariable String orderCode) {
-        orderUpdateService.cancelOrder(userId, orderCode);
+        orderUpdateService.cancelOrder(account.requireUserUuid(), orderCode);
         return ResponseEntity.ok(ApiRes.success("Order cancelled"));
     }
 }

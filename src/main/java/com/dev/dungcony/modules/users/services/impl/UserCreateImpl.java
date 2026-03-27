@@ -25,13 +25,9 @@ public class UserCreateImpl implements UserCreateService {
     @Override
     public UserRes createUser(int accId, UserCreateReq req) {
         User user = new User();
-        user.setFirstName(req.firstName());
-        user.setLastName(req.lastName());
-        user.setAvatar(req.avatar());
 
         UUID uuid = UUID.randomUUID();
         user.setId(uuid);
-
         user.setAccountId(accId);
 
         userRepository.save(user);

@@ -24,11 +24,11 @@ public class User extends BaseEntity {
     private UUID id;
 
     @NotBlank(message = "firstName not blank")
-    @Column(name = "f_name", nullable = false)
+    @Column(name = "f_name")
     private String firstName;
 
     @NotBlank(message = "lastName not blank")
-    @Column(name = "l_name", nullable = false)
+    @Column(name = "l_name")
     private String lastName;
 
     @Column(name = "avatar")

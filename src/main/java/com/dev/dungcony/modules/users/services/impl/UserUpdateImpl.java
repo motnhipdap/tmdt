@@ -32,7 +32,7 @@ public class UserUpdateImpl implements UserUpdateService {
         User user = userRepository.findById(uuid)
                 .orElseThrow(UserNotFound::new);
 
-        if (user.getAccountId() == null || user.getAccountId() != accId)
+        if (user.getAccountId() == null || !user.getAccountId().equals(accId))
             throw new UserUnAuthor();
 
         if (req.firstName() != null)

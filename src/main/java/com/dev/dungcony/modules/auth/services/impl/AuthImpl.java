@@ -8,6 +8,8 @@ import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
 import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.enums.Status;
 import com.dev.dungcony.modules.auth.services.interfaces.*;
+import com.dev.dungcony.modules.users.exceptions.UserNotFound;
+import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class AuthImpl implements AuthService {
     private final JwtService jwtService;
     private final JwtConfig jwtConfig;
     private final RefreshTokenService refreshTokenService;
+    private final UserGetService userGetService;
 
     @Transactional
     @Override
@@ -61,7 +66,7 @@ public class AuthImpl implements AuthService {
 
         log.info("Login successful for account: {}", acc.username());
 
-        String acessToken = jwtService.generateToken(acc.id(), acc.username(), acc.role());
+        String acessToken = jwtService.generateToken(acc.id(), acc.username(), acc.role(), resolveUserUuid(acc.id()));
         String refreshToken = refreshTokenService.create(acc.id(), deviceId);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
@@ -71,7 +76,7 @@ public class AuthImpl implements AuthService {
                 .sameSite("Lax")
                 .maxAge(jwtConfig.getRefreshExpiration())
                 .build();
-        log.info("Generated refresh token for" + refreshToken.toString());
+        log.info("Generated refresh token for account: {}", acc.username());
 
         return new LoginResult(acessToken, JwtConfig.headerPrefix, jwtConfig.getExpiration(), refreshCookie.toString());
     }
@@ -79,9 +84,19 @@ public class AuthImpl implements AuthService {
     @Override
     public AcessTokenRes refreshToken(String refreshToken) {
         AccDto acc = refreshTokenService.verify(refreshToken);
-        String token = jwtService.generateToken(acc.id(), acc.username(), acc.role());
+        String token = jwtService.generateToken(acc.id(), acc.username(), acc.role(), resolveUserUuid(acc.id()));
 
         return new AcessTokenRes(token, jwtConfig.getExpiration());
+    }
+
+    // -----PRIVATE-----//
+    private UUID resolveUserUuid(int accId) {
+        try {
+            return userGetService.getUserByAccId(accId).id();
+        } catch (UserNotFound e) {
+            log.error("User not found for account: {}", accId);
+            return null;
+        }
     }
 
     @Override

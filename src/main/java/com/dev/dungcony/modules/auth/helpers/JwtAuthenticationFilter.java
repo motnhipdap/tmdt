@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * JWT Authentication Filter
@@ -67,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Integer userId = jwtService.extractUserId(token);
             String email = jwtService.extractEmail(token);
             Role role = jwtService.extractRole(token);
+            UUID userUuid = jwtService.extractUserUuid(token);
 
             logger.debug("Extracted from token - username: {}, userId: {}, role: {}", username, userId, role);
 
@@ -75,7 +77,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            AccountDetails accountDetails = new AccountDetails(userId, username, email, role);
+            AccountDetails accountDetails = new AccountDetails(userId, username, email, role, userUuid);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     accountDetails,
