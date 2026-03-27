@@ -15,18 +15,18 @@ import com.dev.dungcony.modules.order.enums.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
-    Optional<Order> findByOrderCode(String orderCode);
+    Optional<Order> findByCode(String orderCode);
 
     @Query("""
             SELECT o FROM Order o
             LEFT JOIN FETCH o.items
-            WHERE o.orderCode = :orderCode
+            WHERE o.code = :orderCode
             """)
     Optional<Order> findByOrderCodeWithItems(@Param("orderCode") String orderCode);
 
     @Query("""
             SELECT new com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes(
-                o.orderCode,
+                o.code,
                 o.status,
                 o.totalAmount,
                 SIZE(o.items),

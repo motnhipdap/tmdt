@@ -4,10 +4,11 @@ import java.util.UUID;
 
 import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
 import com.dev.dungcony.modules.product.enums.ProductSize;
+import com.dev.dungcony.modules.users.entities.User;
+import com.dev.dungcony.modules.users.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,13 +35,15 @@ import lombok.extern.slf4j.Slf4j;
 public class CartUpdateController {
 
     private final CartUpdateService cartUpdateService;
+    private final UserRepository userRepository;
 
     @Operation(summary = "Thêm sản phẩm vào giỏ hàng")
     @PostMapping("/add")
     public ResponseEntity<ApiRes<Void>> addToCart(
             @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @Valid @RequestBody AddToCartReq req) {
-        cartUpdateService.addItemToCart(req);
+        cartUpdateService.addItemToCart(userId, req);
         return ResponseEntity.ok(ApiRes.success("Item added to cart"));
     }
 
@@ -48,8 +51,9 @@ public class CartUpdateController {
     @PatchMapping("/update-quantity")
     public ResponseEntity<ApiRes<Void>> updateQuantity(
             @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
             @Valid @RequestBody UpdateCartItemReq req) {
-        cartUpdateService.updateItemQuantity(req);
+        cartUpdateService.updateItemQuantity(userId, req);
         return ResponseEntity.ok(ApiRes.success("Quantity updated"));
     }
 
@@ -57,7 +61,7 @@ public class CartUpdateController {
     @DeleteMapping("/remove")
     public ResponseEntity<ApiRes<Void>> removeItem(
             @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("userId") UUID userId,
+            @RequestParam("user_id") UUID userId,
             @RequestParam("productCode") String productCode,
             @RequestParam("size") ProductSize size) {
         cartUpdateService.removeItemFromCart(userId, productCode, size);
@@ -68,8 +72,30 @@ public class CartUpdateController {
     @DeleteMapping("/clear")
     public ResponseEntity<ApiRes<Void>> clearCart(
             @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("userId") UUID userId) {
+            @RequestParam("user_id") UUID userId) {
         cartUpdateService.clearCart(userId);
         return ResponseEntity.ok(ApiRes.success("Cart cleared"));
+    }
+
+    @Operation(summary = "Chọn/bỏ chọn sản phẩm")
+    @PatchMapping("/select")
+    public ResponseEntity<ApiRes<Void>> selectItem(
+            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
+            @RequestParam("productCode") String productCode,
+            @RequestParam("size") ProductSize size,
+            @RequestParam("selected") boolean selected) {
+        cartUpdateService.updateItemSelection(userId, productCode, size, selected);
+        return ResponseEntity.ok(ApiRes.success("Selection updated"));
+    }
+
+    @Operation(summary = "Chọn/bỏ chọn tất cả sản phẩm")
+    @PatchMapping("/select-all")
+    public ResponseEntity<ApiRes<Void>> selectAllItems(
+            @AuthenticationPrincipal AccountDetails account,
+            @RequestParam("user_id") UUID userId,
+            @RequestParam("selected") boolean selected) {
+        cartUpdateService.updateAllSelection(userId, selected);
+        return ResponseEntity.ok(ApiRes.success("All items selection updated"));
     }
 }

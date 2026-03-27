@@ -2,7 +2,7 @@ package com.dev.dungcony.modules.users.controllers.store;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.users.dtos.UserRes;
+import com.dev.dungcony.modules.users.dtos.res.UserRes;
 import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 
 import io.swagger.v3.oas.annotations.Operation;

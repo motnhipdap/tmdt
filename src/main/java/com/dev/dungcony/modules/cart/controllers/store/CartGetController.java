@@ -1,10 +1,11 @@
 package com.dev.dungcony.modules.cart.controllers.store;
 
-
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.cart.dtos.res.CartRes;
 import com.dev.dungcony.modules.cart.services.interfaces.CartGetService;
+import com.dev.dungcony.modules.users.entities.User;
+import com.dev.dungcony.modules.users.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +22,14 @@ import java.util.UUID;
 @RequestMapping("/v1/api/user/cart")
 @Tag(name = "Cart")
 public class CartGetController {
-    private final CartGetService cartGetService;
 
-    @Operation(summary = "Tạo giỏ hàng")
-    @PostMapping("/create")
-    public ResponseEntity<ApiRes<?>> createCart(
-            @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("userId") UUID userId) {
-        cartGetService.getCart(userId);
-        return ResponseEntity.ok(ApiRes.success("Cart created"));
-    }
+    private final CartGetService cartGetService;
 
     @Operation(summary = "Lấy giỏ hàng")
     @GetMapping
     public ResponseEntity<ApiRes<CartRes>> getCart(
             @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("userId") UUID userId) {
+            @RequestParam("user_id") UUID userId) {
         return ResponseEntity.ok(
                 ApiRes.success("Cart retrieved", cartGetService.getCart(userId)));
     }

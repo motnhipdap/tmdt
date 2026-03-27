@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.dev.dungcony.modules.users.dtos.UserRes;
+import com.dev.dungcony.modules.users.dtos.res.UserRes;
 import com.dev.dungcony.modules.users.dtos.req.UserUpdateReq;
 import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.exceptions.UserNotFound;

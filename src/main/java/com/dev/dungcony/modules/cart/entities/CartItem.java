@@ -45,15 +45,11 @@ public class CartItem extends BaseEntity {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "is_selected", nullable = false)
-    private Boolean isSelected = false;
-
     public CartItem(User user, Product product, Size size, int quantity) {
         this.id = new CartItemId(user.getId(), product.getId(), size.getId());
         this.user = user;
         this.product = product;
         this.size = size;
         this.quantity = quantity;
-        this.isSelected = false;
     }
 }

@@ -3,6 +3,9 @@ package com.dev.dungcony.modules.order.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
+import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
+import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,16 +28,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrderGetServiceImpl implements OrderGetService {
+public class OrderGetImpl implements OrderGetService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderMapper orderMapper;
 
+    private final RecieverGetService recieverGetService;
+    private final ProductGetService productGetService;
+
     @Override
     @Transactional(readOnly = true)
     public OrderRes getOrderByCode(UUID userId, String orderCode) {
-        Order order = orderRepository.findByOrderCode(orderCode)
+        Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
         if (!order.getUserId().equals(userId)) {
@@ -42,7 +48,12 @@ public class OrderGetServiceImpl implements OrderGetService {
         }
 
         List<OrderItem> items = orderItemRepository.findAllByOrderIdWithDetails(order.getId());
-        return orderMapper.toOrderRes(order, items);
+
+        for (OrderItem item : items) {
+            ProductSummaryRes product = productGetService.getByCode()
+        }
+
+        return orderMapper.toOrderRes(order, items, recieverGetService.getById(order.getReceiverId()));
     }
 
     @Override

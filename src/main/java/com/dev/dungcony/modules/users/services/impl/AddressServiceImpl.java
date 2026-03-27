@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.users.services.impl;
 
-import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.AddressDto;
 import com.dev.dungcony.modules.users.dtos.req.AddressUpdateReq;
 import com.dev.dungcony.modules.users.dtos.req.AddressAddReq;
 import com.dev.dungcony.modules.users.entities.Address;
@@ -24,7 +24,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public AddressRes addNew(AddressAddReq req) {
+    public AddressDto addNew(AddressAddReq req) {
         Address address = new Address();
         address.setCountry(req.country());
         address.setProvince(req.province());
@@ -43,7 +43,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressRes update(AddressUpdateReq req) {
+    public AddressDto update(AddressUpdateReq req) {
 
         Address address = addressRepository.findById(req.id())
                 .orElseThrow(AddressNotFound::new);

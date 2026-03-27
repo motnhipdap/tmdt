@@ -11,7 +11,6 @@ import com.dev.dungcony.modules.product.entities.Product;
 import com.dev.dungcony.modules.product.entities.Size;
 import com.dev.dungcony.modules.product.enums.ProductSize;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
-import com.dev.dungcony.modules.product.services.interfaces.item.ItemGetService;
 import com.dev.dungcony.modules.product.services.interfaces.item.ItemUpdateService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.entities.User;
@@ -22,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,9 +29,7 @@ import java.util.UUID;
 @Slf4j
 public class CartUpdateImpl implements CartUpdateService {
 
-
     private final CartRepository cartItemRepository;
-    private final ItemGetService itemGetService;
     private final ItemUpdateService itemUpdateService;
     private final SizeCacheService sizeCacheService;
     private final ProductGetService productGetService;
@@ -40,18 +37,26 @@ public class CartUpdateImpl implements CartUpdateService {
 
     @Override
     @Transactional
-    public void addItemToCart(AddToCartReq req) {
+    public void addItemToCart(UUID userId, AddToCartReq req) {
         Integer productId = productGetService.getIdByCode(req.productCode());
         Integer sizeId = sizeCacheService.getIdBySize(req.size());
 
+        CartItem cartItem = cartItemRepository
+                .findById_UserIdAndId_ProductIdAndId_SizeId(userId, productId, sizeId)
+                .orElse(null);
+
         itemUpdateService.reduce(productId, sizeId, req.quantity());
 
-        CartItem cartItem = new CartItem();
-        cartItem.setId(new CartItemId(req.userId(), productId, sizeId));
-        cartItem.setUser(entityManager.getReference(User.class, req.userId()));
-        cartItem.setProduct(entityManager.getReference(Product.class, productId));
-        cartItem.setSize(entityManager.getReference(Size.class, sizeId));
-        cartItem.setQuantity(req.quantity());
+        if (cartItem == null) {
+            cartItem = new CartItem();
+            cartItem.setId(new CartItemId(userId, productId, sizeId));
+            cartItem.setUser(entityManager.getReference(User.class, userId));
+            cartItem.setProduct(entityManager.getReference(Product.class, productId));
+            cartItem.setSize(entityManager.getReference(Size.class, sizeId));
+            cartItem.setQuantity(req.quantity());
+        } else {
+            cartItem.setQuantity(cartItem.getQuantity() + req.quantity());
+        }
 
         cartItemRepository.save(cartItem);
     }
@@ -66,35 +71,57 @@ public class CartUpdateImpl implements CartUpdateService {
                 .orElseThrow(CartItemNotFoundException::new);
 
         itemUpdateService.increase(productId, sizeId, item.getQuantity());
-
         cartItemRepository.delete(item);
     }
 
     @Override
     @Transactional
-    public void updateItemQuantity(UpdateCartItemReq req) {
+    public void updateItemQuantity(UUID userId, UpdateCartItemReq req) {
         int productId = productGetService.getIdByCode(req.productCode());
         int sizeId = sizeCacheService.getIdBySize(req.size());
-        CartItemId id = new CartItemId(req.id(), productId, sizeId);
 
-        itemUpdateService.reduce(productId, sizeId, req.quantity());
+        CartItem cartItem = cartItemRepository.findById(new CartItemId(userId, productId, sizeId))
+                .orElseThrow(CartItemNotFoundException::new);
 
-        CartItem cartItem = cartItemRepository.findById(id)
-                .orElseThrow(() -> new CartItemNotFoundException("Cart item not found"));
-
-        if (req.quantity() <= 0)
-            cartItemRepository.delete(cartItem);
-        else {
-            cartItem.setQuantity(req.quantity());
-            cartItemRepository.save(cartItem);
+        int delta = req.quantity() - cartItem.getQuantity();
+        if (delta > 0) {
+            itemUpdateService.reduce(productId, sizeId, delta);
+        } else if (delta < 0) {
+            itemUpdateService.increase(productId, sizeId, Math.abs(delta));
         }
+
+        cartItem.setQuantity(req.quantity());
+        cartItemRepository.save(cartItem);
     }
 
     @Override
     @Transactional
     public void clearCart(UUID userId) {
+        List<CartItem> items = cartItemRepository.findAllByUserId(userId);
+        for (CartItem item : items) {
+            itemUpdateService.increase(
+                    item.getId().getProductId(),
+                    item.getId().getSizeId(),
+                    item.getQuantity());
+        }
         cartItemRepository.deleteAllById_UserId(userId);
     }
 
+    @Override
+    @Transactional
+    public void updateItemSelection(UUID userId, String productCode, ProductSize size, boolean selected) {
+        int productId = productGetService.getIdByCode(productCode);
+        int sizeId = sizeCacheService.getIdBySize(size);
 
+        CartItem cartItem = cartItemRepository.findById(new CartItemId(userId, productId, sizeId))
+                .orElseThrow(CartItemNotFoundException::new);
+
+        cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    @Transactional
+    public void updateAllSelection(UUID userId, boolean selected) {
+        cartItemRepository.updateAllSelectionByCartId(userId, selected);
+    }
 }

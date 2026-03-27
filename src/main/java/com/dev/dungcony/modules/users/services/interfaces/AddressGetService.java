@@ -3,12 +3,12 @@ package com.dev.dungcony.modules.users.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.AddressDto;
 
 public interface AddressGetService {
 
-    AddressRes getAddressById(int id);
+    AddressDto getAddressById(int id);
 
-    List<AddressRes> getAddressByUserId(UUID userId);
+    List<AddressDto> getAddressByUserId(UUID userId);
 
 }

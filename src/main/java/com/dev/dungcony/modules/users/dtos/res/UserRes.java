@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.users.dtos;
+package com.dev.dungcony.modules.users.dtos.res;
 
 import java.util.UUID;
 

@@ -46,6 +46,22 @@ public class ProductGetImpl implements ProductGetService {
     }
 
     @Override
+    public ProductSummaryRes getById(int id) {
+
+        Product product = findById(id);
+
+        // Tính discount cho sản phẩm
+        String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
+        DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
+                product.getCode(), categoryCode, product.getPrice());
+
+        // Lấy danh sách items (nếu có) để hiển thị chi tiết
+        List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
+
+        return productMapper.toSumaryRes(product);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public ProductDetailRes getByCode(String code) {
 
@@ -164,6 +180,24 @@ public class ProductGetImpl implements ProductGetService {
 
     private Product findByCode(String code) {
         Product product = productRepository.findByCodeWithCategoryAndProvider(code)
+                .orElseThrow(() -> new ProductNotFoundException("product not found"));
+
+        // Không trả về product đã bị xóa
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ProductNotFoundException("product not found");
+        }
+
+        // Ẩn sản phẩm nếu category bị ẩn
+        if (product.getCategory() != null && product.getCategory().getStatus() == CategoryStatus.HIDDEN) {
+            throw new ProductNotFoundException("product not found");
+        }
+
+        return product;
+    }
+
+
+    private Product findById(int id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("product not found"));
 
         // Không trả về product đã bị xóa

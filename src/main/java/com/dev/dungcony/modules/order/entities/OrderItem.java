@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import com.dev.dungcony.modules.product.entities.Product;
 import com.dev.dungcony.modules.product.entities.Size;
 
+import com.dev.dungcony.modules.product.enums.ProductSize;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -28,21 +29,6 @@ public class OrderItem {
     @EmbeddedId
     private OrderItemId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("orderId")
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("productId")
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("sizeId")
-    @JoinColumn(name = "size_id")
-    private Size size;
-
     @NotNull
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
@@ -51,12 +37,14 @@ public class OrderItem {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "product_name", length = 100)
-    private String productName;
+    @NotNull
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totaPrice;
 
-    @Column(name = "size_name", length = 20)
-    private String sizeName;
 
-    @Column(name = "product_img")
-    private String productImg;
+    //---fk---//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("orderId")
+    @JoinColumn(name = "order_id")
+    private Order order;
 }

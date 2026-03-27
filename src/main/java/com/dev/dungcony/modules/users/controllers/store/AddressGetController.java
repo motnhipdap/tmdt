@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.AddressDto;
 import com.dev.dungcony.modules.users.services.interfaces.AddressGetService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +31,7 @@ public class AddressGetController {
 
     @Operation(summary = "Get my address")
     @GetMapping("/gets")
-    public ResponseEntity<ApiRes<List<AddressRes>>> getMyAddresses(
+    public ResponseEntity<ApiRes<List<AddressDto>>> getMyAddresses(
             @AuthenticationPrincipal AccountDetails details,
             @RequestParam UUID userId) {
         return ResponseEntity.ok()
@@ -40,7 +40,7 @@ public class AddressGetController {
 
     @Operation(summary = "Get my address")
     @GetMapping("/get")
-    public ResponseEntity<ApiRes<AddressRes>> getById(
+    public ResponseEntity<ApiRes<AddressDto>> getById(
             @AuthenticationPrincipal AccountDetails details,
             @RequestParam Integer addrId) {
         return ResponseEntity.ok()

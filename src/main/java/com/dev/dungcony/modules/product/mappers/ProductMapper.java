@@ -5,6 +5,7 @@ import com.dev.dungcony.modules.product.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.product.dtos.ItemDto;
 import com.dev.dungcony.modules.product.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
+import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.product.entities.Category;
 import com.dev.dungcony.modules.product.entities.Product;
 import com.dev.dungcony.modules.product.entities.Provider;
@@ -19,6 +20,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ProductMapper {
+
+    public ProductSummaryRes toSumaryRes(Product p) {
+        return new ProductSummaryRes(
+                p.getCode(),
+                p.getName(),
+                p.getPrice(),
+                p.getRated(),
+                p.getImg(),
+                p.getCategory().getCode()
+        );
+    }
 
     /**
      * Entity → ProductDetailRes không có discount (cho create/update response).

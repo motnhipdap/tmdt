@@ -1,9 +1,7 @@
-package com.dev.dungcony.modules.order.entities;
+package com.dev.dungcony.modules.users.entities;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,13 @@ import lombok.Setter;
 @Table(name = "tbl_recivers")
 public class Reciever {
 
-    @Column(name = "address_id", nullable = false)
-    private Integer addressId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
     @Size(max = 100)
-    @Column(name = "name", length = 100)
+    @Column(name = "name", lenAth = 100)
     private String receiverName;
 
     @Size(max = 10)
@@ -28,4 +28,8 @@ public class Reciever {
     private String phone;
 
 
+    //-----FK-----//
+    @OneToOne
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 }

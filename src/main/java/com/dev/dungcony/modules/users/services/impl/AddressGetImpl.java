@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.dev.dungcony.modules.users.dtos.AddressRes;
+import com.dev.dungcony.modules.users.dtos.AddressDto;
 import com.dev.dungcony.modules.users.entities.Address;
 import com.dev.dungcony.modules.users.exceptions.AddressIdConflict;
 import com.dev.dungcony.modules.users.mappers.AddressMapper;
@@ -23,7 +23,7 @@ public class AddressGetImpl implements AddressGetService {
     private final AddressRepository addressRepository;
 
     @Override
-    public List<AddressRes> getAddressByUserId(UUID userId) {
+    public List<AddressDto> getAddressByUserId(UUID userId) {
         List<Address> addrs = addressRepository.findByUserId(userId);
         return addrs.stream()
                 .map(AddressMapper::toDto)
@@ -31,7 +31,7 @@ public class AddressGetImpl implements AddressGetService {
     }
 
     @Override
-    public AddressRes getAddressById(int id) {
+    public AddressDto getAddressById(int id) {
         Address addr = addressRepository.findById(id)
                 .orElseThrow(AddressIdConflict::new);
         return AddressMapper.toDto(addr);

@@ -2,7 +2,6 @@ package com.dev.dungcony.modules.cart.repositories;
 
 import com.dev.dungcony.modules.cart.entities.CartItem;
 import com.dev.dungcony.modules.cart.entities.CartItemId;
-import com.dev.dungcony.modules.users.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,6 +13,4 @@ public interface CartRepository extends JpaRepository<CartItem, CartItemId>, Car
             UUID userId, Integer productId, Integer sizeId);
 
     void deleteAllById_UserId(UUID userId);
-
-    UUID user(User user);
 }

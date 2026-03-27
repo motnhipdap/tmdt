@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 public interface ProductGetService {
     Integer getIdByCode(String code);
 
+    ProductSummaryRes getById(int id);
+
     ProductDetailRes getByCode(String code);
 
     Page<ProductSummaryRes> getAll(Pageable pageable);
