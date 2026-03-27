@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.product.services.interfaces.product;
 
+import com.dev.dungcony.modules.product.dtos.ProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +14,7 @@ public interface ProductGetService {
 
     ProductSummaryRes getById(int id);
 
-    ProductDetailRes getByCode(String code);
+    ProductDto getByCode(String code);
 
     Page<ProductSummaryRes> getAll(Pageable pageable);
 

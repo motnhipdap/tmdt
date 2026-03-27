@@ -1,9 +1,12 @@
 package com.dev.dungcony.modules.order.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
+import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import org.springframework.data.domain.Page;
@@ -36,7 +39,10 @@ public class OrderGetImpl implements OrderGetService {
 
     private final RecieverGetService recieverGetService;
     private final ProductGetService productGetService;
+    private final SizeCacheService sizeCacheService;
 
+
+    //find order of user
     @Override
     @Transactional(readOnly = true)
     public OrderRes getOrderByCode(UUID userId, String orderCode) {
@@ -49,11 +55,10 @@ public class OrderGetImpl implements OrderGetService {
 
         List<OrderItem> items = orderItemRepository.findAllByOrderIdWithDetails(order.getId());
 
-        for (OrderItem item : items) {
-            ProductSummaryRes product = productGetService.getByCode()
-        }
-
-        return orderMapper.toOrderRes(order, items, recieverGetService.getById(order.getReceiverId()));
+        return OrderMapper.toOrderRes(
+                order,
+                mapper(items),
+                recieverGetService.getById(order.getReceiverId()));
     }
 
     @Override
@@ -71,11 +76,15 @@ public class OrderGetImpl implements OrderGetService {
     @Override
     @Transactional(readOnly = true)
     public OrderRes getOrderByCodeAdmin(String orderCode) {
-        Order order = orderRepository.findByOrderCode(orderCode)
+        Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
         List<OrderItem> items = orderItemRepository.findAllByOrderIdWithDetails(order.getId());
-        return orderMapper.toOrderRes(order, items);
+
+        return OrderMapper.toOrderRes(
+                order,
+                mapper(items),
+                recieverGetService.getById(order.getReceiverId()));
     }
 
     @Override
@@ -88,5 +97,26 @@ public class OrderGetImpl implements OrderGetService {
     @Transactional(readOnly = true)
     public Page<OrderSummaryRes> getAllOrdersByStatus(OrderStatus status, Pageable pageable) {
         return orderRepository.findAllByStatus(status, pageable);
+    }
+
+
+    //-----private-----//
+    private List<OrderItemDto> mapper(List<OrderItem> items) {
+        List<OrderItemDto> itemDtos = new ArrayList<>();
+
+        for (OrderItem item : items) {
+
+            ProductSummaryRes product = productGetService.getById(item.getId().getProductId());
+
+            itemDtos.add(
+                    new OrderItemDto(
+                            product.code(),
+                            sizeCacheService.getProductSizeById(item.getId().getSizeId()),
+                            item.getQuantity(),
+                            item.getPrice()
+                    )
+            );
+        }
+        return itemDtos;
     }
 }

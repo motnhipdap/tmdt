@@ -2,6 +2,7 @@ package com.dev.dungcony.modules.product.services.impl.product;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.product.dtos.ItemDto;
+import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.product.entities.Product;
@@ -50,20 +51,16 @@ public class ProductGetImpl implements ProductGetService {
 
         Product product = findById(id);
 
-        // Tính discount cho sản phẩm
         String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
         DiscountInfoDto discount = promotionCalculator.calculateFinalPrice(
                 product.getCode(), categoryCode, product.getPrice());
 
-        // Lấy danh sách items (nếu có) để hiển thị chi tiết
-        List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
-
-        return productMapper.toSumaryRes(product);
+        return productMapper.toSumaryRes(product).withDiscount(discount);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDetailRes getByCode(String code) {
+    public ProductDto getByCode(String code) {
 
         Product product = findByCode(code);
 
@@ -75,7 +72,7 @@ public class ProductGetImpl implements ProductGetService {
         // Lấy danh sách items (nếu có) để hiển thị chi tiết
         List<ItemDto> items = itemGetService.getByProductCode(product.getCode());
 
-        return productMapper.toDetailRes(product, items, discount);
+        return productMapper.toDto(product, items, discount);
     }
 
     @Override

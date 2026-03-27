@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.product.mappers;
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.product.dtos.CategorySummaryDto;
 import com.dev.dungcony.modules.product.dtos.ItemDto;
+import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.dtos.ProviderSummaryDto;
 import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
@@ -79,5 +80,24 @@ public class ProductMapper {
                 p.getUpdatedAt(),
                 catDto,
                 provDto);
+    }
+
+    public ProductDto toDto(Product p, List<ItemDto> items, DiscountInfoDto discount) {
+        return new ProductDto(
+                p.getId(),
+                p.getName(),
+                p.getCode(),
+                p.getDescription(),
+                p.getPrice(),
+                discount != null ? discount.finalPrice() : p.getPrice(),
+                discount != null ? discount.discountType() : "NONE",
+                discount != null ? discount.discountValue() : 0,
+                p.getQuantitySold(),
+                p.getRated(),
+                p.getImg(),
+                p.getStatus(),
+                items,
+                p.getCreatedAt(),
+                p.getUpdatedAt());
     }
 }
