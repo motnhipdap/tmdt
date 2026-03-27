@@ -11,6 +11,8 @@ import com.dev.dungcony.modules.users.repositories.RecieverRepository;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.UUID;
 public class ReceiverGetImpl implements RecieverGetService {
 
     private final RecieverRepository recieverRepository;
-    
+
     // Dto luôn chỉ sử dụng nội bộ kh trả về cho user
     @Override
     public ReceiverDto getById(UUID userId, Integer id) {
@@ -32,6 +34,20 @@ public class ReceiverGetImpl implements RecieverGetService {
     @Override
     public ReceiverRes getReceiverById(UUID userId, Integer id) {
         return ReceiverMapper.toRes(findById(userId, id));
+    }
+
+    @Override
+    public ReceiverRes adminGetReceiverById(Integer id) {
+        Receiver re = recieverRepository.findById(id)
+                .orElseThrow(ReceiverNotFound::new);
+
+        return ReceiverMapper.toRes(re);
+    }
+
+    @Override
+    public Page<ReceiverRes> adminGetAll(Pageable pageable) {
+        return recieverRepository.findAll(pageable)
+                .map(ReceiverMapper::toRes);
     }
 
     @Override
@@ -46,13 +62,12 @@ public class ReceiverGetImpl implements RecieverGetService {
                 .toList();
     }
 
-
-    //-----PRIVATE-----//
+    // -----PRIVATE-----//
     private Receiver findById(UUID userId, int id) {
         Receiver re = recieverRepository.findById(id)
                 .orElseThrow(ReceiverNotFound::new);
 
-        if (re.getUser().getId() != userId)
+        if (!re.getUser().getId().equals(userId))
             throw new ReceiverIdConflict();
 
         return re;

@@ -23,7 +23,6 @@ public class CartMapper {
                 item.getSize().getSize(),
                 unitPrice,
                 item.getQuantity(),
-                item.getIsSelected(),
                 lineTotal);
     }
 
@@ -33,7 +32,6 @@ public class CartMapper {
                 .toList();
 
         BigDecimal totalAmount = itemResList.stream()
-                .filter(CartItemRes::selected)
                 .map(CartItemRes::lineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 

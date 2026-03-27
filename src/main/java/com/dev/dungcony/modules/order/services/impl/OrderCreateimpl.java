@@ -15,7 +15,7 @@ import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
-import com.dev.dungcony.modules.users.dtos.ReceiverDto;
+import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,7 +47,7 @@ public class OrderCreateimpl implements OrderCreateService {
             throw new OrderCannotCreateException("Order items are required");
         }
 
-        ReceiverDto reciver = recieverGetService.getById(userId, req.recieverid());
+        ReceiverRes receiver = recieverGetService.getReceiverById(userId, req.recieverid());
 
         Order order = new Order();
         order.setUserId(userId);
@@ -55,6 +57,7 @@ public class OrderCreateimpl implements OrderCreateService {
         order.setNote(req.note());
 
         BigDecimal totalAmount = BigDecimal.ZERO;
+        List<OrderItemDto> savedItems = new ArrayList<>();
 
         for (OrderItemDto itemDto : req.items()) {
             if (itemDto.quantity() <= 0) {
@@ -68,6 +71,12 @@ public class OrderCreateimpl implements OrderCreateService {
             order.addItem(orderItem);
 
             totalAmount = totalAmount.add(orderItem.getTotaPrice());
+
+            savedItems.add(new OrderItemDto(
+                    itemDto.productCode(),
+                    itemDto.size(),
+                    orderItem.getQuantity(),
+                    orderItem.getPrice()));
         }
 
         order.setTotalAmount(totalAmount);
@@ -75,17 +84,15 @@ public class OrderCreateimpl implements OrderCreateService {
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
 
-        return OrderMapper.toOrderRes(order, req.items(), reciver);
+        return OrderMapper.toOrderRes(order, savedItems, receiver);
     }
 
-
-    //-----PRIVATE-----//
+    // -----PRIVATE-----//
     private String generateOrderCode() {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         return "ORD-" + timestamp.substring(timestamp.length() - 8) + "-" + random;
     }
-
 
     private static @NonNull OrderItem getOrderItem(OrderItemDto itemDto, ProductDto product, int sizeId) {
         BigDecimal currentPrice = product.finalPrice();

@@ -26,7 +26,7 @@ public class UserUpdateImpl implements UserUpdateService {
 
     @Override
     @Transactional
-    public UserRes updateUser(int accId, UserUpdateReq req) {
+    public UserRes updateUser(Integer accId, UserUpdateReq req) {
 
         UUID uuid = req.id();
         User user = userRepository.findById(uuid)
@@ -34,6 +34,25 @@ public class UserUpdateImpl implements UserUpdateService {
 
         if (user.getAccountId() == null || user.getAccountId() != accId)
             throw new UserUnAuthor();
+
+        if (req.firstName() != null)
+            user.setFirstName(req.firstName());
+        if (req.lastName() != null)
+            user.setLastName(req.lastName());
+        if (req.avatar() != null)
+            user.setAvatar(req.avatar());
+
+        userRepository.save(user);
+
+        return UserMapper.toUserDto(user);
+    }
+
+    @Override
+    @Transactional
+    public UserRes adminUpdateUser(UserUpdateReq req) {
+        UUID uuid = req.id();
+        User user = userRepository.findById(uuid)
+                .orElseThrow(UserNotFound::new);
 
         if (req.firstName() != null)
             user.setFirstName(req.firstName());

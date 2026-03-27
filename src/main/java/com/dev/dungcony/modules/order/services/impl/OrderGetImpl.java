@@ -8,10 +8,7 @@ import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
-import com.dev.dungcony.modules.users.dtos.res.UserRes;
-import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
-import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,15 +35,12 @@ public class OrderGetImpl implements OrderGetService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final OrderMapper orderMapper;
 
     private final RecieverGetService recieverGetService;
     private final ProductGetService productGetService;
     private final SizeCacheService sizeCacheService;
-    private final UserGetService userGetService;
 
-
-    //find order of user
+    // find order of user
     @Override
     @Transactional(readOnly = true)
     public OrderRes getOrderByCode(UUID userId, String orderCode) {
@@ -62,21 +56,19 @@ public class OrderGetImpl implements OrderGetService {
         return OrderMapper.toOrderRes(
                 order,
                 mapper(items),
-                recieverGetService.getById(userId, order.getReceiverId()));
+                recieverGetService.getReceiverById(userId, order.getReceiverId()));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getUserOrders(Integer accountId, Pageable pageable) {
-        UserRes user = userGetService.getUserByAccId(accountId);
-        return orderRepository.findAllByUserId(user.id(), pageable);
+    public Page<OrderSummaryRes> getUserOrders(UUID userId, Pageable pageable) {
+        return orderRepository.findAllByUserId(userId, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getUserOrdersByStatus(Integer accountId, OrderStatus status, Pageable pageable) {
-        UserRes user = userGetService.getUserByAccId(accountId);
-        return orderRepository.findAllByUserIdAndStatus(user.id(), status, pageable);
+    public Page<OrderSummaryRes> getUserOrdersByStatus(UUID userId, OrderStatus status, Pageable pageable) {
+        return orderRepository.findAllByUserIdAndStatus(userId, status, pageable);
     }
 
     @Override
@@ -90,7 +82,7 @@ public class OrderGetImpl implements OrderGetService {
         return OrderMapper.toOrderRes(
                 order,
                 mapper(items),
-                recieverGetService.getById(order.getReceiverId()));
+                recieverGetService.adminGetReceiverById(order.getReceiverId()));
     }
 
     @Override
@@ -105,8 +97,7 @@ public class OrderGetImpl implements OrderGetService {
         return orderRepository.findAllByStatus(status, pageable);
     }
 
-
-    //-----private-----//
+    // -----private-----//
     private List<OrderItemDto> mapper(List<OrderItem> items) {
         List<OrderItemDto> itemDtos = new ArrayList<>();
 
@@ -119,9 +110,7 @@ public class OrderGetImpl implements OrderGetService {
                             product.code(),
                             sizeCacheService.getProductSizeById(item.getId().getSizeId()),
                             item.getQuantity(),
-                            item.getPrice()
-                    )
-            );
+                            item.getPrice()));
         }
         return itemDtos;
     }

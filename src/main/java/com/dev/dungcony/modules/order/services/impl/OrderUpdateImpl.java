@@ -1,14 +1,11 @@
 package com.dev.dungcony.modules.order.services.impl;
 
-import com.dev.dungcony.modules.cart.repositories.CartCustomRepository;
 import com.dev.dungcony.modules.order.entities.Order;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.exceptions.OrderConflictException;
 import com.dev.dungcony.modules.order.exceptions.OrderNotFoundException;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderUpdateService;
-import com.dev.dungcony.modules.users.dtos.res.UserRes;
-import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,9 +18,7 @@ import java.util.UUID;
 @Slf4j
 public class OrderUpdateImpl implements OrderUpdateService {
 
-
     private final OrderRepository orderRepository;
-    private final UserGetService userGetService;
 
     @Override
     @Transactional
@@ -44,6 +39,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
     }
 
     @Override
+    @Transactional
     public void completedOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
@@ -53,11 +49,11 @@ public class OrderUpdateImpl implements OrderUpdateService {
         }
 
         if (order.getStatus() != OrderStatus.PENDING) {
-            throw new OrderConflictException("Only pending orders can be cancelled");
+            throw new OrderConflictException("Only pending orders can be confirmed");
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
-        log.info("Order confirm: {} by user: {}", orderCode, userId);
+        log.info("Order confirmed: {} by user: {}", orderCode, userId);
     }
 
     @Override
@@ -75,8 +71,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
         order.setStatus(nextStatus);
     }
 
-
-    //---PRIVATE---//
+    // ---PRIVATE---//
     private void validateStatusTransition(OrderStatus current, OrderStatus next) {
         boolean valid = switch (current) {
             case PENDING -> next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELLED;

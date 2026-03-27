@@ -11,6 +11,7 @@ public class ItemMapper {
 
     public static ItemDto toDto(Item item) {
         return new ItemDto(
+                item.getProduct().getCode(),
                 item.getSize().getSize(),
                 item.getStatus(),
                 item.getQuantity());
@@ -23,7 +24,6 @@ public class ItemMapper {
                 item.getProduct().getPrice(),
                 item.getProduct().getRated(),
                 item.getProduct().getImg(),
-                item.getSize().getSize()
-        );
+                item.getSize().getSize());
     }
 }
