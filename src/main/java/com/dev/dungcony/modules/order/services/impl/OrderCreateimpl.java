@@ -17,6 +17,8 @@ import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
+import com.dev.dungcony.modules.voucher.dtos.VoucherApplyResult;
+import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -38,6 +40,7 @@ public class OrderCreateimpl implements OrderCreateService {
     private final ProductGetService productGetService;
     private final SizeCacheService sizeCacheService;
     private final RecieverGetService recieverGetService;
+    private final UserVoucherService userVoucherService;
 
     @Override
     @Transactional
@@ -56,7 +59,7 @@ public class OrderCreateimpl implements OrderCreateService {
         order.setStatus(OrderStatus.PENDING);
         order.setNote(req.note());
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal subtotalAmount = BigDecimal.ZERO;
         List<OrderItemDto> savedItems = new ArrayList<>();
 
         for (OrderItemDto itemDto : req.items()) {
@@ -70,7 +73,7 @@ public class OrderCreateimpl implements OrderCreateService {
 
             order.addItem(orderItem);
 
-            totalAmount = totalAmount.add(orderItem.getTotaPrice());
+            subtotalAmount = subtotalAmount.add(orderItem.getTotaPrice());
 
             savedItems.add(new OrderItemDto(
                     itemDto.productCode(),
@@ -79,8 +82,17 @@ public class OrderCreateimpl implements OrderCreateService {
                     orderItem.getPrice()));
         }
 
-        order.setTotalAmount(totalAmount);
+        VoucherApplyResult voucherResult = userVoucherService.previewApplyVoucher(
+                userId,
+                req.voucherCode(),
+                subtotalAmount);
+
+        order.setSubtotalAmount(subtotalAmount);
+        order.setVoucherCode(voucherResult.voucherCode());
+        order.setVoucherDiscountAmount(voucherResult.discountAmount());
+        order.setTotalAmount(voucherResult.finalAmount());
         orderRepo.save(order);
+        userVoucherService.markVoucherUsed(voucherResult.userVoucherId(), order.getCode());
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
 

@@ -9,12 +9,15 @@ import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 
 public record OrderRes(
-                String orderCode,
-                OrderStatus status,
-                BigDecimal totalAmount,
-                ReceiverRes reciever,
-                String note,
-                List<OrderItemDto> items,
-                Instant createdAt,
-                Instant updatedAt) {
+        String orderCode,
+        OrderStatus status,
+        String voucherCode,
+        ReceiverRes reciever,
+        String note,
+        List<OrderItemDto> items,
+        BigDecimal totalAmount,
+        BigDecimal voucherDiscount,
+        BigDecimal finalPrice,
+        Instant createdAt,
+        Instant updatedAt) {
 }

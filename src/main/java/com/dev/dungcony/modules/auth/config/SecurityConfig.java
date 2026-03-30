@@ -47,6 +47,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/v1/api/public/auth/**",
+                                "/v1/api/public/product/**",
+                                "/v1/api/public/category/**",
+                                "/v1/api/public/provider/**",
+                                "/v1/api/promotions/**",
                                 "/v1/api/account/check/exists-email",
                                 "/v1/api/account/check/exists-username",
                                 "/v1/api/test/**",

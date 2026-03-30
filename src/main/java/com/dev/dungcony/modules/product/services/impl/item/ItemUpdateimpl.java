@@ -7,12 +7,11 @@ import com.dev.dungcony.modules.product.enums.ItemStatus;
 import com.dev.dungcony.modules.product.exceptions.ItemNotFoundException;
 import com.dev.dungcony.modules.product.exceptions.ItemQuantityUnLimit;
 import com.dev.dungcony.modules.product.repositories.ItemRepository;
-import com.dev.dungcony.modules.product.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.item.ItemUpdateService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 
 @RequiredArgsConstructor
 @Service
@@ -20,13 +19,10 @@ public class ItemUpdateimpl implements ItemUpdateService {
 
     private final ItemRepository itemRepository;
     private final SizeCacheService sizeCacheService;
-    private final GetIdByCode getIdByCode;
-
 
     @Override
     public void updateQuantity(ItemUpdateReq req) {
-
-        Item item = get(req.productId(), req.sizeId());
+        Item item = get(req.productCode(), sizeCacheService.getIdBySize(req.size()));
 
         item.setQuantity(req.quantity());
         item.setStatus(req.status());

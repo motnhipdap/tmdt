@@ -9,6 +9,9 @@ import java.util.List;
 public record CreateOrderReq(
         int recieverid,
         List<OrderItemDto> items,
-        BigDecimal price,
+        BigDecimal totalPrice,
+        String voucherCode,
+        BigDecimal voucherDiscount,
+        BigDecimal finalPrice,
         @Size(max = 500) String note) {
 }

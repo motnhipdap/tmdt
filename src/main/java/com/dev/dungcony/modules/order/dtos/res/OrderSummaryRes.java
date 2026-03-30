@@ -8,7 +8,7 @@ import com.dev.dungcony.modules.order.enums.OrderStatus;
 public record OrderSummaryRes(
         String orderCode,
         OrderStatus status,
-        BigDecimal totalAmount,
+        BigDecimal finalPrice,
         int totalItems,
         Instant createdAt) {
 }

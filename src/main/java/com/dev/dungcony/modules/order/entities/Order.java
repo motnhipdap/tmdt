@@ -36,9 +36,20 @@ public class Order extends BaseEntity {
     @Column(name = "status", length = 20, nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
 
+    @Size(max = 30)
+    @Column(name = "voucher_code")
+    private String voucherCode;
+
     @NotNull
-    @Column(name = "total_amount", nullable = false)
-    private BigDecimal totalAmount;
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totalPrice;
+
+    @Column(name = "voucher_discount")
+    private BigDecimal voucherDiscount;
+
+    @NotNull
+    @Column(name = "final_price", nullable = false)
+    private BigDecimal finalPrice;
 
     @Size(max = 500)
     @Column(name = "note", length = 500)
@@ -49,7 +60,6 @@ public class Order extends BaseEntity {
     private Long version;
 
     //-----FK-----//
-
     @NotNull
     @Column(name = "user_id", nullable = false, columnDefinition = "CHAR(36)")
     private UUID userId;
@@ -57,6 +67,7 @@ public class Order extends BaseEntity {
     @NotNull
     @Column(name = "receiver_id", nullable = false)
     private Integer receiverId;
+
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();

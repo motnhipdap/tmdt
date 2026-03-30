@@ -13,7 +13,6 @@ import com.dev.dungcony.modules.product.repositories.ItemRepository;
 import com.dev.dungcony.modules.product.services.interfaces.GetIdByCode;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.item.ItemGetService;
-import com.dev.dungcony.modules.promotion.dtos.IteamCartDto;
 
 import lombok.RequiredArgsConstructor;
 
