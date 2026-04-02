@@ -102,14 +102,11 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
                         List<PromotionSummaryRes> productPromotions,
                         List<PromotionSummaryRes> categoryPromotions,
                         List<PromotionSummaryRes> globalPromotions) {
-                // (VD: product thuộc 1 category mà cả product lẫn category đều được map với
-                // cùng promotion)
-                Map<String, PromotionSummaryRes> dedupMap = new LinkedHashMap<>(
+                List<PromotionSummaryRes> allPromotions = new ArrayList<>(
                                 productPromotions.size() + categoryPromotions.size() + globalPromotions.size());
-                productPromotions.forEach(p -> dedupMap.put(p.code(), p));
-                categoryPromotions.forEach(p -> dedupMap.put(p.code(), p));
-                globalPromotions.forEach(p -> dedupMap.put(p.code(), p));
-                List<PromotionSummaryRes> allPromotions = new ArrayList<>(dedupMap.values());
+                allPromotions.addAll(productPromotions);
+                allPromotions.addAll(categoryPromotions);
+                allPromotions.addAll(globalPromotions);
 
                 List<PromotionSummaryRes> applicablePromotions = allPromotions.stream()
                                 .filter(promo -> promo.isApplicable(price, now))
@@ -128,8 +125,9 @@ public class PromotionCalculatorImpl implements PromotionCalculator {
                 BigDecimal finalPrice = price.subtract(discount);
 
                 log.debug("Best promotion: type={}, value={}, discount={}, finalPrice={}",
-                                bestPromotion.type(), bestPromotion.value(), discount, finalPrice);
+                                bestPromotion.promotionType(), bestPromotion.value(), discount, finalPrice);
 
-                return new DiscountInfoDto(price, finalPrice, bestPromotion.type().getValue(), bestPromotion.value());
+                return new DiscountInfoDto(price, finalPrice, bestPromotion.promotionType().getValue(),
+                                bestPromotion.value());
         }
 }

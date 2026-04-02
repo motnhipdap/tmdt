@@ -18,7 +18,7 @@ import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetSe
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import com.dev.dungcony.modules.voucher.dtos.VoucherApplyResult;
-import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherService;
+import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherCreateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -40,7 +40,7 @@ public class OrderCreateimpl implements OrderCreateService {
     private final ProductGetService productGetService;
     private final SizeCacheService sizeCacheService;
     private final RecieverGetService recieverGetService;
-    private final UserVoucherService userVoucherService;
+    private final UserVoucherCreateService userVoucherService;
 
     @Override
     @Transactional
@@ -87,12 +87,17 @@ public class OrderCreateimpl implements OrderCreateService {
                 req.voucherCode(),
                 subtotalAmount);
 
-        order.setSubtotalAmount(subtotalAmount);
+        BigDecimal finalAmount = voucherResult.finalAmount();
+        BigDecimal voucherDiscount = voucherResult.discountAmount();
+
+        validateClientTotals(req, subtotalAmount, voucherDiscount, finalAmount);
+
+        order.setTotalPrice(subtotalAmount);
         order.setVoucherCode(voucherResult.voucherCode());
-        order.setVoucherDiscountAmount(voucherResult.discountAmount());
-        order.setTotalAmount(voucherResult.finalAmount());
+        order.setVoucherDiscount(voucherDiscount);
+        order.setFinalPrice(finalAmount);
         orderRepo.save(order);
-        userVoucherService.markVoucherUsed(voucherResult.userVoucherId(), order.getCode());
+        userVoucherService.markVoucherUsed(userId, voucherResult.userVoucherId(), order.getCode());
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
 
@@ -124,5 +129,23 @@ public class OrderCreateimpl implements OrderCreateService {
         orderItem.setPrice(currentPrice);
         orderItem.setTotaPrice(currentPrice.multiply(BigDecimal.valueOf(itemDto.quantity())));
         return orderItem;
+    }
+
+    private void validateClientTotals(
+            CreateOrderReq req,
+            BigDecimal subtotalAmount,
+            BigDecimal voucherDiscount,
+            BigDecimal finalAmount) {
+        if (req.totalPrice() != null && req.totalPrice().compareTo(subtotalAmount) != 0) {
+            throw new OrderConflictException("Order total price has changed");
+        }
+
+        if (req.voucherDiscount() != null && req.voucherDiscount().compareTo(voucherDiscount) != 0) {
+            throw new OrderConflictException("Voucher discount has changed");
+        }
+
+        if (req.finalPrice() != null && req.finalPrice().compareTo(finalAmount) != 0) {
+            throw new OrderConflictException("Order final price has changed");
+        }
     }
 }

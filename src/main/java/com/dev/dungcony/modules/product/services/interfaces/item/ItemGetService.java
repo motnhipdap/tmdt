@@ -5,7 +5,6 @@ import java.util.List;
 import com.dev.dungcony.modules.product.dtos.ItemDto;
 import com.dev.dungcony.modules.product.dtos.res.ItemRes;
 import com.dev.dungcony.modules.product.enums.ProductSize;
-import com.dev.dungcony.modules.promotion.dtos.IteamCartDto;
 
 public interface ItemGetService {
     List<ItemDto> getByProductId(Integer productId);

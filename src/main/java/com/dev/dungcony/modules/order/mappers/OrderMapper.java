@@ -12,13 +12,13 @@ public class OrderMapper {
         return new OrderRes(
                 order.getCode(),
                 order.getStatus(),
-                order.getSubtotalAmount(),
-                order.getVoucherDiscountAmount(),
                 order.getVoucherCode(),
-                order.getTotalAmount(),
                 reciever,
                 order.getNote(),
                 items,
+                order.getTotalPrice(),
+                order.getVoucherDiscount(),
+                order.getFinalPrice(),
                 order.getCreatedAt(),
                 order.getUpdatedAt());
     }

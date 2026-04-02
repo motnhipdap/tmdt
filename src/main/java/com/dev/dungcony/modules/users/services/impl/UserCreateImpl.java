@@ -10,6 +10,7 @@ import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.mappers.UserMapper;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
 import com.dev.dungcony.modules.users.services.interfaces.UserCreateService;
+import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherCreateService;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserCreateImpl implements UserCreateService {
     private final UserRepository userRepository;
+    private final UserVoucherCreateService userVoucherService;
 
     @Transactional
     @Override
@@ -30,7 +32,8 @@ public class UserCreateImpl implements UserCreateService {
         user.setId(uuid);
         user.setAccountId(accId);
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
+        userVoucherService.applyNewbieVoucher(uuid);
 
         return UserMapper.toUserDto(user);
     }

@@ -22,25 +22,19 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
          * Lấy danh sách promotion (không bao gồm DELETED) cho admin.
          */
         @Query("""
-                            SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes(
-                                p.code,
-                                p.type,
+                            SELECT new com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes(
                                 p.value,
-                                p.minPriceApply,
                                 p.startAt,
                                 p.endAt
                             )
                             FROM Promotion p
-                            WHERE p.status <> com.dev.dungcony.modules.promotions.enums.PromotionStatus.DELETED
+                            WHERE p.status <> com.dev.dungcony.modules.promotion.enums.PromotionStatus.DELETED
                         """)
         Page<PromotionSummaryRes> getAll(Pageable pageable);
 
         @Query("""
-                        SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes(
-                            p.code,
-                            p.type,
+                        SELECT new com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes(
                             p.value,
-                            p.minPriceApply,
                             p.startAt,
                             p.endAt
                         )
@@ -65,7 +59,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
         @Modifying
         @Query("""
                         UPDATE Promotion p
-                        SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ENDED
+                        SET p.status = com.dev.dungcony.modules.promotion.enums.PromotionStatus.ENDED
                         WHERE p.status = :activeStatus
                             AND p.endAt < :now
                         """)
@@ -80,7 +74,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
         @Modifying
         @Query("""
                         UPDATE Promotion p
-                        SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ACTIVE
+                        SET p.status = com.dev.dungcony.modules.promotion.enums.PromotionStatus.ACTIVE
                         WHERE p.status = :scheduledStatus
                             AND p.startAt <= :now
                             AND p.endAt > :now
@@ -96,7 +90,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
         @Modifying
         @Query("""
                         UPDATE Promotion p
-                        SET p.status = com.dev.dungcony.modules.promotions.enums.PromotionStatus.ENDED
+                        SET p.status = com.dev.dungcony.modules.promotion.enums.PromotionStatus.ENDED
                         WHERE p.status = :scheduledStatus
                             AND p.endAt <= :now
                         """)

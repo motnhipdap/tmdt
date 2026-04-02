@@ -8,9 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.dev.dungcony.modules.promotion.enums.PromotionScope;
 import com.dev.dungcony.modules.promotion.enums.PromotionStatus;
-import com.dev.dungcony.modules.promotion.enums.PromotionType;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -22,14 +20,6 @@ public class Promotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int not null")
     private Integer id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 20)
-    private PromotionType type = PromotionType.PERCENT;
-
-    @NotNull
-    @Column(name = "code", nullable = false, length = 20)
-    private String code;
 
     @NotNull
     @Column(name = "value", nullable = false)
@@ -49,11 +39,6 @@ public class Promotion {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private PromotionStatus status = PromotionStatus.SCHEDULED;
-
-    @NotNull
-    @ColumnDefault("0")
-    @Column(name = "min_price_apply", nullable = false)
-    private BigDecimal minPriceApply;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "scope", nullable = false, length = 20)

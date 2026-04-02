@@ -53,17 +53,11 @@ public class UserGetImpl implements UserGetService {
     }
 
     @Override
-    public UserRes getByFirstName(String firstName) {
-        User user = userRepository.findByFirstName(firstName)
+    public UserRes getByName(String name) {
+        User user = userRepository.findByName(name)
                 .orElseThrow(UserNotFound::new);
         return UserMapper.toUserDto(user);
     }
 
-    @Override
-    public UserRes getByLastName(String lastName) {
-        User user = userRepository.findByLastName(lastName)
-                .orElseThrow(UserNotFound::new);
-        return UserMapper.toUserDto(user);
-    }
 
 }

@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.auth.controllers.store;
+package com.dev.dungcony.modules.auth.controllers.user;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.auth.dtos.req.LoginReq;

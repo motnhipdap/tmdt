@@ -137,14 +137,12 @@ CREATE TABLE tbl_cart_items (
 
 CREATE TABLE tbl_promotions (
     id               SERIAL PRIMARY KEY,
-    type             VARCHAR(20) NOT NULL DEFAULT 'PERCENT',
     code             VARCHAR(20) NOT NULL,
     value            INT NOT NULL,
     start_at         TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     end_at           TIMESTAMP WITH TIME ZONE,
     priority         INT DEFAULT 1,
     status           VARCHAR(20) DEFAULT 'SCHEDULED',
-    min_price_apply  DECIMAL(19, 2) NOT NULL DEFAULT 0,
     scope            VARCHAR(20) NOT NULL DEFAULT 'GLOBAL',
     version          BIGINT NOT NULL DEFAULT 0
 );

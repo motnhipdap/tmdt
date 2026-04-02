@@ -51,6 +51,15 @@ public class AdminUserController {
                         userGetService.getUserById(userId)));
     }
 
+    @Operation(summary = "Lấy user theo teen")
+    @GetMapping
+    public ResponseEntity<ApiRes<?>> getByName(
+            @RequestParam String name) {
+        return ResponseEntity.ok(
+                ApiRes.success("user",
+                        userGetService.getByName(name)));
+    }
+
     @Operation(summary = "Cập nhật thông tin user")
     @PutMapping("/update")
     public ResponseEntity<ApiRes<UserRes>> update(

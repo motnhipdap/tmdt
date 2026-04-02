@@ -11,7 +11,6 @@ import com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotion.entities.Promotion;
 import com.dev.dungcony.modules.promotion.enums.PromotionScope;
 import com.dev.dungcony.modules.promotion.enums.PromotionStatus;
-import com.dev.dungcony.modules.promotion.enums.PromotionType;
 import com.dev.dungcony.modules.promotion.exceptions.InvalidPromotionException;
 import com.dev.dungcony.modules.promotion.exceptions.PromotionNotFoundException;
 import com.dev.dungcony.modules.promotion.repositories.PromotionRepository;
@@ -26,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -117,17 +115,7 @@ public class PromotionServiceImpl implements PromotionService {
             throw new InvalidPromotionException("End date must be after start date");
         }
 
-        // Xác định type cuối cùng để validate value
-        PromotionType effectiveType = req.type() != null ? req.type() : promotion.getType();
-
-        if (req.value() != null && effectiveType == PromotionType.PERCENT
-                && (req.value() < 0 || req.value() > 100)) {
-            throw new InvalidPromotionException("Percent value must be between 0 and 100");
-        }
-
         // Update only provided fields
-        if (req.type() != null)
-            promotion.setType(req.type());
         if (req.value() != null)
             promotion.setValue(req.value());
         if (req.startAt() != null)
@@ -136,8 +124,6 @@ public class PromotionServiceImpl implements PromotionService {
             promotion.setEndAt(req.endAt());
         if (req.priority() != null)
             promotion.setPriority(req.priority());
-        if (req.priceRequire() != null)
-            promotion.setMinPriceApply(BigDecimal.valueOf(req.priceRequire()));
         if (req.status() != null)
             promotion.setStatus(req.status());
 
@@ -149,15 +135,12 @@ public class PromotionServiceImpl implements PromotionService {
     public Optional<PromotionDetailRes> getByCode(String code) {
         return promotionRepository.findByCode(code)
                 .map(p -> new PromotionDetailRes(
-                        p.getType(),
-                        p.getCode(),
                         p.getValue(),
                         p.getScope(),
                         p.getStartAt(),
                         p.getEndAt(),
                         p.getPriority(),
-                        p.getStatus(),
-                        p.getMinPriceApply().intValue()));
+                        p.getStatus()));
     }
 
     @Override
@@ -170,10 +153,6 @@ public class PromotionServiceImpl implements PromotionService {
     private void validateAddRequest(PromoAddReq req) {
         if (req.endAt().isBefore(req.startAt())) {
             throw new InvalidPromotionException("End date must be after start date");
-        }
-
-        if (req.type() == PromotionType.PERCENT && req.value() > 100) {
-            throw new InvalidPromotionException("Percent value must be between 0 and 100");
         }
 
         if (req.scope() == PromotionScope.PRODUCT) {
@@ -215,16 +194,12 @@ public class PromotionServiceImpl implements PromotionService {
 
     private Promotion getPromotion(PromoAddReq req, PromotionStatus initialStatus) {
         Promotion promotion = new Promotion();
-        promotion.setType(req.type());
         promotion.setCode(req.code());
         promotion.setValue(req.value());
         promotion.setScope(req.scope());
         promotion.setStartAt(req.startAt());
         promotion.setEndAt(req.endAt());
         promotion.setPriority(req.priority());
-        promotion.setMinPriceApply(req.priceRequire() != null
-                ? BigDecimal.valueOf(req.priceRequire())
-                : BigDecimal.ZERO);
         promotion.setStatus(initialStatus);
         return promotion;
     }

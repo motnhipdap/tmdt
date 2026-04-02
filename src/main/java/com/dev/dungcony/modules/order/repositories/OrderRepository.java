@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             SELECT new com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes(
                 o.code,
                 o.status,
-                o.totalAmount,
+                o.finalPrice,
                 SIZE(o.items),
                 o.createdAt
             )
@@ -42,7 +42,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             SELECT new com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes(
                 o.code,
                 o.status,
-                o.totalAmount,
+                o.finalPrice,
                 SIZE(o.items),
                 o.createdAt
             )
@@ -59,7 +59,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             SELECT new com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes(
                 o.code,
                 o.status,
-                o.totalAmount,
+                o.finalPrice,
                 SIZE(o.items),
                 o.createdAt
             )
@@ -72,7 +72,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             SELECT new com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes(
                 o.code,
                 o.status,
-                o.totalAmount,
+                o.finalPrice,
                 SIZE(o.items),
                 o.createdAt
             )

@@ -13,7 +13,5 @@ public interface UserGetService {
 
     Page<UserRes> getAll(Pageable pageable);
 
-    UserRes getByFirstName(String firstName);
-
-    UserRes getByLastName(String lastName);
+    UserRes getByName(String name);
 }

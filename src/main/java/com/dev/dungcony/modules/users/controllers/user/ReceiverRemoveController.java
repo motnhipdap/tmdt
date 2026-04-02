@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.users.controllers.store;
+package com.dev.dungcony.modules.users.controllers.user;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -30,7 +30,7 @@ public class ReceiverRemoveController {
     public ResponseEntity<ApiRes<Void>> removeById(
             @AuthenticationPrincipal AccountDetails details,
             @RequestParam Integer receiverId) {
-        receiverRemoveService.removeReceiverUserById(getUserId(details), receiverId);
+        receiverRemoveService.removeReceiverUserById(details.getUserUuid(), receiverId);
         return ResponseEntity.ok(ApiRes.success("deleted"));
     }
 
@@ -38,11 +38,7 @@ public class ReceiverRemoveController {
     @DeleteMapping("/all")
     public ResponseEntity<ApiRes<Void>> removeAllByUser(
             @AuthenticationPrincipal AccountDetails details) {
-        receiverRemoveService.removeAllByUser(getUserId(details));
+        receiverRemoveService.removeAllByUser(details.getUserUuid());
         return ResponseEntity.ok(ApiRes.success("deleted"));
-    }
-
-    private UUID getUserId(AccountDetails details) {
-        return userGetService.getUserByAccId(details.getId()).id();
     }
 }

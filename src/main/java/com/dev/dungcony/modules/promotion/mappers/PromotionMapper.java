@@ -19,15 +19,12 @@ public class PromotionMapper {
      */
     public PromotionDetailRes toDetailRes(Promotion p) {
         return new PromotionDetailRes(
-                p.getType(),
-                p.getCode(),
                 p.getValue(),
                 p.getScope(),
                 p.getStartAt(),
                 p.getEndAt(),
                 p.getPriority(),
-                p.getStatus(),
-                p.getMinPriceApply().intValue());
+                p.getStatus());
     }
 
     /**
@@ -36,10 +33,7 @@ public class PromotionMapper {
      */
     public PromotionSummaryRes toSummaryRes(Promotion p) {
         return new PromotionSummaryRes(
-                p.getCode(),
-                p.getType(),
                 p.getValue(),
-                p.getMinPriceApply(),
                 p.getStartAt(),
                 p.getEndAt());
     }

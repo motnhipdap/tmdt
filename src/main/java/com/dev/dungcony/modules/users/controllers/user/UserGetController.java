@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.users.controllers.store;
+package com.dev.dungcony.modules.users.controllers.user;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/api/user/get")
 public class UserGetController {
-        private final UserGetService userGetService;
+    private final UserGetService userGetService;
 
-        @Operation(summary = "Get my profile")
-        @GetMapping("/me")
-        public ResponseEntity<ApiRes<UserRes>> getMe(
-                        @AuthenticationPrincipal AccountDetails details) {
-                return ResponseEntity.ok()
-                                .body(ApiRes.success("profile", userGetService.getUserByAccId(details.getId())));
-        }
+    @Operation(summary = "Get my profile")
+    @GetMapping("/me")
+    public ResponseEntity<ApiRes<UserRes>> getMe(
+            @AuthenticationPrincipal AccountDetails details) {
+        return ResponseEntity.ok()
+                .body(ApiRes.success("profile", userGetService.getUserByAccId(details.getId())));
+    }
 
 }

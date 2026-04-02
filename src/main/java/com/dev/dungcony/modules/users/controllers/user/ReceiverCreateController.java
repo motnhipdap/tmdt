@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.users.controllers.store;
+package com.dev.dungcony.modules.users.controllers.user;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -34,10 +34,6 @@ public class ReceiverCreateController {
             @AuthenticationPrincipal AccountDetails details,
             @Valid @RequestBody ReceiverCreateReq req) {
         return ResponseEntity.ok(
-                ApiRes.success("created", receiverCreateService.create(getUserId(details), req)));
-    }
-
-    private UUID getUserId(AccountDetails details) {
-        return userGetService.getUserByAccId(details.getId()).id();
+                ApiRes.success("created", receiverCreateService.create(details.getUserUuid(), req)));
     }
 }

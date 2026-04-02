@@ -1,8 +1,9 @@
 package com.dev.dungcony.modules.voucher.entities;
 
 import com.dev.dungcony.commons.entities.BaseEntity;
-import com.dev.dungcony.modules.voucher.enums.VoucherStatus;
 import com.dev.dungcony.modules.voucher.enums.VoucherType;
+import com.dev.dungcony.modules.voucher.enums.VoucherStatus;
+import com.dev.dungcony.modules.voucher.enums.DiscountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,8 +37,16 @@ public class Voucher extends BaseEntity {
     private String code;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 20)
-    private VoucherType type;
+    @Column(name = "discountType", nullable = false, length = 20)
+    private DiscountType discountType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "voucherType", nullable = false, length = 20)
+    private VoucherType voucherType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private VoucherStatus status = VoucherStatus.ACTIVE;
 
     @NotNull
     @Column(name = "value", nullable = false)
@@ -52,10 +61,6 @@ public class Voucher extends BaseEntity {
 
     @Column(name = "end_at")
     private Instant endAt;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private VoucherStatus status = VoucherStatus.ACTIVE;
 
     @Version
     @Column(name = "version", nullable = false)

@@ -1,14 +1,13 @@
 package com.dev.dungcony.modules.voucher.entities;
 
 import com.dev.dungcony.commons.entities.BaseEntity;
-import com.dev.dungcony.modules.order.entities.OrderItemId;
 import com.dev.dungcony.modules.voucher.enums.UserVoucherStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Table(
         name = "tbl_user_vouchers",
         uniqueConstraints = @UniqueConstraint(name = "uk_user_voucher", columnNames = {"user_id", "voucher_id"}))
-public class UserVoucher extends BaseEntity {
+public class UserVoucher {
 
     @EmbeddedId
     private UserVoucherId id;
@@ -26,15 +25,21 @@ public class UserVoucher extends BaseEntity {
     @JoinColumn(name = "voucher_id", nullable = false)
     private Voucher voucher;
 
+
+    //------------FIELD----------//
+
+    /*
+    trạng thái hiện tại của voucher user
+    */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private UserVoucherStatus status = UserVoucherStatus.AVAILABLE;
 
-    @Column(name = "used_at")
-    private Instant usedAt;
+    @Column(name = "end_at")
+    private Instant endAt;
 
-    @Column(name = "used_order_code", length = 20)
-    private String usedOrderCode;
+    @Column(name = "min_price_apply")
+    private BigDecimal minPriceApply;
 
     @Version
     @Column(name = "version", nullable = false)

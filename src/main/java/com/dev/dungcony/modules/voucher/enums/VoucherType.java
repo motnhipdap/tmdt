@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.voucher.enums;
 
 public enum VoucherType {
-    PERCENT,
-    FIXED
+    NEWBIE, // dành cho khách hàng mới
+    GLOBAL, // dành cho tất cả khách hàng
 }

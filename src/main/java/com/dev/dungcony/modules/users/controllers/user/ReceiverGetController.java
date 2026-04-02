@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.users.controllers.store;
+package com.dev.dungcony.modules.users.controllers.user;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -32,7 +32,7 @@ public class ReceiverGetController {
     public ResponseEntity<ApiRes<List<ReceiverRes>>> getAll(
             @AuthenticationPrincipal AccountDetails details) {
         return ResponseEntity.ok(
-                ApiRes.success("receivers", recieverGetService.getAllByUser(getUserId(details))));
+                ApiRes.success("receivers", recieverGetService.getAllByUser(details.getUserUuid())));
     }
 
     @Operation(summary = "Get receiver by id")
@@ -41,10 +41,6 @@ public class ReceiverGetController {
             @AuthenticationPrincipal AccountDetails details,
             @RequestParam Integer receiverId) {
         return ResponseEntity.ok(
-                ApiRes.success("receiver", recieverGetService.getReceiverById(getUserId(details), receiverId)));
-    }
-
-    private UUID getUserId(AccountDetails details) {
-        return userGetService.getUserByAccId(details.getId()).id();
+                ApiRes.success("receiver", recieverGetService.getReceiverById(details.getUserUuid(), receiverId)));
     }
 }

@@ -15,11 +15,8 @@ import java.util.List;
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, PromotionProductId> {
 
      @Query("""
-               SELECT new com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes(
-                                pp.promotion.code,
-                                pp.promotion.type,
+               SELECT new com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes(
                                 pp.promotion.value,
-                                pp.promotion.minPriceApply,
                                 pp.promotion.startAt,
                                 pp.promotion.endAt
                             )
@@ -40,11 +37,8 @@ public interface PromotionProductRepository extends JpaRepository<PromotionProdu
       */
      @Query("""
                SELECT pp.productId,
-                      new com.dev.dungcony.modules.promotions.dtos.res.PromotionSummaryRes(
-                          pp.promotion.code,
-                          pp.promotion.type,
+                      new com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes(
                           pp.promotion.value,
-                          pp.promotion.minPriceApply,
                           pp.promotion.startAt,
                           pp.promotion.endAt
                       )
