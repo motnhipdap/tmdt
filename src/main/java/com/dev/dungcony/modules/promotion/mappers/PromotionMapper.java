@@ -1,23 +1,18 @@
 package com.dev.dungcony.modules.promotion.mappers;
 
-import org.springframework.stereotype.Component;
 
+import com.dev.dungcony.modules.promotion.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotion.dtos.res.PromotionDetailRes;
 import com.dev.dungcony.modules.promotion.dtos.res.PromotionSummaryRes;
 import com.dev.dungcony.modules.promotion.entities.Promotion;
 
-/**
- * Mapper chuyển đổi giữa Promotion entity và các DTO response.
- * Tách riêng để tuân thủ SRP và tránh rò rỉ internal ID ra client.
- */
-@Component
 public class PromotionMapper {
 
     /**
      * Entity → PromotionDetailRes (dùng cho endpoint get single promotion).
      * Không bao gồm internal id — client dùng code làm định danh.
      */
-    public PromotionDetailRes toDetailRes(Promotion p) {
+    public static PromotionDetailRes toDetailRes(Promotion p) {
         return new PromotionDetailRes(
                 p.getValue(),
                 p.getScope(),
@@ -31,10 +26,22 @@ public class PromotionMapper {
      * Entity → PromotionSummaryRes (dùng cho danh sách / batch query).
      * Không bao gồm internal id — code là business key duy nhất.
      */
-    public PromotionSummaryRes toSummaryRes(Promotion p) {
+    public static PromotionSummaryRes toSummaryRes(Promotion p) {
         return new PromotionSummaryRes(
                 p.getValue(),
                 p.getStartAt(),
                 p.getEndAt());
     }
+
+    public static Promotion toEntity(PromoAddReq req) {
+        Promotion p = new Promotion();
+        p.setValue(req.value());
+        p.setScope(req.scope());
+        p.setStartAt(req.startAt());
+        p.setEndAt(req.endAt());
+        p.setPriority(req.priority());
+        return p;
+    }
+
+
 }

@@ -4,7 +4,6 @@ import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
-import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @Tag(name = "Receiver")
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ import java.util.UUID;
 public class ReceiverGetController {
 
     private final RecieverGetService recieverGetService;
-    private final UserGetService userGetService;
 
     @Operation(summary = "Get my receivers")
     @GetMapping("/all")

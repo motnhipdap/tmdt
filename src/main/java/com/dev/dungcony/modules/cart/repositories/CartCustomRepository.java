@@ -8,13 +8,9 @@ import java.util.UUID;
 public interface CartCustomRepository {
     List<CartItem> findAllByUserId(UUID userId);
 
-    List<CartItem> findSelectedByUserId(UUID userId);
-
     void deleteByCartIdAndProductIdAndSizeId(
             UUID userId,
             Integer productId,
             Integer sizeId);
-
-    void updateAllSelectionByCartId(UUID userId, boolean selected);
 }
 

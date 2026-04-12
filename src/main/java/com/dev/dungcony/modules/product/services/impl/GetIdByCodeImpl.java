@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.product.services.impl;
 import com.dev.dungcony.modules.product.repositories.CategoryRepository;
 import com.dev.dungcony.modules.product.repositories.ProductRepository;
 import com.dev.dungcony.modules.product.services.interfaces.GetIdByCode;
-import com.dev.dungcony.modules.promotion.exceptions.InvalidPromotionException;
+import com.dev.dungcony.modules.promotion.exceptions.PromotionUnProcessable;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class GetIdByCodeImpl implements GetIdByCode {
     @Override
     public Integer getByCategoryCode(String code) {
         return categoryRepository.findByCode(code)
-                .orElseThrow(() -> new InvalidPromotionException("Category code not found: " + code))
+                .orElseThrow(() -> new PromotionUnProcessable("Category code not found: " + code))
                 .getId();
     }
 
@@ -39,7 +39,7 @@ public class GetIdByCodeImpl implements GetIdByCode {
     @Override
     public Integer getByProductCode(String code) {
         return productRepository.findByCode(code)
-                .orElseThrow(() -> new InvalidPromotionException("Product code not found: " + code))
+                .orElseThrow(() -> new PromotionUnProcessable("Product code not found: " + code))
                 .getId();
     }
 
@@ -55,7 +55,7 @@ public class GetIdByCodeImpl implements GetIdByCode {
 
     private Map<String, Integer> toMap(List<String> codes, Function<String, Integer> mapper) {
         if (codes == null) {
-            throw new InvalidPromotionException("Codes must not be null");
+            throw new PromotionUnProcessable("Codes must not be null");
         }
         return codes.stream()
                 .collect(Collectors.toMap(Function.identity(), mapper, (a, b) -> a));

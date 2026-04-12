@@ -5,7 +5,6 @@ import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.users.dtos.req.ReceiverCreateReq;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.ReceiverCreateService;
-import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
 
 @Tag(name = "Receiver")
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ import java.util.UUID;
 public class ReceiverCreateController {
 
     private final ReceiverCreateService receiverCreateService;
-    private final UserGetService userGetService;
 
     @Operation(summary = "Create new receiver")
     @PostMapping

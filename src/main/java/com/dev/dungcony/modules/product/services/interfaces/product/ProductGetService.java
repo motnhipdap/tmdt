@@ -8,6 +8,7 @@ import com.dev.dungcony.modules.product.dtos.res.ProductDetailRes;
 import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface ProductGetService {
     Integer getIdByCode(String code);
@@ -28,4 +29,6 @@ public interface ProductGetService {
                                    String keyword, Pageable pageable);
 
     Page<ProductSummaryRes> getAllBestSeller(Pageable pageable);
+
+    long countByCodes(List<String> codes);
 }

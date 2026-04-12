@@ -6,5 +6,4 @@ import com.dev.dungcony.modules.voucher.dtos.res.VoucherRes;
 public interface VoucherCreateService {
     VoucherRes createVoucher(CreateVoucherReq req);
 
-
 }

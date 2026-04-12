@@ -13,16 +13,14 @@ import com.dev.dungcony.modules.product.entities.Provider;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 
 /**
  * Mapper chuyển đổi giữa Product entity và các DTO response.
  * Không bao gồm internal id — client dùng code làm định danh.
  */
-@Component
 public class ProductMapper {
 
-    public ProductSummaryRes toSumaryRes(Product p) {
+    public static ProductSummaryRes toSumaryRes(Product p) {
         return new ProductSummaryRes(
                 p.getCode(),
                 p.getName(),
@@ -36,21 +34,21 @@ public class ProductMapper {
     /**
      * Entity → ProductDetailRes không có discount (cho create/update response).
      */
-    public ProductDetailRes toDetailRes(Product p) {
+    public static ProductDetailRes toDetailRes(Product p) {
         return toDetailRes(p, null, null);
     }
 
     /**
      * Entity → ProductDetailRes với discount info, không có items.
      */
-    public ProductDetailRes toDetailRes(Product p, DiscountInfoDto discount) {
+    public static ProductDetailRes toDetailRes(Product p, DiscountInfoDto discount) {
         return toDetailRes(p, null, discount);
     }
 
     /**
      * Entity → ProductDetailRes với discount info và items.
      */
-    public ProductDetailRes toDetailRes(Product p, List<ItemDto> items, DiscountInfoDto discount) {
+    public static ProductDetailRes toDetailRes(Product p, List<ItemDto> items, DiscountInfoDto discount) {
         CategorySummaryDto catDto = null;
         Category c = p.getCategory();
         if (c != null) {
@@ -82,7 +80,7 @@ public class ProductMapper {
                 provDto);
     }
 
-    public ProductDto toDto(Product p, List<ItemDto> items, DiscountInfoDto discount) {
+    public static ProductDto toDto(Product p, List<ItemDto> items, DiscountInfoDto discount) {
         return new ProductDto(
                 p.getId(),
                 p.getName(),

@@ -123,13 +123,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     boolean existsByCategory_Code(String code);
 
     /**
-     * Kiểm tra tất cả productIds có tồn tại hay không.
-     * Dùng khi validate danh sách productIds trước khi tạo promotion.
+     * Kiểm tra tất cả product có tồn tại hay không.
      */
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.id IN :ids AND p.status = :status")
-    long countByIdInAndStatus(
-            @Param("ids") List<Integer> ids,
-            @Param("status") ProductStatus status);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.code IN :codes")
+    long countByCodes(
+            @Param("codes") List<String> codes
+    );
 
     Optional<Product> findByCode(String productCode);
 

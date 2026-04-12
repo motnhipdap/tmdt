@@ -13,13 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PromotionService {
-    String addNew(PromoAddReq req);
+    PromotionDetailRes addNew(PromoAddReq req);
 
-    void update(PromoUpdateReq req);
+    PromotionDetailRes update(PromoUpdateReq req);
 
-    void delete(String code);
-
-    void softDelete(String code);
+    void softDelete(Integer id);
 
     Page<PromotionSummaryRes> getAll(Pageable pageable);
 

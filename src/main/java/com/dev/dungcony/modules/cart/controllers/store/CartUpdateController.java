@@ -67,24 +67,4 @@ public class CartUpdateController {
         cartUpdateService.clearCart(account.requireUserUuid());
         return ResponseEntity.ok(ApiRes.success("Cart cleared"));
     }
-
-    @Operation(summary = "Chọn/bỏ chọn sản phẩm")
-    @PatchMapping("/select")
-    public ResponseEntity<ApiRes<Void>> selectItem(
-            @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("productCode") String productCode,
-            @RequestParam("size") ProductSize size,
-            @RequestParam("selected") boolean selected) {
-        cartUpdateService.updateItemSelection(account.requireUserUuid(), productCode, size, selected);
-        return ResponseEntity.ok(ApiRes.success("Selection updated"));
-    }
-
-    @Operation(summary = "Chọn/bỏ chọn tất cả sản phẩm")
-    @PatchMapping("/select-all")
-    public ResponseEntity<ApiRes<Void>> selectAllItems(
-            @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("selected") boolean selected) {
-        cartUpdateService.updateAllSelection(account.requireUserUuid(), selected);
-        return ResponseEntity.ok(ApiRes.success("All items selection updated"));
-    }
 }

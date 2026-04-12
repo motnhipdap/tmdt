@@ -14,8 +14,4 @@ public interface CartUpdateService {
     void updateItemQuantity(UUID userId, UpdateCartItemReq req);
 
     void clearCart(UUID userId);
-
-    void updateItemSelection(UUID userId, String productCode, ProductSize size, boolean selected);
-
-    void updateAllSelection(UUID userId, boolean selected);
 }

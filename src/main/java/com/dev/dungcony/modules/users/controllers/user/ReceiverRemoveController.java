@@ -3,7 +3,6 @@ package com.dev.dungcony.modules.users.controllers.user;
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.users.services.interfaces.ReceiverRemoveService;
-import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @Tag(name = "Receiver")
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +20,6 @@ import java.util.UUID;
 public class ReceiverRemoveController {
 
     private final ReceiverRemoveService receiverRemoveService;
-    private final UserGetService userGetService;
 
     @Operation(summary = "Remove receiver by id")
     @DeleteMapping

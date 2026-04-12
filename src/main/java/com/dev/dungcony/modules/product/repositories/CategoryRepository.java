@@ -12,16 +12,13 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    boolean existsByParent_Id(Integer parentId);
-
-    long countByIdIn(List<Integer> ids);
-
     Optional<Category> findByCode(String categoryCode);
 
     Optional<Category> findByName(String name);
 
     List<Category> findByParent_Id(Integer parentId);
 
+    // ------------------- cusstom------------------//
     @Query("""
                 SELECT c
                 FROM Category c
@@ -54,4 +51,13 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
                 AND c.status = 'ACTIVE'
             """)
     void hideAllByPathPrefix(@Param("pathPrefix") String pathPrefix);
+
+
+    @Modifying
+    @Query("""
+            select count(*)
+            from Category c
+            where c.code in :codes
+            """)
+    long cntByCodes(@Param("codes") List<String> codes);
 }

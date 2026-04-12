@@ -12,4 +12,6 @@ public interface CategoryGetService {
     CategoryRes getByCode(String code);
 
     CategoryRes getByName(String name);
+
+    long coutByCodes(List<String> codes);
 }

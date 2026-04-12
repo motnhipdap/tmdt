@@ -17,8 +17,8 @@ import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
-import com.dev.dungcony.modules.voucher.dtos.VoucherApplyResult;
-import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherCreateService;
+import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherGetService;
+import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -40,7 +40,8 @@ public class OrderCreateimpl implements OrderCreateService {
     private final ProductGetService productGetService;
     private final SizeCacheService sizeCacheService;
     private final RecieverGetService recieverGetService;
-    private final UserVoucherCreateService userVoucherService;
+    private final UserVoucherGetService userVoucherService;
+    private final UserVoucherUpdateService userVoucherUpdateService;
 
     @Override
     @Transactional
@@ -73,7 +74,7 @@ public class OrderCreateimpl implements OrderCreateService {
 
             order.addItem(orderItem);
 
-            subtotalAmount = subtotalAmount.add(orderItem.getTotaPrice());
+            subtotalAmount = subtotalAmount.add(orderItem.getTotalPrice());
 
             savedItems.add(new OrderItemDto(
                     itemDto.productCode(),
@@ -82,36 +83,34 @@ public class OrderCreateimpl implements OrderCreateService {
                     orderItem.getPrice()));
         }
 
-        VoucherApplyResult voucherResult = userVoucherService.previewApplyVoucher(
-                userId,
-                req.voucherCode(),
-                subtotalAmount);
+        BigDecimal finalPrice = userVoucherService.applyVoucher(req.voucherCode(), userId, subtotalAmount);
 
-        BigDecimal finalAmount = voucherResult.finalAmount();
-        BigDecimal voucherDiscount = voucherResult.discountAmount();
+        BigDecimal voucherDiscount = subtotalAmount.subtract(finalPrice);
 
-        validateClientTotals(req, subtotalAmount, voucherDiscount, finalAmount);
+        validateClientTotals(req, subtotalAmount, voucherDiscount, finalPrice);
 
         order.setTotalPrice(subtotalAmount);
-        order.setVoucherCode(voucherResult.voucherCode());
+        order.setVoucherCode(req.voucherCode());
         order.setVoucherDiscount(voucherDiscount);
-        order.setFinalPrice(finalAmount);
+        order.setFinalPrice(finalPrice);
         orderRepo.save(order);
-        userVoucherService.markVoucherUsed(userId, voucherResult.userVoucherId(), order.getCode());
+        userVoucherUpdateService.apllyVoucherComplete(userId, req.voucherCode());
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
 
         return OrderMapper.toOrderRes(order, savedItems, receiver);
     }
 
-    // -----PRIVATE-----//
+    // -----------------------------PRIVATE-----------------------------------//
+
     private String generateOrderCode() {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         return "ORD-" + timestamp.substring(timestamp.length() - 8) + "-" + random;
     }
 
-    private static @NonNull OrderItem getOrderItem(OrderItemDto itemDto, ProductDto product, int sizeId) {
+
+    private @NonNull OrderItem getOrderItem(OrderItemDto itemDto, ProductDto product, int sizeId) {
         BigDecimal currentPrice = product.finalPrice();
 
         if (itemDto.price() == null) {
@@ -127,25 +126,26 @@ public class OrderCreateimpl implements OrderCreateService {
         orderItem.setId(new OrderItemId(null, product.id(), sizeId));
         orderItem.setQuantity(itemDto.quantity());
         orderItem.setPrice(currentPrice);
-        orderItem.setTotaPrice(currentPrice.multiply(BigDecimal.valueOf(itemDto.quantity())));
+        orderItem.setTotalPrice(currentPrice.multiply(BigDecimal.valueOf(itemDto.quantity())));
         return orderItem;
     }
 
+
+    //kiểm tra lại dữ liệu với dữ liệu client gửi lên
     private void validateClientTotals(
             CreateOrderReq req,
             BigDecimal subtotalAmount,
             BigDecimal voucherDiscount,
             BigDecimal finalAmount) {
-        if (req.totalPrice() != null && req.totalPrice().compareTo(subtotalAmount) != 0) {
+        if (req.totalPrice() != null && req.totalPrice().compareTo(subtotalAmount) != 0)
             throw new OrderConflictException("Order total price has changed");
-        }
 
-        if (req.voucherDiscount() != null && req.voucherDiscount().compareTo(voucherDiscount) != 0) {
+        if (req.voucherDiscount() != null && req.voucherDiscount().compareTo(voucherDiscount) != 0)
             throw new OrderConflictException("Voucher discount has changed");
-        }
 
-        if (req.finalPrice() != null && req.finalPrice().compareTo(finalAmount) != 0) {
+        if (req.finalPrice() != null && req.finalPrice().compareTo(finalAmount) != 0)
             throw new OrderConflictException("Order final price has changed");
-        }
+
     }
+
 }

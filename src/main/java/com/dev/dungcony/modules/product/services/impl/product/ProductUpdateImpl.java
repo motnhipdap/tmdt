@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductUpdateImpl implements ProductUpdateService {
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
 
     @Override
     public void increaseSold(String code, int quantity) {
@@ -65,6 +64,6 @@ public class ProductUpdateImpl implements ProductUpdateService {
         if (req.videoUrl() != null)
             product.setVideo(req.videoUrl());
 
-        return productMapper.toDetailRes(product);
+        return ProductMapper.toDetailRes(product);
     }
 }

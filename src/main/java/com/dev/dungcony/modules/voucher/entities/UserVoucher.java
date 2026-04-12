@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.voucher.entities;
 
-import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.voucher.enums.UserVoucherStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

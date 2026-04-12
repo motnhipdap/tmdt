@@ -45,6 +45,7 @@ public class CartUpdateImpl implements CartUpdateService {
                 .findById_UserIdAndId_ProductIdAndId_SizeId(userId, productId, sizeId)
                 .orElse(null);
 
+        // giảm số lượng sản phẩm
         itemUpdateService.reduce(productId, sizeId, req.quantity());
 
         if (cartItem == null) {
@@ -105,23 +106,5 @@ public class CartUpdateImpl implements CartUpdateService {
                     item.getQuantity());
         }
         cartItemRepository.deleteAllById_UserId(userId);
-    }
-
-    @Override
-    @Transactional
-    public void updateItemSelection(UUID userId, String productCode, ProductSize size, boolean selected) {
-        int productId = productGetService.getIdByCode(productCode);
-        int sizeId = sizeCacheService.getIdBySize(size);
-
-        CartItem cartItem = cartItemRepository.findById(new CartItemId(userId, productId, sizeId))
-                .orElseThrow(CartItemNotFoundException::new);
-
-        cartItemRepository.save(cartItem);
-    }
-
-    @Override
-    @Transactional
-    public void updateAllSelection(UUID userId, boolean selected) {
-        cartItemRepository.updateAllSelectionByCartId(userId, selected);
     }
 }

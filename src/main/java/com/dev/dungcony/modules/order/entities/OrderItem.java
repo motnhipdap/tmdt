@@ -1,11 +1,6 @@
 package com.dev.dungcony.modules.order.entities;
 
 import java.math.BigDecimal;
-
-import com.dev.dungcony.modules.product.entities.Product;
-import com.dev.dungcony.modules.product.entities.Size;
-
-import com.dev.dungcony.modules.product.enums.ProductSize;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -39,7 +34,7 @@ public class OrderItem {
 
     @NotNull
     @Column(name = "total_price", nullable = false)
-    private BigDecimal totaPrice;
+    private BigDecimal totalPrice;
 
 
     //---fk---//

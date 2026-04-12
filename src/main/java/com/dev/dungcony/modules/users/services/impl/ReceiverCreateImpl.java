@@ -2,10 +2,8 @@ package com.dev.dungcony.modules.users.services.impl;
 
 import com.dev.dungcony.modules.users.dtos.req.ReceiverCreateReq;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
-import com.dev.dungcony.modules.users.entities.Address;
 import com.dev.dungcony.modules.users.entities.Receiver;
 import com.dev.dungcony.modules.users.entities.User;
-import com.dev.dungcony.modules.users.mappers.AddressMapper;
 import com.dev.dungcony.modules.users.mappers.ReceiverMapper;
 import com.dev.dungcony.modules.users.repositories.RecieverRepository;
 import com.dev.dungcony.modules.users.services.interfaces.ReceiverCreateService;
@@ -25,7 +23,6 @@ public class ReceiverCreateImpl implements ReceiverCreateService {
     @Override
     public ReceiverRes create(UUID userId, ReceiverCreateReq req) {
 
-        Address address = AddressMapper.toEntity(req.addr());
         User user = new User();
         user.setId(userId);
 

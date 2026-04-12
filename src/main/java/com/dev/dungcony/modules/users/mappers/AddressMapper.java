@@ -1,7 +1,6 @@
 package com.dev.dungcony.modules.users.mappers;
 
 import com.dev.dungcony.modules.users.dtos.AddressDto;
-import com.dev.dungcony.modules.users.dtos.req.AddressUpdateReq;
 import com.dev.dungcony.modules.users.entities.Address;
 
 public class AddressMapper {

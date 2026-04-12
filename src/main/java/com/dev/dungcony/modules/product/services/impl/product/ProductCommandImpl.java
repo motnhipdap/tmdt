@@ -36,7 +36,6 @@ public class ProductCommandImpl implements ProductAddService, ProductDeleteServi
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
     private final CategoryRepository categoryRepository;
-    private final ProductMapper productMapper;
 
     @Transactional
     @Override
@@ -64,7 +63,7 @@ public class ProductCommandImpl implements ProductAddService, ProductDeleteServi
 
         productRepository.save(product);
 
-        return productMapper.toDetailRes(product);
+        return ProductMapper.toDetailRes(product);
     }
 
     @Transactional

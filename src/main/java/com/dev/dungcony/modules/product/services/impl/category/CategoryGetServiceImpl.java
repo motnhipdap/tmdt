@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.product.services.impl.category;
 
+import com.dev.dungcony.modules.product.exceptions.CategoryConflict;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,6 @@ public class CategoryGetServiceImpl implements CategoryGetService {
 
     @Override
     public List<CategoryRes> getAllChildren(String code) {
-        //
-        // Category parent = categoryRepository.findByCode(code)
-        // .orElseThrow(() -> new RuntimeException("Category not found with code: " +
-        // code));
-        //
-        // List<Category> categories =
-        // categoryRepository.findAllChildrenByPath(parent.getPath());
         List<Category> categories = categoryRepository.findAllChildrenByCode(code);
 
         return categories.stream().map(categoryMapper::toRes).toList();
@@ -53,5 +47,18 @@ public class CategoryGetServiceImpl implements CategoryGetService {
     public CategoryRes getByName(String name) {
         return categoryMapper.toRes(
                 categoryRepository.findByName(name).orElseThrow(CategoryNotFoundException::new));
+    }
+
+    @Override
+    public long coutByCodes(List<String> codes) {
+        long cnt = categoryRepository.cntByCodes(codes);
+
+        if (cnt < codes.size())
+            throw new CategoryConflict("1 số category bị sai");
+
+        if (cnt > codes.size())
+            throw new CategoryConflict("lỗi logic");
+
+        return cnt;
     }
 }
