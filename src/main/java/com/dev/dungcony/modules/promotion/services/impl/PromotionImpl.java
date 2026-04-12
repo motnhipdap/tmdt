@@ -1,7 +1,5 @@
 package com.dev.dungcony.modules.promotion.services.impl;
 
-import com.dev.dungcony.modules.product.services.interfaces.category.CategoryGetService;
-import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.promotion.dtos.req.PromoAddReq;
 import com.dev.dungcony.modules.promotion.dtos.req.PromoUpdateReq;
 import com.dev.dungcony.modules.promotion.dtos.res.PromotionDetailRes;
@@ -40,16 +38,11 @@ public class PromotionImpl implements PromotionService {
     private final PromotionProductService promotionProductService;
     private final PromotionCategoryService promotionCategoryService;
 
-    private final ProductGetService productGetService;
-    private final CategoryGetService categoryGetService;
-
     //thêm 1 sản phẩm
     @Transactional
     @Override
     public PromotionDetailRes addNew(PromoAddReq req) {
         log.info("Adding new promotion: {}", req);
-
-        validateAddRequest(req);
 
         Promotion promotion = PromotionMapper.toEntity(req);
         promotion.setStatus(initSatus(req.startAt(), req.endAt()));
@@ -129,8 +122,8 @@ public class PromotionImpl implements PromotionService {
     // ----------------------------------- GET -----------------------------------//
 
     @Override
-    public Optional<PromotionDetailRes> getByCode(String code) {
-        return promotionRepository.findByCode(code)
+    public Optional<PromotionDetailRes> getById(Integer id) {
+        return promotionRepository.findById(id)
                 .map(p -> new PromotionDetailRes(
                         p.getValue(),
                         p.getScope(),
@@ -144,29 +137,7 @@ public class PromotionImpl implements PromotionService {
     public List<PromotionSummaryRes> getGlobalPromotions(Instant now) {
         return promotionRepository.findGlobalPromotions(now, PromotionStatus.ACTIVE);
     }
-
-    // ============ PRIVATE HELPERS ============
-
-    private void validateAddRequest(PromoAddReq req) {
-
-        if (req.endAt().isBefore(req.startAt()))
-            throw new StartIsAfterEnd();
-
-        if (req.scope() == PromotionScope.PRODUCT) {
-            if (req.productCodes() == null || req.productCodes().isEmpty())
-                throw new PromotionUnProcessable("Product is null");
-
-            productGetService.countByCodes(req.productCodes());
-        }
-
-        if (req.scope() == PromotionScope.CATEGORY) {
-            if (req.categoryCodes() == null || req.categoryCodes().isEmpty()) {
-                throw new PromotionUnProcessable("category is null");
-            }
-
-            categoryGetService.coutByCodes(req.categoryCodes());
-        }
-    }
+//    // ============ PRIVATE HELPERS ============
 
     /**
      * Xác định status ban đầu: nếu startAt đã qua -> ACTIVE, nếu chưa -> SCHEDULED.

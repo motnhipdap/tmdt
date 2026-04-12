@@ -43,7 +43,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "Lấy user theo id")
-    @GetMapping
+    @GetMapping(params = "userId")
     public ResponseEntity<ApiRes<UserRes>> getById(
             @RequestParam UUID userId) {
         return ResponseEntity.ok(
@@ -52,7 +52,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "Lấy user theo teen")
-    @GetMapping
+    @GetMapping(params = "name")
     public ResponseEntity<ApiRes<?>> getByName(
             @RequestParam String name) {
         return ResponseEntity.ok(

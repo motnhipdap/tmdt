@@ -21,7 +21,7 @@ public interface PromotionService {
 
     Page<PromotionSummaryRes> getAll(Pageable pageable);
 
-    Optional<PromotionDetailRes> getByCode(String code);
+    Optional<PromotionDetailRes> getById(Integer id);
 
     List<PromotionSummaryRes> getGlobalPromotions(Instant now);
 }

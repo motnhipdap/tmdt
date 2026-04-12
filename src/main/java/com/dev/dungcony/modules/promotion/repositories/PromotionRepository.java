@@ -48,9 +48,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                         @Param("now") Instant now,
                         @Param("status") PromotionStatus status);
 
-        Optional<Promotion> findByCode(String code);
-
-        boolean existsByCode(String code);
 
         /**
          * Bulk update: đánh dấu ENDED cho tất cả promotion ACTIVE đã hết hạn.

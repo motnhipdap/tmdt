@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.dev.dungcony.modules.users.dtos.res.UserRes;
-import com.dev.dungcony.modules.users.dtos.req.UserCreateReq;
 import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.mappers.UserMapper;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
@@ -25,7 +24,7 @@ public class UserCreateImpl implements UserCreateService {
 
     @Transactional
     @Override
-    public UserRes createUser(int accId, UserCreateReq req) {
+    public UserRes createUser(int accId) {
         User user = new User();
 
         UUID uuid = UUID.randomUUID();

@@ -20,10 +20,9 @@ public class UserVoucher {
     private UserVoucherId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("voucher_id")
+    @MapsId("voucherId")
     @JoinColumn(name = "voucher_id", nullable = false)
     private Voucher voucher;
-
 
     //------------FIELD----------//
 
@@ -43,4 +42,5 @@ public class UserVoucher {
     @Version
     @Column(name = "version", nullable = false)
     private Long version = 0L;
+
 }

@@ -9,6 +9,7 @@ import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
 import com.dev.dungcony.modules.auth.enums.Status;
 import com.dev.dungcony.modules.auth.services.interfaces.*;
 import com.dev.dungcony.modules.users.exceptions.UserNotFound;
+import com.dev.dungcony.modules.users.services.interfaces.UserCreateService;
 import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class AuthImpl implements AuthService {
     private final JwtConfig jwtConfig;
     private final RefreshTokenService refreshTokenService;
     private final UserGetService userGetService;
+    private final UserCreateService userCreateService;
 
     @Transactional
     @Override
@@ -94,8 +96,7 @@ public class AuthImpl implements AuthService {
         try {
             return userGetService.getUserByAccId(accId).id();
         } catch (UserNotFound e) {
-            log.error("User not found for account: {}", accId);
-            return null;
+            return userCreateService.createUser(accId).id();
         }
     }
 

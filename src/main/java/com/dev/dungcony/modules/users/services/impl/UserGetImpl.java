@@ -6,13 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.dev.dungcony.modules.users.dtos.req.UserCreateReq;
 import com.dev.dungcony.modules.users.dtos.res.UserRes;
 import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.exceptions.UserNotFound;
 import com.dev.dungcony.modules.users.mappers.UserMapper;
 import com.dev.dungcony.modules.users.repositories.UserRepository;
-import com.dev.dungcony.modules.users.services.interfaces.UserCreateService;
 import com.dev.dungcony.modules.users.services.interfaces.UserGetService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,16 +23,13 @@ public class UserGetImpl implements UserGetService {
 
     private final UserRepository userRepository;
 
-    private final UserCreateService userCreateService;
-
     @Override
     public UserRes getUserByAccId(int accId) {
         User user = userRepository.findByAccountId(accId)
                 .orElse(null);
 
-        if (user == null) {
-            return userCreateService.createUser(accId, new UserCreateReq());
-        }
+        if (user == null)
+            return null;
 
         return UserMapper.toUserDto(user);
     }
