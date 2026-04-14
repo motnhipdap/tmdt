@@ -6,6 +6,7 @@ import com.dev.dungcony.modules.users.entities.Receiver;
 import com.dev.dungcony.modules.users.entities.User;
 import com.dev.dungcony.modules.users.mappers.ReceiverMapper;
 import com.dev.dungcony.modules.users.repositories.RecieverRepository;
+import com.dev.dungcony.modules.users.repositories.UserRepository;
 import com.dev.dungcony.modules.users.services.interfaces.ReceiverCreateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +20,12 @@ import java.util.UUID;
 public class ReceiverCreateImpl implements ReceiverCreateService {
 
     private final RecieverRepository recieverRepository;
+    private final UserRepository userRepository;
 
     @Override
     public ReceiverRes create(UUID userId, ReceiverCreateReq req) {
 
-        User user = new User();
-        user.setId(userId);
+        User user = userRepository.getReferenceById(userId);
 
         Receiver receiver = ReceiverMapper.toEntity(req);
         receiver.setUser(user);

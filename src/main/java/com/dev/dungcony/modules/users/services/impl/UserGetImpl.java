@@ -26,11 +26,8 @@ public class UserGetImpl implements UserGetService {
     @Override
     public UserRes getUserByAccId(int accId) {
         User user = userRepository.findByAccountId(accId)
-                .orElse(null);
-
-        if (user == null)
-            return null;
-
+                .orElseThrow(UserNotFound::new);
+        
         return UserMapper.toUserDto(user);
     }
 

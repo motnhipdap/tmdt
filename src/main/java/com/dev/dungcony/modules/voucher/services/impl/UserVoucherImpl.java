@@ -17,6 +17,7 @@ import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherGetServic
 import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherUpdateService;
 import com.dev.dungcony.modules.voucher.services.interfaces.VoucherGetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserVoucherImpl implements UserVoucherCreateService, UserVoucherGetService, UserVoucherUpdateService {
@@ -39,6 +41,7 @@ public class UserVoucherImpl implements UserVoucherCreateService, UserVoucherGet
 
     @Override
     public void applyNewbieVoucher(UUID uid) {
+        log.info("applyNewbieVoucher", uid);
         List<Voucher> vouchers = voucherGetService.getByTypeAndStatus(VoucherType.NEWBIE, VoucherStatus.ACTIVE);
 
         List<UserVoucher> uvs = new ArrayList<>();
@@ -80,7 +83,6 @@ public class UserVoucherImpl implements UserVoucherCreateService, UserVoucherGet
 
     @Override
     public List<UserVoucherRes> getUserVouchersByStatus(UUID userId, UserVoucherStatus status) {
-
         List<UserVoucher> uvs = userVoucherRepository.findAllByUserIdByStatus(userId, status);
 
         return uvs.stream()

@@ -13,7 +13,6 @@ import com.dev.dungcony.modules.promotion.enums.PromotionStatus;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 // PromotionRepository.java
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {

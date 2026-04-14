@@ -46,6 +46,12 @@ public class OpenApiConfig {
                         .description("Khuyến mãi — public API và admin API"))
                 .addTagsItem(new Tag().name("Users")
                         .description("Thông tin người dùng / Địa chỉ — 🔒 Yêu cầu đăng nhập"))
+                .addTagsItem(new Tag().name("Vouchers")
+                        .description("Thông tin voucher — 🔒 Yêu cầu đăng nhập"))
+                .addTagsItem(new Tag().name("Orders")
+                        .description("Thông tin order — 🔒 Yêu cầu đăng nhập"))
+                .addTagsItem(new Tag().name("Carts")
+                        .description("Thông tin Giỏ hàng — 🔒 Yêu cầu đăng nhập"))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
                                 new SecurityScheme()

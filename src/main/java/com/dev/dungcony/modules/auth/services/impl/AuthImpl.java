@@ -96,7 +96,13 @@ public class AuthImpl implements AuthService {
         try {
             return userGetService.getUserByAccId(accId).id();
         } catch (UserNotFound e) {
-            return userCreateService.createUser(accId).id();
+            log.info("khởi tạo user cho accId: {}", accId);
+            try {
+                return userCreateService.createUser(accId).id();
+            } catch (Exception ex) {
+                log.warn("createUser failed (possible race condition), retrying get: {}", ex.getMessage());
+                return userGetService.getUserByAccId(accId).id();
+            }
         }
     }
 

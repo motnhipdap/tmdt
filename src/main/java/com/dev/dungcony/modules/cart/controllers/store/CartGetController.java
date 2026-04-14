@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/cart")
-@Tag(name = "Cart")
+@Tag(name = "Carts")
 public class CartGetController {
 
     private final CartGetService cartGetService;
