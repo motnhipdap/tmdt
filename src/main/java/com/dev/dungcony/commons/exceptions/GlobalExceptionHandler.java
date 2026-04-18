@@ -1,8 +1,6 @@
 package com.dev.dungcony.commons.exceptions;
 
 import com.dev.dungcony.commons.dtos.ApiRes;
-import com.dev.dungcony.commons.dtos.ApiErrorLogEntry;
-import com.dev.dungcony.commons.services.ApiErrorLogStore;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +24,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private final ApiErrorLogStore apiErrorLogStore;
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiRes<Void>> handleAppException(AppException e, HttpServletRequest request) {
@@ -94,7 +91,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiRes<Void>> handleDuplicateKey(DataIntegrityViolationException ex,
-            HttpServletRequest request) {
+                                                           HttpServletRequest request) {
         log.warn("Data integrity violation", ex);
         captureApiError(request, HttpStatus.CONFLICT, ex, "Email hoặc username đã tồn tại");
 
@@ -152,12 +149,5 @@ public class GlobalExceptionHandler {
         if (path == null || !path.startsWith("/v1/api/")) {
             return;
         }
-
-        apiErrorLogStore.add(new ApiErrorLogEntry(
-                request.getMethod(),
-                path,
-                status.value(),
-                ex.getClass().getSimpleName(),
-                clientMessage));
     }
 }
