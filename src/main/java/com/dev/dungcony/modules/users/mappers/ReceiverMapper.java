@@ -12,8 +12,7 @@ public class ReceiverMapper {
                 AddressMapper.toDto(receiver.getAddress()),
                 receiver.getFirstName(),
                 receiver.getLastName(),
-                receiver.getPhone()
-        );
+                receiver.getPhone());
     }
 
     public static ReceiverRes toRes(Receiver receiver) {
@@ -21,16 +20,15 @@ public class ReceiverMapper {
                 AddressMapper.toDto(receiver.getAddress()),
                 receiver.getFirstName(),
                 receiver.getLastName(),
-                receiver.getPhone()
-        );
+                receiver.getPhone());
     }
 
     public static Receiver toEntity(ReceiverCreateReq req) {
 
         Receiver receiver = new Receiver();
         receiver.setPhone(req.phone());
-        receiver.setLastName(receiver.getLastName());
-        receiver.setFirstName(receiver.getFirstName());
+        receiver.setLastName(req.lName());
+        receiver.setFirstName(req.fName());
         receiver.setAddress(AddressMapper.toEntity(req.addr()));
 
         return receiver;

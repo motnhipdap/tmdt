@@ -24,24 +24,18 @@ CREATE TABLE tbl_users (
 );
 
 CREATE TABLE tbl_recivers (
-    id      SERIAL PRIMARY KEY,
-    f_name  VARCHAR(100),
-    l_name  VARCHAR(100),
-    phone   VARCHAR(10) NOT NULL,
-    user_id CHAR(36) NOT NULL,
+    id       SERIAL PRIMARY KEY,
+    f_name   VARCHAR(100),
+    l_name   VARCHAR(100),
+    phone    VARCHAR(10)  NOT NULL,
+    user_id  CHAR(36)     NOT NULL,
+    country  VARCHAR(20)  NOT NULL,
+    province VARCHAR(20)  NOT NULL,
+    district VARCHAR(20)  NOT NULL,
+    street   VARCHAR(100) NOT NULL,
+    detail   VARCHAR(255),
     CONSTRAINT fk_receivers_user
         FOREIGN KEY (user_id) REFERENCES tbl_users (id)
-);
-
-CREATE TABLE tbl_address (
-    receiver_id INT PRIMARY KEY,
-    country     VARCHAR(20) NOT NULL,
-    province    VARCHAR(20) NOT NULL,
-    district    VARCHAR(20) NOT NULL,
-    street      VARCHAR(100) NOT NULL,
-    detail      VARCHAR(255),
-    CONSTRAINT fk_address_receiver
-        FOREIGN KEY (receiver_id) REFERENCES tbl_recivers (id) ON DELETE CASCADE
 );
 
 CREATE TABLE tbl_categories (

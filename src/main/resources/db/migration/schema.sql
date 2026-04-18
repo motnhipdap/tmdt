@@ -42,21 +42,16 @@ CREATE TABLE IF NOT EXISTS tbl_recivers
     f_name  VARCHAR(100),
     l_name  VARCHAR(100),
     phone   VARCHAR(10) NOT NULL,
-    user_id UUID        NOT NULL,
-
-    CONSTRAINT fk_receiver_user FOREIGN KEY (user_id) REFERENCES tbl_users (id)
-);
-
-CREATE TABLE IF NOT EXISTS tbl_address
-(
-    receiver_id INT PRIMARY KEY,
     country     VARCHAR(20)  NOT NULL,
     province    VARCHAR(20)  NOT NULL,
     district    VARCHAR(20)  NOT NULL,
     street      VARCHAR(100) NOT NULL,
     detail      VARCHAR(255),
 
-    CONSTRAINT fk_address_receiver FOREIGN KEY (receiver_id) REFERENCES tbl_recivers (id) ON DELETE CASCADE
+
+    user_id UUID        NOT NULL,
+
+    CONSTRAINT fk_receiver_user FOREIGN KEY (user_id) REFERENCES tbl_users (id)
 );
 
 -- ========================= PRODUCT ===========================

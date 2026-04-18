@@ -1,6 +1,5 @@
 package com.dev.dungcony.modules.users.entities;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -23,7 +22,6 @@ public class Receiver {
     @Column(name = "f_name", length = 100)
     private String firstName;
 
-
     @Size(max = 100)
     @Column(name = "l_name", length = 100)
     private String lastName;
@@ -32,9 +30,7 @@ public class Receiver {
     @Column(name = "phone", nullable = false)
     private String phone;
 
-
-    //-----FK-----//
-    @OneToOne(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Embedded
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)

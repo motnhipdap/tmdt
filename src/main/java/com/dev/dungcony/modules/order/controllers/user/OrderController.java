@@ -1,4 +1,4 @@
-package com.dev.dungcony.modules.order.controllers.store;
+package com.dev.dungcony.modules.order.controllers.user;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;

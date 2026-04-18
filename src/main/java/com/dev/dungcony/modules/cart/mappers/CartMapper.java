@@ -1,19 +1,19 @@
 package com.dev.dungcony.modules.cart.mappers;
 
+import com.dev.dungcony.commons.dtos.DiscountInfoDto;
 import com.dev.dungcony.modules.cart.dtos.res.CartItemRes;
 import com.dev.dungcony.modules.cart.dtos.res.CartRes;
 import com.dev.dungcony.modules.cart.entities.CartItem;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
-@Component
 public class CartMapper {
 
-    public CartItemRes toCartItemRes(CartItem item) {
-        BigDecimal unitPrice = item.getProduct().getPrice();
-        BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+    public static CartItemRes toCartItemRes(CartItem item, DiscountInfoDto discount) {
+        BigDecimal finalPrice = discount.finalPrice();
+        BigDecimal lineTotal = finalPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
 
         return new CartItemRes(
                 item.getProduct().getCode(),
@@ -21,14 +21,22 @@ public class CartMapper {
                 item.getProduct().getImg(),
                 item.getSize().getId(),
                 item.getSize().getSize(),
-                unitPrice,
+                discount.originalPrice(),
+                discount.finalPrice(),
+                discount.discountType(),
+                discount.discountValue(),
                 item.getQuantity(),
                 lineTotal);
     }
 
-    public CartRes toCartRes(List<CartItem> items) {
+    public static CartRes toCartRes(List<CartItem> items, Map<String, DiscountInfoDto> discountMap) {
         List<CartItemRes> itemResList = items.stream()
-                .map(this::toCartItemRes)
+                .map(item -> {
+                    DiscountInfoDto discount = discountMap.getOrDefault(
+                            item.getProduct().getCode(),
+                            DiscountInfoDto.noDiscount(item.getProduct().getPrice()));
+                    return toCartItemRes(item, discount);
+                })
                 .toList();
 
         BigDecimal totalAmount = itemResList.stream()

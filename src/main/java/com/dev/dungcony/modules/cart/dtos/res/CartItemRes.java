@@ -10,7 +10,10 @@ public record CartItemRes(
                 String imgUrl,
                 Integer sizeId,
                 ProductSize size,
-                BigDecimal unitPrice,
+                BigDecimal originalPrice,
+                BigDecimal finalPrice,
+                String discountType,
+                int discountValue,
                 Integer quantity,
                 BigDecimal lineTotal) {
 }

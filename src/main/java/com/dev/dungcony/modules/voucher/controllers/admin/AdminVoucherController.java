@@ -7,6 +7,7 @@ import com.dev.dungcony.modules.voucher.dtos.req.VoucherUpdateReq;
 import com.dev.dungcony.modules.voucher.dtos.res.VoucherRes;
 import com.dev.dungcony.modules.voucher.services.interfaces.VoucherCreateService;
 import com.dev.dungcony.modules.voucher.services.interfaces.VoucherUpdateService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/admin/voucher")
+@Tag(name = "Voucher (Admin)")
 public class AdminVoucherController {
 
     private final VoucherCreateService voucherCreateService;

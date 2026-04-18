@@ -5,6 +5,7 @@ import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.voucher.dtos.res.UserVoucherRes;
 import com.dev.dungcony.modules.voucher.enums.UserVoucherStatus;
 import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherGetService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/vouchers")
+@Tag(name = "Voucher")
 public class UserController {
 
     private final UserVoucherGetService userVoucherGetService;

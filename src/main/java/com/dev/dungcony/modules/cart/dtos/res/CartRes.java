@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record CartRes(
-        List<CartItemRes> items,
-        Integer totalItems,
-        BigDecimal totalAmount
-) {
+                List<CartItemRes> items,
+                Integer totalItems,
+                BigDecimal totalAmount) {
 }
