@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.users.services.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -45,10 +46,11 @@ public class UserGetImpl implements UserGetService {
     }
 
     @Override
-    public UserRes getByName(String name) {
-        User user = userRepository.findByName(name)
-                .orElseThrow(UserNotFound::new);
-        return UserMapper.toUserDto(user);
+    public List<UserRes> getByName(String name) {
+        return userRepository.findByName(name)
+                .stream()
+                .map(UserMapper::toUserDto)
+                .toList();
     }
 
 

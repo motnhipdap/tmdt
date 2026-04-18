@@ -20,6 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     p.code,
                     p.name,
                     p.price,
+                    p.price,
                     p.rated,
                     p.img,
                     p.category.code
@@ -40,6 +41,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     p.code,
                     p.name,
                     p.price,
+                    p.price,
                     p.rated,
                     p.img,
                     p.category.code
@@ -59,6 +61,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     p.code,
                     p.name,
                     p.price,
+                    p.price,
                     p.rated,
                     p.img,
                     p.category.code
@@ -77,6 +80,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
+                    p.price,
                     p.price,
                     p.rated,
                     p.img,
@@ -105,6 +109,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 SELECT new com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes(
                     p.code,
                     p.name,
+                    p.price,
                     p.price,
                     p.rated,
                     p.img,

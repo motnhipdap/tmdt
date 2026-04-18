@@ -12,6 +12,7 @@ public record ProductSummaryRes(
         String code,
         String name,
         BigDecimal price,
+        BigDecimal originalPrice,
         Float rated,
         String imgUrl,
         String categoryCode) {
@@ -24,6 +25,7 @@ public record ProductSummaryRes(
                 code,
                 name,
                 discount.finalPrice(),
+                discount.originalPrice(),
                 rated,
                 imgUrl,
                 categoryCode);

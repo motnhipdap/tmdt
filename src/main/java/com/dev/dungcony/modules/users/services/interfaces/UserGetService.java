@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.users.services.interfaces;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.dev.dungcony.modules.users.dtos.res.UserRes;
@@ -13,5 +14,5 @@ public interface UserGetService {
 
     Page<UserRes> getAll(Pageable pageable);
 
-    UserRes getByName(String name);
+    List<UserRes> getByName(String name);
 }

@@ -3,6 +3,8 @@
 -- Database: PostgreSQL
 -- ============================================================
 
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 -- =========================== AUTH ============================
 
 CREATE TABLE IF NOT EXISTS tbl_accounts

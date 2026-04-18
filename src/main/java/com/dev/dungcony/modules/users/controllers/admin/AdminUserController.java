@@ -43,7 +43,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "Lấy user theo id")
-    @GetMapping(params = "userId")
+    @GetMapping("/get-by-id")
     public ResponseEntity<ApiRes<UserRes>> getById(
             @RequestParam UUID userId) {
         return ResponseEntity.ok(
@@ -51,8 +51,8 @@ public class AdminUserController {
                         userGetService.getUserById(userId)));
     }
 
-    @Operation(summary = "Lấy user theo teen")
-    @GetMapping(params = "name")
+    @Operation(summary = "Lấy user theo tên")
+    @GetMapping("/get-by-name")
     public ResponseEntity<ApiRes<?>> getByName(
             @RequestParam String name) {
         return ResponseEntity.ok(

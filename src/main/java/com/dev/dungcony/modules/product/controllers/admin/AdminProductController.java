@@ -23,7 +23,7 @@ public class AdminProductController {
     private final ProductUpdateService productUpdateService;
     private final ProductDeleteService productDeleteService;
 
-    @PostMapping("/product/add-new")
+    @PostMapping("/add-new")
     public ResponseEntity<ApiRes<?>> addNew(
             @RequestBody ProductAddReq req) {
         return ResponseEntity.ok()
@@ -31,7 +31,7 @@ public class AdminProductController {
                         productAddService.addNew(req)));
     }
 
-    @PutMapping("/product/update")
+    @PutMapping("/update")
     public ResponseEntity<ApiRes<?>> update(
             @RequestParam("product_code") String productCode,
             @RequestBody ProductUpdateReq req) {
@@ -39,7 +39,7 @@ public class AdminProductController {
                 .body(ApiRes.success("Update product successfully", productUpdateService.update(productCode, req)));
     }
 
-    @DeleteMapping("/product/{code}")
+    @DeleteMapping("/delete/{code}")
     public ResponseEntity<Void> delete(
             @PathVariable String code) {
         productDeleteService.delete(code);

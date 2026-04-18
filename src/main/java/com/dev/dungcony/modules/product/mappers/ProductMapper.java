@@ -13,7 +13,6 @@ import com.dev.dungcony.modules.product.entities.Provider;
 
 import java.util.List;
 
-
 /**
  * Mapper chuyển đổi giữa Product entity và các DTO response.
  * Không bao gồm internal id — client dùng code làm định danh.
@@ -25,10 +24,10 @@ public class ProductMapper {
                 p.getCode(),
                 p.getName(),
                 p.getPrice(),
+                p.getPrice(),
                 p.getRated(),
                 p.getImg(),
-                p.getCategory().getCode()
-        );
+                p.getCategory().getCode());
     }
 
     /**

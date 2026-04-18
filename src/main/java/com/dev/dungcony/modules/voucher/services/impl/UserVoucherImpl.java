@@ -72,11 +72,10 @@ public class UserVoucherImpl implements UserVoucherCreateService, UserVoucherGet
 
     @Override
     public List<UserVoucherRes> getUserVouchersByName(String name) {
-        UserRes user = userGetService.getByName(name);
+        List<UserRes> users = userGetService.getByName(name);
 
-        List<UserVoucher> uvs = userVoucherRepository.findAllByUserId(user.id());
-
-        return uvs.stream()
+        return users.stream()
+                .flatMap(user -> userVoucherRepository.findAllByUserId(user.id()).stream())
                 .map(UserVoucherMapper::toRes)
                 .toList();
     }

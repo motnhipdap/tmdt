@@ -27,7 +27,7 @@ public class Product extends BaseEntity {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Size(max = 10)
+    @Size(max = 30)
     @NotNull
     @Column(name = "code", nullable = false, length = 30)
     private String code;
