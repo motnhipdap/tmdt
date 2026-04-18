@@ -10,8 +10,20 @@ import com.dev.dungcony.modules.product.entities.Item;
 import com.dev.dungcony.modules.product.entities.ItemId;
 
 public interface ItemRepository extends JpaRepository<Item, ItemId> {
+    @Query("""
+            select i from Item i
+            join fetch i.product
+            join fetch i.size
+            where i.id.productId = :productId
+            """)
     List<Item> findByIdProductId(Integer productId);
 
+    @Query("""
+            select i from Item i
+            join fetch i.product
+            join fetch i.size
+            where i.id.sizeId = :sizeId
+            """)
     List<Item> findByIdSizeId(Integer sizeId);
 
     Optional<Item> findItemById(ItemId id);

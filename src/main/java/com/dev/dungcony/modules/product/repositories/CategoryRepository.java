@@ -26,14 +26,14 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             """)
     List<Category> findAllChildrenByPath(String path);
 
-    @Query(value = """
-                SELECT c.*
-                FROM category c
+    @Query("""
+                SELECT c
+                FROM Category c
                 WHERE c.path LIKE CONCAT(
-                    (SELECT p.path FROM category p WHERE p.code = :code),
+                    (SELECT p.path FROM Category p WHERE p.code = :code),
                     '/%'
                 )
-            """, nativeQuery = true)
+            """)
     List<Category> findAllChildrenByCode(String code);
 
     @Query("""

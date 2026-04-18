@@ -73,6 +73,15 @@ public class GlobalExceptionHandler {
                 .body(ApiRes.error("Missing refresh_token cookie"));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiRes<Void>> handleIllegalArgument(
+            IllegalArgumentException ex, HttpServletRequest request) {
+        captureApiError(request, HttpStatus.CONFLICT, ex, ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiRes.error(ex.getMessage()));
+    }
+
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ApiRes<Void>> handleDatabaseError(DataAccessException ex, HttpServletRequest request) {
         if (isDuplicateKeyError(ex)) {

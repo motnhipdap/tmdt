@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +53,7 @@ public class OpenApiConfig {
                         .description("Thông tin order — 🔒 Yêu cầu đăng nhập"))
                 .addTagsItem(new Tag().name("Carts")
                         .description("Thông tin Giỏ hàng — 🔒 Yêu cầu đăng nhập"))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
                                 new SecurityScheme()

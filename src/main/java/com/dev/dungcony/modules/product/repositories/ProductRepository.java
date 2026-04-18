@@ -90,8 +90,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                   AND (:maxPrice IS NULL OR p.price <= :maxPrice)
                   AND (:categoryCode IS NULL OR c.path LIKE CONCAT(root.path, '%'))
                   AND (:keyword IS NULL
-                       OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-                       OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
+                       OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS STRING), '%'))
+                       OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:keyword AS STRING), '%')))
             """)
     Page<ProductSummaryRes> filterProducts(
             @Param("status") ProductStatus status,

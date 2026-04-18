@@ -33,7 +33,7 @@ public class Product extends BaseEntity {
     private String code;
 
     @Size(max = 255)
-    @Column(name = "description", length = 255)
+    @Column(name = "description", columnDefinition = "VARCHAR(255)")
     private String description;
 
     @ColumnDefault("0")
