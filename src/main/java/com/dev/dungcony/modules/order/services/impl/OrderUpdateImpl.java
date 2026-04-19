@@ -53,6 +53,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
     }
 
     @Override
+    @Transactional
     public void paidOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);

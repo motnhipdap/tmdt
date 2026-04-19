@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.order.services.interfaces;
 
+import com.dev.dungcony.modules.order.dtos.OrderDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,11 +14,13 @@ public interface OrderGetService {
 
     OrderRes getOrderByCode(UUID userId, String orderCode);
 
+    OrderRes getOrderByCodeAdmin(String orderCode);
+
+    OrderDto getDtoByCode(String orderCode);
+
     Page<OrderSummaryRes> getUserOrders(UUID uId, Pageable pageable);
 
     Page<OrderSummaryRes> getUserOrdersByStatus(UUID uId, OrderStatus status, Pageable pageable);
-
-    OrderRes getOrderByCodeAdmin(String orderCode);
 
     Page<OrderSummaryRes> getAllOrders(Pageable pageable);
 

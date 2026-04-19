@@ -7,6 +7,7 @@ import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +27,24 @@ public class OrderCreateController {
 
     private final OrderCreateService orderCreateService;
 
-    @Operation(summary = "Tạo đơn hàng từ giỏ hàng", description = "Tạo đơn hàng từ các sản phẩm đã chọn trong giỏ")
+    @Operation(summary = "Tạo đơn hàng từ giỏ hàng",
+            description = "Tạo đơn hàng từ các sản phẩm đã chọn trong giỏ. Nếu paymentType=ONLINE sẽ trả kèm paymentUrl")
     @PostMapping("/create")
     public ResponseEntity<ApiRes<OrderRes>> createOrder(
             @AuthenticationPrincipal AccountDetails account,
-            @Valid @RequestBody CreateOrderReq req) {
-        OrderRes order = orderCreateService.createOrder(account.requireUserUuid(), req);
+            @Valid @RequestBody CreateOrderReq req,
+            HttpServletRequest request) {
+        String ipAddress = getClientIp(request);
+        OrderRes order = orderCreateService.createOrder(account.requireUserUuid(), req, ipAddress);
         return ResponseEntity.ok(ApiRes.success("Order created successfully", order));
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        String ip = request.getRemoteAddr();
+        return ip != null ? ip : "127.0.0.1";
     }
 }

@@ -29,13 +29,13 @@ public class OrderUpdateController {
         return ResponseEntity.ok(ApiRes.success("Order cancelled"));
     }
 
-    @Operation(summary = "Thanh toán đơn hàng", description = "Chỉ đơn hàng ở trạng thái UNPAID")
+    @Operation(summary = "Đánh dấu đã thanh toán", description = "Chỉ đơn hàng ở trạng thái UNPAID — nên dùng VNPay thay vì gọi trực tiếp")
     @PutMapping("/paid/{order-code}")
     public ResponseEntity<ApiRes<Void>> paidOrder(
             @AuthenticationPrincipal AccountDetails account,
-            @PathVariable String orderCode) {
-        orderUpdateService.cancelOrder(account.requireUserUuid(), orderCode);
-        return ResponseEntity.ok(ApiRes.success("Order cancelled"));
+            @PathVariable("order-code") String orderCode) {
+        orderUpdateService.paidOrder(account.requireUserUuid(), orderCode);
+        return ResponseEntity.ok(ApiRes.success("Order paid successfully"));
     }
 
 }

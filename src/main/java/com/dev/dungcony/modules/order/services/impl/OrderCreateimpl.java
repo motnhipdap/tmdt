@@ -14,6 +14,8 @@ import com.dev.dungcony.modules.order.exceptions.OrderConflictException;
 import com.dev.dungcony.modules.order.mappers.OrderMapper;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
+import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
+import com.dev.dungcony.modules.payment.services.impl.VnPayImpl;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
@@ -46,10 +48,11 @@ public class OrderCreateimpl implements OrderCreateService {
     private final UserVoucherGetService userVoucherService;
     private final UserVoucherUpdateService userVoucherUpdateService;
     private final CartItemGetService cartItemGetService;
+    private final VnPayImpl vnPayImpl;
 
     @Override
     @Transactional
-    public OrderRes createOrder(UUID userId, CreateOrderReq req) {
+    public OrderRes createOrder(UUID userId, CreateOrderReq req, String ipAddress) {
 
         if (req.items() == null || req.items().isEmpty())
             throw new OrderCannotCreateException();
@@ -123,7 +126,13 @@ public class OrderCreateimpl implements OrderCreateService {
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
 
-        return OrderMapper.toOrderRes(order, savedItems, receiver);
+        String paymentUrl = null;
+        if (req.paymentType() == PaymentType.ONLINE) {
+            PaymentRes paymentRes = vnPayImpl.createPaymentUrl(userId, order.getCode(), ipAddress);
+            paymentUrl = paymentRes.paymentUrl();
+        }
+
+        return OrderMapper.toOrderRes(order, savedItems, receiver, paymentUrl);
     }
 
     // -----------------------------PRIVATE-----------------------------------//

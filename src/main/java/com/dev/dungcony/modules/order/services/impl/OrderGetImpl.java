@@ -3,6 +3,7 @@ package com.dev.dungcony.modules.order.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import com.dev.dungcony.modules.order.dtos.OrderDto;
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import org.springframework.data.domain.Page;
@@ -75,6 +76,16 @@ public class OrderGetImpl implements OrderGetService {
                 order,
                 items,
                 recieverGetService.adminGetReceiverById(order.getReceiverId()));
+    }
+
+    @Override
+    public OrderDto getDtoByCode(String orderCode) {
+        Order order = orderRepository.findByCode(orderCode)
+                .orElseThrow(OrderNotFoundException::new);
+
+        List<OrderItemDto> items = orderItemRepository.findAllByOrderId(order.getId());
+
+        return OrderMapper.toDto(order, items, "");
     }
 
     @Override

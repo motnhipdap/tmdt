@@ -53,6 +53,8 @@ public class OpenApiConfig {
                         .description("Thông tin order — 🔒 Yêu cầu đăng nhập"))
                 .addTagsItem(new Tag().name("Carts")
                         .description("Thông tin Giỏ hàng — 🔒 Yêu cầu đăng nhập"))
+                .addTagsItem(new Tag().name("Payment")
+                        .description("Thanh toán VNPay — 🔒 Yêu cầu đăng nhập (trừ callback)"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,

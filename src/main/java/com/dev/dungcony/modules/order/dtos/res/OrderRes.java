@@ -20,6 +20,7 @@ public record OrderRes(
         BigDecimal totalAmount,
         BigDecimal voucherDiscount,
         BigDecimal finalPrice,
+        String paymentUrl,
         Instant createdAt,
         Instant updatedAt) {
 }
