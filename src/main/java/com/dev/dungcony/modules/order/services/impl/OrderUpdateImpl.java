@@ -53,6 +53,23 @@ public class OrderUpdateImpl implements OrderUpdateService {
     }
 
     @Override
+    public void paidOrder(UUID userId, String orderCode) {
+        Order order = orderRepository.findByCode(orderCode)
+                .orElseThrow(OrderNotFoundException::new);
+
+        if (!order.getUserId().equals(userId))
+            throw new OrderUnAuthException();
+
+        if (order.getStatus() != OrderStatus.UNPAID) {
+            throw new OrderConflictException("chỉ đơn hàng chưa thanh toán");
+        }
+
+        order.setStatus(OrderStatus.PAID);
+
+        log.info("thanh toán thành công");
+    }
+
+    @Override
     @Transactional
     public void completedOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)

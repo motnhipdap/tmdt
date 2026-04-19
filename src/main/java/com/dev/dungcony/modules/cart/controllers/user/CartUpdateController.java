@@ -1,16 +1,12 @@
-package com.dev.dungcony.modules.cart.controllers.store;
+package com.dev.dungcony.modules.cart.controllers.user;
 
+import com.dev.dungcony.modules.cart.dtos.req.RemoveListItemReq;
 import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
 import com.dev.dungcony.modules.product.enums.ProductSize;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
@@ -51,13 +47,24 @@ public class CartUpdateController {
     }
 
     @Operation(summary = "Xóa sản phẩm khỏi giỏ hàng")
-    @DeleteMapping("/remove")
+    @DeleteMapping("/remove/{product-code}/{size}")
     public ResponseEntity<ApiRes<Void>> removeItem(
             @AuthenticationPrincipal AccountDetails account,
-            @RequestParam("productCode") String productCode,
-            @RequestParam("size") ProductSize size) {
+            @PathVariable String productCode,
+            @PathVariable ProductSize size) {
         cartUpdateService.removeItemFromCart(account.requireUserUuid(), productCode, size);
         return ResponseEntity.ok(ApiRes.success("Item removed from cart"));
+    }
+
+    @Operation(summary = "Xóa danh sách sản phẩm khỏi giỏ hàng")
+    @DeleteMapping("/removes")
+    public ResponseEntity<ApiRes<Void>> removeListItem(
+            @AuthenticationPrincipal AccountDetails account,
+            @Valid @RequestBody RemoveListItemReq listItemReq) {
+
+        cartUpdateService.removeListItem(account.requireUserUuid(), listItemReq.listRemove());
+
+        return ResponseEntity.ok(ApiRes.success("Items removed from cart"));
     }
 
     @Operation(summary = "Xóa toàn bộ giỏ hàng")
