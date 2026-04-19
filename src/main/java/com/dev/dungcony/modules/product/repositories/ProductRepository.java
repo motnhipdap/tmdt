@@ -147,4 +147,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 WHERE p.code = :code
             """)
     Optional<Product> findByCodeWithCategoryAndProvider(@Param("code") String code);
+
+    List<Product> findByCodeIn(List<String> codes);
 }

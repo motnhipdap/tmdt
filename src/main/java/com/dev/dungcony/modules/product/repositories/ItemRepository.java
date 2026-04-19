@@ -44,5 +44,11 @@ public interface ItemRepository extends JpaRepository<Item, ItemId> {
             """)
     List<Integer> findSizesByProductCode(String productCode);
 
-
+    @Query("""
+            select i from Item i
+            join fetch i.product
+            join fetch i.size
+            where i.product.code in :productCodes
+            """)
+    List<Item> findByProductCodes(List<String> productCodes);
 }

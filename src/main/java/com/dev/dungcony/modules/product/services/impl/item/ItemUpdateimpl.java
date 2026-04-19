@@ -55,12 +55,16 @@ public class ItemUpdateimpl implements ItemUpdateService {
         int newCnt = item.getQuantity() + quantity;
 
         item.setQuantity(newCnt);
+        if (item.getStatus() == ItemStatus.OUT_OF_STOCK)
+            item.setStatus(ItemStatus.AVAILABLE);
 
         itemRepository.save(item);
+        
     }
 
-    private Item get(int pId, int sId) {
+    // ------------------------------ PRIVATE --------------------------------//
 
+    private Item get(int pId, int sId) {
         return itemRepository.findById(new ItemId(pId, sId))
                 .orElseThrow(ItemNotFoundException::new);
 

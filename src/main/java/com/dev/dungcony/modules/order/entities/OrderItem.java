@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.order.entities;
 
 import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -29,15 +30,17 @@ public class OrderItem {
     private Integer quantity;
 
     @NotNull
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
+    @Column(name = "original_price", nullable = false)
+    private BigDecimal originalPrice;
+    @NotNull
+    @Column(name = "final_price", nullable = false)
+    private BigDecimal finalPrice;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
-
-    //---fk---//
+    // ---fk---//
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("orderId")
     @JoinColumn(name = "order_id")

@@ -1,10 +1,12 @@
 package com.dev.dungcony.modules.cart.services.impl;
 
+import com.dev.dungcony.modules.cart.dtos.CartItemDto;
 import com.dev.dungcony.modules.cart.dtos.req.AddToCartReq;
 import com.dev.dungcony.modules.cart.dtos.req.UpdateCartItemReq;
 import com.dev.dungcony.modules.cart.entities.CartItem;
 import com.dev.dungcony.modules.cart.entities.CartItemId;
 import com.dev.dungcony.modules.cart.exceptions.CartItemNotFoundException;
+import com.dev.dungcony.modules.cart.exceptions.CartUnProcessableException;
 import com.dev.dungcony.modules.cart.repositories.CartRepository;
 import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
 import com.dev.dungcony.modules.product.entities.Product;
@@ -93,6 +95,17 @@ public class CartUpdateImpl implements CartUpdateService {
 
         cartItem.setQuantity(req.quantity());
         cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public void removeListItem(UUID uid, List<CartItemDto> cartItemDtos) {
+        List<CartItemId> ids = cartItemDtos.stream()
+                .map(id -> new CartItemId(uid, id.productId(), sizeCacheService.getIdBySize(id.productSize())))
+                .toList();
+
+        if (ids.size() != cartItemRepository.deleteAllByIdIn(ids))
+            throw new CartUnProcessableException();
+
     }
 
     @Override

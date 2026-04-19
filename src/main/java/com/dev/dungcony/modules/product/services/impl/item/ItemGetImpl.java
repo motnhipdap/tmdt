@@ -1,6 +1,8 @@
 package com.dev.dungcony.modules.product.services.impl.item;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.dev.dungcony.modules.product.dtos.res.ItemRes;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,13 @@ public class ItemGetImpl implements ItemGetService {
     public List<ItemDto> getByProductCode(String productCode) {
         Integer productId = getIdByCode.getByProductCode(productCode);
         return itemRepository.findByIdProductId(productId).stream().map(ItemMapper::toDto).toList();
+    }
+
+    @Override
+    public Map<String, List<ItemDto>> getByproductCodes(List<String> productCodes) {
+        return itemRepository.findByProductCodes(productCodes).stream()
+                .map(ItemMapper::toDto)
+                .collect(Collectors.groupingBy(ItemDto::productCode));
     }
 
     @Override

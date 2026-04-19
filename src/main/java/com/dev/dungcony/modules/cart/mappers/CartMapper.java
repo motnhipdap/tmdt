@@ -1,9 +1,11 @@
 package com.dev.dungcony.modules.cart.mappers;
 
 import com.dev.dungcony.commons.dtos.DiscountInfoDto;
+import com.dev.dungcony.modules.cart.dtos.CartItemDto;
 import com.dev.dungcony.modules.cart.dtos.res.CartItemRes;
 import com.dev.dungcony.modules.cart.dtos.res.CartRes;
 import com.dev.dungcony.modules.cart.entities.CartItem;
+import com.dev.dungcony.modules.product.enums.ProductSize;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,5 +46,14 @@ public class CartMapper {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new CartRes(itemResList, itemResList.size(), totalAmount);
+    }
+
+    public static CartItemDto toDto(int productId, String productCode, ProductSize productSize) {
+        return new CartItemDto(
+                productId,
+                productCode,
+                productSize,
+                null, null, null, null
+        );
     }
 }

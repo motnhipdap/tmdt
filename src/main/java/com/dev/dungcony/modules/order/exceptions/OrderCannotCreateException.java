@@ -1,15 +1,14 @@
 package com.dev.dungcony.modules.order.exceptions;
 
-import com.dev.dungcony.commons.exceptions.AppException;
-import org.springframework.http.HttpStatus;
+import com.dev.dungcony.commons.exceptions.UnProcessableException;
 
-public class OrderCannotCreateException extends AppException {
-
+public class OrderCannotCreateException extends UnProcessableException {
     public OrderCannotCreateException() {
-        super(HttpStatus.BAD_REQUEST, "ORDER_CANNOT_CREATE", "Cannot create order");
+        super("NOT_ITEM", "cần ít nhất 1 sp");
     }
 
-    public OrderCannotCreateException(String message) {
-        super(HttpStatus.BAD_REQUEST, "ORDER_CANNOT_CREATE", message);
+    public OrderCannotCreateException(String code, String message) {
+        super(code, message);
     }
+
 }

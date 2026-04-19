@@ -11,7 +11,9 @@ import com.dev.dungcony.modules.product.entities.Category;
 import com.dev.dungcony.modules.product.entities.Product;
 import com.dev.dungcony.modules.product.entities.Provider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mapper chuyển đổi giữa Product entity và các DTO response.
@@ -97,4 +99,20 @@ public class ProductMapper {
                 p.getCreatedAt(),
                 p.getUpdatedAt());
     }
+
+    public static Map<String, ProductDto> toMapDto(List<Product> p, Map<String, List<ItemDto>> items,
+            Map<String, DiscountInfoDto> discounts) {
+
+        Map<String, ProductDto> productDtos = new HashMap<>();
+
+        for (Product p1 : p) {
+            DiscountInfoDto discount = discounts.get(p1.getCode());
+            List<ItemDto> itemDto = items.get(p1.getCode());
+
+            productDtos.put(p1.getCode(), toDto(p1, itemDto, discount));
+        }
+
+        return productDtos;
+    }
+
 }

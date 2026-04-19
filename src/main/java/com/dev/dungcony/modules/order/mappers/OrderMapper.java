@@ -12,6 +12,7 @@ public class OrderMapper {
         return new OrderRes(
                 order.getCode(),
                 order.getStatus(),
+                order.getPaymentType(),
                 order.getVoucherCode(),
                 reciever,
                 order.getNote(),

@@ -1,13 +1,9 @@
 package com.dev.dungcony.modules.order.services.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
-import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
-import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
-import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.dtos.res.OrderSummaryRes;
 import com.dev.dungcony.modules.order.entities.Order;
-import com.dev.dungcony.modules.order.entities.OrderItem;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.exceptions.OrderNotFoundException;
 import com.dev.dungcony.modules.order.mappers.OrderMapper;
@@ -35,10 +30,7 @@ public class OrderGetImpl implements OrderGetService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-
     private final RecieverGetService recieverGetService;
-    private final ProductGetService productGetService;
-    private final SizeCacheService sizeCacheService;
 
     // find order of user
     @Override
@@ -51,11 +43,11 @@ public class OrderGetImpl implements OrderGetService {
             throw new OrderNotFoundException("Order not found");
         }
 
-        List<OrderItem> items = orderItemRepository.findAllByOrderIdWithDetails(order.getId());
+        List<OrderItemDto> items = orderItemRepository.findAllByOrderId(order.getId());
 
         return OrderMapper.toOrderRes(
                 order,
-                mapper(items),
+                items,
                 recieverGetService.getReceiverById(userId, order.getReceiverId()));
     }
 
@@ -77,11 +69,11 @@ public class OrderGetImpl implements OrderGetService {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
-        List<OrderItem> items = orderItemRepository.findAllByOrderIdWithDetails(order.getId());
+        List<OrderItemDto> items = orderItemRepository.findAllByOrderId(order.getId());
 
         return OrderMapper.toOrderRes(
                 order,
-                mapper(items),
+                items,
                 recieverGetService.adminGetReceiverById(order.getReceiverId()));
     }
 
@@ -95,23 +87,5 @@ public class OrderGetImpl implements OrderGetService {
     @Transactional(readOnly = true)
     public Page<OrderSummaryRes> getAllOrdersByStatus(OrderStatus status, Pageable pageable) {
         return orderRepository.findAllByStatus(status, pageable);
-    }
-
-    // -----private-----//
-    private List<OrderItemDto> mapper(List<OrderItem> items) {
-        List<OrderItemDto> itemDtos = new ArrayList<>();
-
-        for (OrderItem item : items) {
-
-            ProductSummaryRes product = productGetService.getById(item.getId().getProductId());
-
-            itemDtos.add(
-                    new OrderItemDto(
-                            product.code(),
-                            sizeCacheService.getProductSizeById(item.getId().getSizeId()),
-                            item.getQuantity(),
-                            item.getPrice()));
-        }
-        return itemDtos;
     }
 }

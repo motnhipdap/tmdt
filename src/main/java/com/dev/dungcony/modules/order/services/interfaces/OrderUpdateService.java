@@ -9,5 +9,7 @@ public interface OrderUpdateService {
 
     void completedOrder(UUID userId, String orderCode);
 
+    void confirmOrder(UUID userId, String orderCode);
+
     void updateOrderStatus(String orderCode, OrderStatus nextStatus);
 }

@@ -18,7 +18,6 @@ import java.util.UUID;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApiRequestMdcFilter extends OncePerRequestFilter {
 
-    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

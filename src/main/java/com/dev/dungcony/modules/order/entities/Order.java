@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.dev.dungcony.commons.entities.BaseEntity;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 
+import com.dev.dungcony.modules.order.enums.PaymentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,6 +36,10 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_type")
+    private PaymentType paymentType;
 
     @Size(max = 30)
     @Column(name = "voucher_code")

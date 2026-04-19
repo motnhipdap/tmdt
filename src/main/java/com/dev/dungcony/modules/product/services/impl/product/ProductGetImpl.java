@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class ProductGetImpl implements ProductGetService {
     private final PromotionCalculator promotionCalculator;
 
     private final ItemGetService itemGetService;
-    
+
     @Override
     public Integer getIdByCode(String code) {
         return findByCode(code).getId();
@@ -58,7 +59,7 @@ public class ProductGetImpl implements ProductGetService {
         return ProductMapper.toSumaryRes(product).withDiscount(discount);
     }
 
-    //dùng nội bộ với dto
+    // dùng nội bộ với dto
     @Override
     @Transactional(readOnly = true)
     public ProductDto getDtoByCode(String code) {
@@ -76,7 +77,24 @@ public class ProductGetImpl implements ProductGetService {
         return ProductMapper.toDto(product, items, discount);
     }
 
-    //trả về thông tin chi tiết
+    @Override
+    public Map<String, ProductDto> getDtoByCodes(List<String> codes) {
+        List<Product> products = productRepository.findByCodeIn(codes);
+
+        List<ProductPriceInput> productPriceInputs = new ArrayList<>();
+
+        // Tính discount cho sản phẩm
+        for (Product product : products) {
+            String categoryCode = product.getCategory() != null ? product.getCategory().getCode() : null;
+            productPriceInputs.add(new ProductPriceInput(product.getCode(), categoryCode, product.getPrice()));
+        }
+        Map<String, DiscountInfoDto> discount = promotionCalculator.calculateFinalPrices(productPriceInputs);
+        Map<String, List<ItemDto>> items = itemGetService.getByproductCodes(codes);
+
+        return ProductMapper.toMapDto(products, items, discount);
+    }
+
+    // trả về thông tin chi tiết
     @Override
     public ProductDetailRes getDetailByCode(String code) {
 
@@ -93,7 +111,7 @@ public class ProductGetImpl implements ProductGetService {
         return ProductMapper.toDetailRes(product, items, discount);
     }
 
-    //trả về toàn bộ
+    // trả về toàn bộ
     @Override
     @Transactional(readOnly = true)
     public Page<ProductSummaryRes> getAll(Pageable pageable) {
@@ -104,7 +122,7 @@ public class ProductGetImpl implements ProductGetService {
         return enrichWithDiscounts(page);
     }
 
-    //tìm theo category
+    // tìm theo category
     @Override
     @Transactional(readOnly = true)
     public Page<ProductSummaryRes> getAllByCategoryCode(String categoryCode, Pageable pageable) {
@@ -117,7 +135,7 @@ public class ProductGetImpl implements ProductGetService {
         return enrichWithDiscounts(rawPage);
     }
 
-    //tìm theo keyword
+    // tìm theo keyword
     @Override
     @Transactional(readOnly = true)
     public Page<ProductSummaryRes> searchByKeyword(String keyword, Pageable pageable) {
@@ -133,11 +151,11 @@ public class ProductGetImpl implements ProductGetService {
         return enrichWithDiscounts(page);
     }
 
-    //lọc sản phẩm
+    // lọc sản phẩm
     @Override
     @Transactional(readOnly = true)
     public Page<ProductSummaryRes> filter(String categoryCode, BigDecimal minPrice, BigDecimal maxPrice,
-                                          String keyword, Pageable pageable) {
+            String keyword, Pageable pageable) {
 
         if (categoryCode != null && !categoryCode.isBlank()) {
             categoryRepository.findByCode(categoryCode)
@@ -159,7 +177,7 @@ public class ProductGetImpl implements ProductGetService {
         return enrichWithDiscounts(page);
     }
 
-    //tra về các sản phẩm mua nhiều nhất
+    // tra về các sản phẩm mua nhiều nhất
     @Override
     @Transactional(readOnly = true)
     public Page<ProductSummaryRes> getAllBestSeller(Pageable pageable) {
@@ -170,7 +188,7 @@ public class ProductGetImpl implements ProductGetService {
         return enrichWithDiscounts(page);
     }
 
-    //kiểm tra đủ sản phẩm không
+    // kiểm tra đủ sản phẩm không
     @Override
     public long countByCodes(List<String> codes) {
 
@@ -185,9 +203,9 @@ public class ProductGetImpl implements ProductGetService {
         return cnt;
     }
 
-    // =============================  PRIVATE HELPERS =========================
+    // ============================= PRIVATE HELPERS =========================
 
-    //áp dụng promotion vào từng sản phẩm
+    // áp dụng promotion vào từng sản phẩm
     private Page<ProductSummaryRes> enrichWithDiscounts(Page<ProductSummaryRes> page) {
         List<ProductSummaryRes> content = page.getContent();
         if (content.isEmpty()) {
@@ -214,7 +232,7 @@ public class ProductGetImpl implements ProductGetService {
         });
     }
 
-    //------ tìm kiếm sản phẩm với code -----------/
+    // ------ tìm kiếm sản phẩm với code -----------/
     private Product findByCode(String code) {
         Product product = productRepository.findByCodeWithCategoryAndProvider(code)
                 .orElseThrow(() -> new ProductNotFoundException("product not found"));
@@ -232,7 +250,7 @@ public class ProductGetImpl implements ProductGetService {
         return product;
     }
 
-    //------ tìm kiếm sản phẩm với id -----------/
+    // ------ tìm kiếm sản phẩm với id -----------/
     private Product findById(int id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("product not found"));

@@ -9,6 +9,7 @@ import com.dev.dungcony.modules.product.dtos.res.ProductSummaryRes;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface ProductGetService {
     Integer getIdByCode(String code);
@@ -16,6 +17,8 @@ public interface ProductGetService {
     ProductSummaryRes getById(int id);
 
     ProductDto getDtoByCode(String code);
+
+    Map<String, ProductDto> getDtoByCodes(List<String> codes);
 
     ProductDetailRes getDetailByCode(String code);
 
