@@ -49,6 +49,7 @@ public class OrderCreateimpl implements OrderCreateService {
     private final UserVoucherUpdateService userVoucherUpdateService;
     private final CartItemGetService cartItemGetService;
     private final VnPayImpl vnPayImpl;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -125,6 +126,7 @@ public class OrderCreateimpl implements OrderCreateService {
         userVoucherUpdateService.apllyVoucherComplete(userId, req.voucherCode());
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
+        notificationService.onOrderCreated(order.getCode(), finalPrice);
 
         String paymentUrl = null;
         if (req.paymentType() == PaymentType.ONLINE) {

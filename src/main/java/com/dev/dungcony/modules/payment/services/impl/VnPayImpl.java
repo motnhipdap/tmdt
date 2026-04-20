@@ -34,11 +34,8 @@ import java.util.UUID;
 @Slf4j
 public class VnPayImpl implements VnPayService {
 
-    private static final DateTimeFormatter VNP_DATE_FMT =
-            DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
+    private static final DateTimeFormatter VNP_DATE_FMT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final ZoneId VN_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
-
     private final VnPayProperties vnPayProperties;
     private final OrderGetService orderGetService;
     private final OrderUpdateService orderUpdateService;

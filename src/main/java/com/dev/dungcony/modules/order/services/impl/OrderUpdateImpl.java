@@ -23,8 +23,8 @@ import java.util.UUID;
 public class OrderUpdateImpl implements OrderUpdateService {
 
     private final OrderRepository orderRepository;
-
     private final ItemUpdateService itemUpdateService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -50,6 +50,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
         }
 
         log.info("Order cancelled: {} by user: {}", orderCode, userId);
+        notificationService.onOrderCancelled(orderCode, userId);
     }
 
     @Override
@@ -66,6 +67,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
         }
 
         order.setStatus(OrderStatus.PAID);
+        notificationService.onPaymentSuccess(orderCode, userId);
 
         log.info("thanh toán thành công");
     }
@@ -117,6 +119,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
         validateStatusTransition(currentStatus, nextStatus);
         order.setStatus(nextStatus);
+        notificationService.onOrderStatusChanged(orderCode, order.getUserId(), nextStatus.name());
     }
 
     // ---PRIVATE---//

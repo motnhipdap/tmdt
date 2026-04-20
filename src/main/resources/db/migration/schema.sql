@@ -38,18 +38,18 @@ CREATE TABLE IF NOT EXISTS tbl_users
 
 CREATE TABLE IF NOT EXISTS tbl_recivers
 (
-    id      SERIAL PRIMARY KEY,
-    f_name  VARCHAR(100),
-    l_name  VARCHAR(100),
-    phone   VARCHAR(10) NOT NULL,
-    country     VARCHAR(20)  NOT NULL,
-    province    VARCHAR(20)  NOT NULL,
-    district    VARCHAR(20)  NOT NULL,
-    street      VARCHAR(100) NOT NULL,
-    detail      VARCHAR(255),
+    id       SERIAL PRIMARY KEY,
+    f_name   VARCHAR(100),
+    l_name   VARCHAR(100),
+    phone    VARCHAR(10)  NOT NULL,
+    country  VARCHAR(20)  NOT NULL,
+    province VARCHAR(20)  NOT NULL,
+    district VARCHAR(20)  NOT NULL,
+    street   VARCHAR(100) NOT NULL,
+    detail   VARCHAR(255),
 
 
-    user_id UUID        NOT NULL,
+    user_id  UUID         NOT NULL,
 
     CONSTRAINT fk_receiver_user FOREIGN KEY (user_id) REFERENCES tbl_users (id)
 );
@@ -275,3 +275,15 @@ CREATE TABLE IF NOT EXISTS tbl_user_vouchers
     CONSTRAINT fk_uv_voucher FOREIGN KEY (voucher_id) REFERENCES tbl_vouchers (id),
     CONSTRAINT chk_uv_status CHECK (status IN ('AVAILABLE', 'USED', 'EXPIRED'))
 );
+
+-- ======================= Notification ====================
+create table if not exists tbl_notifications
+(
+    id          serial primary key,
+    code        varchar(30) unique,
+    sender_id   uuid        not null,
+    receiver_id uuid        not null,
+    type        varchar(20) not null,
+    title       varchar(100),
+    message     text
+)
