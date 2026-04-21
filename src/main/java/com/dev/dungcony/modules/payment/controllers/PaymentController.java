@@ -3,7 +3,6 @@ package com.dev.dungcony.modules.payment.controllers;
 import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
-import com.dev.dungcony.modules.payment.services.impl.VnPayImpl;
 import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +31,7 @@ public class PaymentController {
             HttpServletRequest request) {
 
         String ipAddress = getClientIp(request);
-        
+
         PaymentRes res = vnPayService.createPaymentUrl(
                 account.requireUserUuid(),
                 orderCode,

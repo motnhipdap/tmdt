@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/notifications/get")
@@ -38,8 +36,7 @@ public class UserGetController {
     @Operation(summary = "Đếm thông báo chưa đọc")
     @GetMapping("/unread-count")
     public ResponseEntity<ApiRes<Long>> unreadCount(
-            @AuthenticationPrincipal AccountDetails user
-    ) {
+            @AuthenticationPrincipal AccountDetails user) {
         long count = notificationGetService.countUnRead(user.getUserUuid());
         return ResponseEntity.ok(ApiRes.success("unread", count));
     }

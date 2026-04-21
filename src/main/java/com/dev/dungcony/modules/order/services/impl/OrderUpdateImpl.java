@@ -1,5 +1,6 @@
 package com.dev.dungcony.modules.order.services.impl;
 
+import com.dev.dungcony.modules.notifications.services.interfaces.NotificationCreateService;
 import com.dev.dungcony.modules.order.entities.Order;
 import com.dev.dungcony.modules.order.entities.OrderItem;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
@@ -24,7 +25,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
     private final OrderRepository orderRepository;
     private final ItemUpdateService itemUpdateService;
-    private final NotificationService notificationService;
+    private final NotificationCreateService notificationCreateService;
 
     @Override
     @Transactional
@@ -50,7 +51,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
         }
 
         log.info("Order cancelled: {} by user: {}", orderCode, userId);
-        notificationService.onOrderCancelled(orderCode, userId);
+        notificationCreateService.userCancelOrder(userId);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
         }
 
         order.setStatus(OrderStatus.PAID);
-        notificationService.onPaymentSuccess(orderCode, userId);
+        notificationCreateService.userPailOrder(userId);
 
         log.info("thanh toán thành công");
     }
@@ -119,7 +120,6 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
         validateStatusTransition(currentStatus, nextStatus);
         order.setStatus(nextStatus);
-        notificationService.onOrderStatusChanged(orderCode, order.getUserId(), nextStatus.name());
     }
 
     // ---PRIVATE---//

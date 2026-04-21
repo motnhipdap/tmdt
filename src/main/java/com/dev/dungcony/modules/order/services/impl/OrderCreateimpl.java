@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.order.services.impl;
 
 import com.dev.dungcony.modules.cart.services.interfaces.CartItemGetService;
+import com.dev.dungcony.modules.notifications.services.interfaces.NotificationCreateService;
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.order.dtos.req.CreateOrderReq;
 import com.dev.dungcony.modules.order.dtos.res.OrderRes;
@@ -15,7 +16,7 @@ import com.dev.dungcony.modules.order.mappers.OrderMapper;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
-import com.dev.dungcony.modules.payment.services.impl.VnPayImpl;
+import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
@@ -48,8 +49,8 @@ public class OrderCreateimpl implements OrderCreateService {
     private final UserVoucherGetService userVoucherService;
     private final UserVoucherUpdateService userVoucherUpdateService;
     private final CartItemGetService cartItemGetService;
-    private final VnPayImpl vnPayImpl;
-    private final NotificationService notificationService;
+    private final NotificationCreateService notificationCreateService;
+    private final VnPayService vnPayService;
 
     @Override
     @Transactional
@@ -126,11 +127,11 @@ public class OrderCreateimpl implements OrderCreateService {
         userVoucherUpdateService.apllyVoucherComplete(userId, req.voucherCode());
 
         log.info("Order created: {} for user: {}", order.getCode(), userId);
-        notificationService.onOrderCreated(order.getCode(), finalPrice);
+        notificationCreateService.userCreateOrder(userId);
 
         String paymentUrl = null;
         if (req.paymentType() == PaymentType.ONLINE) {
-            PaymentRes paymentRes = vnPayImpl.createPaymentUrl(userId, order.getCode(), ipAddress);
+            PaymentRes paymentRes = vnPayService.createPaymentUrl(userId, order.getCode(), ipAddress);
             paymentUrl = paymentRes.paymentUrl();
         }
 

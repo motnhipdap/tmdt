@@ -1,35 +1,33 @@
-2026-04-19T06:46:13.483+07:00  INFO 9412 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 9412 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
-2026-04-19T06:46:13.488+07:00  INFO 9412 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
-2026-04-19T06:46:15.363+07:00  INFO 9412 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-04-19T06:46:15.363+07:00  INFO 9412 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
-2026-04-19T06:46:15.407+07:00  INFO 9412 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-04-19T06:46:15.999+07:00  INFO 9412 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-04-19T06:46:16.140+07:00  INFO 9412 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4aef3253
-2026-04-19T06:46:16.142+07:00  INFO 9412 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-04-19T06:46:20.801+07:00  INFO 9412 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 7.707 seconds (process running for 8.072)
-2026-04-19T06:46:26.129+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-04-19T06:46:27.378+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-8] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 834 ms
-2026-04-19T06:46:54.974+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.c.config.ApiRequestLogFilter       : >>> POST /v1/api/public/auth/login — Đăng nhập tài khoản
-2026-04-19T06:46:55.025+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.m.a.c.user.AuthController          : Login req: LoginReq[username=dungcony, password=12345678]
-2026-04-19T06:46:55.026+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.m.auth.services.impl.AuthImpl      : Logging in account with username: dungcony
-2026-04-19T06:46:55.152+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.m.auth.services.impl.AuthImpl      : Login successful for account: dungcony
-2026-04-19T06:46:55.578+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.m.auth.services.impl.AuthImpl      : Generated refresh token for account: dungcony
-2026-04-19T06:46:55.591+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] c.d.d.c.config.ApiRequestLogFilter       : <<< POST /v1/api/public/auth/login — Đăng nhập tài khoản — HTTP 200 (616ms)
-2026-04-19T06:47:00.035+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:47:00.041+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:47:47.941+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-3] c.d.d.c.config.ApiRequestLogFilter       : >>> GET /v1/api/user/cart — Lấy giỏ hàng
-2026-04-19T06:47:48.079+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-3] c.d.d.c.config.ApiRequestLogFilter       : <<< GET /v1/api/user/cart — Lấy giỏ hàng — HTTP 200 (138ms)
-2026-04-19T06:48:00.013+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:48:00.015+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:48:24.133+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-5] c.d.d.c.config.ApiRequestLogFilter       : >>> DELETE /v1/api/user/cart/remove?productCode=MTS-001&size=S — Xóa sản phẩm khỏi giỏ hàng
-2026-04-19T06:48:24.228+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-5] c.d.d.c.config.ApiRequestLogFilter       : <<< DELETE /v1/api/user/cart/remove?productCode=MTS-001&size=S — Xóa sản phẩm khỏi giỏ hàng — HTTP 200 (94ms)
-2026-04-19T06:48:30.054+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-6] c.d.d.c.config.ApiRequestLogFilter       : >>> GET /v1/api/user/cart — Lấy giỏ hàng
-2026-04-19T06:48:30.098+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-6] c.d.d.c.config.ApiRequestLogFilter       : <<< GET /v1/api/user/cart — Lấy giỏ hàng — HTTP 200 (44ms)
-2026-04-19T06:48:41.387+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-7] c.d.d.c.config.ApiRequestLogFilter       : >>> DELETE /v1/api/user/cart/clear — Xóa toàn bộ giỏ hàng
-2026-04-19T06:48:41.416+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-7] c.d.d.c.config.ApiRequestLogFilter       : <<< DELETE /v1/api/user/cart/clear — Xóa toàn bộ giỏ hàng — HTTP 200 (29ms)
-2026-04-19T06:48:44.739+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-8] c.d.d.c.config.ApiRequestLogFilter       : >>> GET /v1/api/user/cart — Lấy giỏ hàng
-2026-04-19T06:48:44.757+07:00  INFO 9412 --- [dungcony] [http-nio-0.0.0.0-8080-exec-8] c.d.d.c.config.ApiRequestLogFilter       : <<< GET /v1/api/user/cart — Lấy giỏ hàng — HTTP 200 (17ms)
-2026-04-19T06:49:00.027+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:49:00.029+07:00  INFO 9412 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
-2026-04-19T06:49:41.251+07:00  INFO 9412 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-04-19T06:49:41.254+07:00  INFO 9412 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-21T19:26:15.707+07:00  INFO 7764 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 7764 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-21T19:26:15.712+07:00  INFO 7764 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-21T19:26:15.947+07:00  WARN 7764 --- [dungcony] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [com.dev.dungcony.DungconyApplication]
+2026-04-21T19:26:16.041+07:00 ERROR 7764 --- [dungcony] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [com.dev.dungcony.DungconyApplication]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:194) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:418) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:290) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:792) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:610) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.11.jar:3.5.11]
+	at com.dev.dungcony.DungconyApplication.main(DungconyApplication.java:15) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.11.jar:3.5.11]
+Caused by: org.springframework.context.annotation.ConflictingBeanDefinitionException: Annotation-specified bean name 'userGetController' for bean class [com.dev.dungcony.modules.users.controllers.user.UserGetController] conflicts with existing, non-compatible bean definition of same name and class [com.dev.dungcony.modules.notifications.controllers.user.UserGetController]
+	at org.springframework.context.annotation.ClassPathBeanDefinitionScanner.checkCandidate(ClassPathBeanDefinitionScanner.java:361) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ClassPathBeanDefinitionScanner.doScan(ClassPathBeanDefinitionScanner.java:288) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ComponentScanAnnotationParser.parse(ComponentScanAnnotationParser.java:128) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:346) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:281) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:204) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:172) ~[spring-context-6.2.16.jar:6.2.16]
+	... 16 common frames omitted
+

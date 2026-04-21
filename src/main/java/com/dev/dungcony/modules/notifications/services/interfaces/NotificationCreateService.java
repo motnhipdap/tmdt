@@ -9,5 +9,11 @@ import java.util.UUID;
 public interface NotificationCreateService {
     String userCreate(UUID senderId, UserNotificationCreateReq req);
 
+    void userCreateOrder(UUID uid);
+
+    void userCancelOrder(UUID uid);
+
+    void userPailOrder(UUID uid);
+
     List<String> adminCreate(AdminCreateNotificationReq req);
 }

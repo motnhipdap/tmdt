@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,42 +18,39 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Notifications")
 public class UserDeleteController {
 
-    private final NotificationDeleteService notificationDeleteService;
+        private final NotificationDeleteService notificationDeleteService;
 
-    @Operation(summary = "user xoas thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
-    @PutMapping("/delete/{code}")
-    public ResponseEntity<ApiRes<Void>> deleteNotification(
-            @AuthenticationPrincipal AccountDetails user,
-            @PathVariable String code) {
+        @Operation(summary = "user xoas thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
+        @PutMapping("/delete/{code}")
+        public ResponseEntity<ApiRes<Void>> deleteNotification(
+                        @AuthenticationPrincipal AccountDetails user,
+                        @PathVariable String code) {
 
-        notificationDeleteService.deleteByCode(user.getUserUuid(), code);
+                notificationDeleteService.deleteByCode(user.getUserUuid(), code);
 
-        return ResponseEntity.ok()
-                .body(ApiRes.success("Delete notification"));
-    }
+                return ResponseEntity.ok()
+                                .body(ApiRes.success("Delete notification"));
+        }
 
-    @Operation(summary = "user xóa nhiều thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
-    @PutMapping("/delete/list")
-    public ResponseEntity<ApiRes<Void>> deleteNotification
-            (
-                    @AuthenticationPrincipal AccountDetails user,
-                    @Valid @RequestBody DeleteListNotiReq req
-            ) {
+        @Operation(summary = "user xóa nhiều thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
+        @PutMapping("/delete/list")
+        public ResponseEntity<ApiRes<Void>> deleteNotification(
+                        @AuthenticationPrincipal AccountDetails user,
+                        @Valid @RequestBody DeleteListNotiReq req) {
 
-        int cnt = notificationDeleteService.deleteListByCode(user.getUserUuid(), req.notis());
+                int cnt = notificationDeleteService.deleteListByCode(user.getUserUuid(), req.notis());
 
-        return ResponseEntity.ok()
-                .body(ApiRes.success("Delete " + cnt + " notification"));
-    }
+                return ResponseEntity.ok()
+                                .body(ApiRes.success("Delete " + cnt + " notification"));
+        }
 
-    @Operation(summary = "use dọn dẹp bảng thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
-    @PutMapping("/clear")
-    public ResponseEntity<ApiRes<Void>> clear(
-            @AuthenticationPrincipal AccountDetails user
-    ) {
-        int cnt = notificationDeleteService.clear(user.getUserUuid());
+        @Operation(summary = "use dọn dẹp bảng thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")
+        @PutMapping("/clear")
+        public ResponseEntity<ApiRes<Void>> clear(
+                        @AuthenticationPrincipal AccountDetails user) {
+                int cnt = notificationDeleteService.clear(user.getUserUuid());
 
-        return ResponseEntity.ok()
-                .body(ApiRes.success("clear thành công đã xóa " + cnt + " thông báo"));
-    }
+                return ResponseEntity.ok()
+                                .body(ApiRes.success("clear thành công đã xóa " + cnt + " thông báo"));
+        }
 }
