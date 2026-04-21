@@ -4,6 +4,7 @@ import com.dev.dungcony.commons.dtos.AccountDetails;
 import com.dev.dungcony.commons.dtos.ApiRes;
 import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
 import com.dev.dungcony.modules.payment.services.impl.VnPayImpl;
+import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +19,12 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Payment")
+@Tag(name = "Payments")
 public class PaymentController {
 
-    private final VnPayImpl vnPayImpl;
+    private final VnPayService vnPayService;
 
-    @Operation(summary = "Tạo URL thanh toán VNPay",
-            description = "Tạo link thanh toán VNPay cho đơn hàng ONLINE ở trạng thái UNPAID")
+    @Operation(summary = "Tạo URL thanh toán VNPay", description = "Tạo link thanh toán VNPay cho đơn hàng ONLINE ở trạng thái UNPAID")
     @PostMapping("/v1/api/user/payment/vnpay/{order-code}")
     public ResponseEntity<ApiRes<PaymentRes>> createPayment(
             @AuthenticationPrincipal AccountDetails account,
@@ -32,18 +32,21 @@ public class PaymentController {
             HttpServletRequest request) {
 
         String ipAddress = getClientIp(request);
-        PaymentRes res = vnPayImpl.createPaymentUrl(
-                account.requireUserUuid(), orderCode, ipAddress);
+        
+        PaymentRes res = vnPayService.createPaymentUrl(
+                account.requireUserUuid(),
+                orderCode,
+                ipAddress);
+
         return ResponseEntity.ok(ApiRes.success("Tạo link thanh toán thành công", res));
     }
 
-    @Operation(summary = "VNPay callback (return URL)",
-            description = "Endpoint cho VNPay redirect sau khi thanh toán — không gọi trực tiếp")
+    @Operation(summary = "VNPay callback (return URL)", description = "Endpoint cho VNPay redirect sau khi thanh toán — không gọi trực tiếp")
     @GetMapping("/v1/api/public/payment/vnpay/return")
     public ResponseEntity<ApiRes<Map<String, Object>>> vnpayReturn(
             @RequestParam Map<String, String> params) {
 
-        boolean success = vnPayImpl.processPaymentReturn(params);
+        boolean success = vnPayService.processPaymentReturn(params);
         String orderCode = params.get("vnp_TxnRef");
 
         if (success) {
