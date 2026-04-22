@@ -39,11 +39,13 @@ public class NotificationCreateImpl implements NotificationCreateService {
 
     @Override
     public void userCreateOrder(UUID uid) {
-        Notification noti = new Notification();
-        noti.setSenderId(uid);
-        noti.setType(NotificationType.ORDER_CREATED);
-        noti.setTitle("create_order");
-        noti.setMessage("tạo đơn hàng");
+        UserNotificationCreateReq req = new UserNotificationCreateReq(
+                uid,
+                NotificationType.ORDER_CREATED,
+                "create_order",
+                "tạo đơn hàng"
+        );
+        Notification noti = NotiMapper.toEntity(req);
 
         notificationRepository.save(noti);
     }
@@ -51,22 +53,27 @@ public class NotificationCreateImpl implements NotificationCreateService {
 
     @Override
     public void userPailOrder(UUID uid) {
-        Notification noti = new Notification();
-        noti.setSenderId(uid);
-        noti.setType(NotificationType.ORDER_PAID);
-        noti.setTitle("paid_order");
-        noti.setMessage("thanh toasn đơn hàng thành công");
+        UserNotificationCreateReq req = new UserNotificationCreateReq(
+                uid,
+                NotificationType.ORDER_PAID,
+                "paid_order",
+                "thanh toán đơn hàng"
+        );
+        Notification noti = NotiMapper.toEntity(req);
 
         notificationRepository.save(noti);
     }
 
     @Override
     public void userCancelOrder(UUID uid) {
-        Notification noti = new Notification();
-        noti.setSenderId(uid);
-        noti.setType(NotificationType.ORDER_CANCELLED);
-        noti.setTitle("cancel_order");
-        noti.setMessage("hủy đơn hàng");
+        UserNotificationCreateReq req = new UserNotificationCreateReq(
+                uid,
+                NotificationType.ORDER_CANCELLED,
+                "cancel_order",
+                "hủy đơn hàng"
+        );
+
+        Notification noti = NotiMapper.toEntity(req);
 
         notificationRepository.save(noti);
     }
@@ -74,6 +81,51 @@ public class NotificationCreateImpl implements NotificationCreateService {
     @Transactional
     @Override
     public List<String> adminCreate(AdminCreateNotificationReq req) {
+
+        List<Notification> notis = NotiMapper.toEntity(req);
+
+        if (notis.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Notification> savedNotis = notificationRepository.saveAll(notis);
+
+        return savedNotis.stream()
+                .map(Notification::getCode)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    @Override
+    public List<String> adminComfirmOrders(List<UUID> uids) {
+        AdminCreateNotificationReq req = new AdminCreateNotificationReq(
+                uids,
+                "CONFIRM_ORDER",
+                "đơn hàng của bạn đã được xác nhận"
+        );
+
+        List<Notification> notis = NotiMapper.toEntity(req);
+
+        if (notis.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Notification> savedNotis = notificationRepository.saveAll(notis);
+
+        return savedNotis.stream()
+                .map(Notification::getCode)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    @Override
+    public List<String> adminDeliveredOrders(List<UUID> uids) {
+
+        AdminCreateNotificationReq req = new AdminCreateNotificationReq(
+                uids,
+                "DELIVERED_ORDER",
+                "đơn hàng của bạn đã được giao vui lòng xác nhận"
+        );
 
         List<Notification> notis = NotiMapper.toEntity(req);
 

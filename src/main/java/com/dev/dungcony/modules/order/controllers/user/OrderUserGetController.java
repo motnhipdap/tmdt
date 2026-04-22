@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/order")
 @Tag(name = "Orders")
-public class OrderGetController {
+public class OrderUserGetController {
 
     private final OrderGetService orderGetService;
 
@@ -41,7 +41,7 @@ public class OrderGetController {
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrders(account.requireUserUuid(), pageable))));
+                        PageRes.from(orderGetService.userGetOrders(account.requireUserUuid(), pageable))));
     }
 
     @Operation(summary = "Lấy danh sách đơn hàng theo trạng thái")
@@ -52,7 +52,7 @@ public class OrderGetController {
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(
                 ApiRes.success("Orders retrieved",
-                        PageRes.from(orderGetService.getUserOrdersByStatus(account.requireUserUuid(), status, pageable))));
+                        PageRes.from(orderGetService.userGetOrdersByStatus(account.requireUserUuid(), status, pageable))));
     }
 
     @Operation(summary = "Xem chi tiết đơn hàng")
@@ -62,7 +62,7 @@ public class OrderGetController {
             @PathVariable String orderCode) {
         return ResponseEntity.ok(
                 ApiRes.success("Order detail",
-                        orderGetService.getOrderByCode(account.requireUserUuid(), orderCode)));
+                        orderGetService.userGetOrderByCode(account.requireUserUuid(), orderCode)));
     }
 
 }

@@ -12,17 +12,17 @@ import java.util.UUID;
 
 public interface OrderGetService {
 
-    OrderRes getOrderByCode(UUID userId, String orderCode);
+    OrderRes userGetOrderByCode(UUID userId, String orderCode);
 
-    OrderRes getOrderByCodeAdmin(String orderCode);
+    OrderRes adminGetOrderByCode(String orderCode);
 
     OrderDto getDtoByCode(String orderCode);
 
-    Page<OrderSummaryRes> getUserOrders(UUID uId, Pageable pageable);
+    Page<OrderSummaryRes> userGetOrders(UUID uId, Pageable pageable);
 
-    Page<OrderSummaryRes> getUserOrdersByStatus(UUID uId, OrderStatus status, Pageable pageable);
+    Page<OrderSummaryRes> userGetOrdersByStatus(UUID uId, OrderStatus status, Pageable pageable);
 
-    Page<OrderSummaryRes> getAllOrders(Pageable pageable);
+    Page<OrderSummaryRes> adminGetAllOrders(Pageable pageable);
 
-    Page<OrderSummaryRes> getAllOrdersByStatus(OrderStatus status, Pageable pageable);
+    Page<OrderSummaryRes> adminGetAllOrdersByStatus(OrderStatus status, Pageable pageable);
 }

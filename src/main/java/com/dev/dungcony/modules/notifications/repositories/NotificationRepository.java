@@ -25,11 +25,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query(
             """
-                    update from Notification n
-                    set n.isDelete = true
-                    where n.isDelete = false
-                          and n.senderId = :sender_id
-                          and n.code in (:codes)
+                    UPDATE Notification n
+                    SET n.isDelete = true
+                    WHERE n.isDelete = false
+                          AND n.senderId = :sender_id
+                          AND n.code IN (:codes)
                     """
     )
     int deleteByListCodesAndSender(
@@ -39,12 +39,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query(
             """
-                    update from Notification n
-                    set n.isDelete = true
-                    where
-                          n.isDelete = false
-                          and n.forAdmin = true
-                          and n.code in (:codes)
+                    UPDATE Notification n
+                    SET n.isDelete = true
+                    WHERE n.isDelete = false
+                          AND n.forAdmin = true
+                          AND n.code IN (:codes)
                     """
     )
     int deleteByListCodesForAdmin(
@@ -52,18 +51,18 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @Modifying
     @Query("""
-            update from Notification n
-            set n.isDelete = true
-            where n.senderId = :sender_id
+            UPDATE Notification n
+            SET n.isDelete = true
+            WHERE n.senderId = :sender_id
             """)
     int clearBySender(@Param("sender_id") UUID senderId);
 
     @Modifying
     @Query("""
-            update from Notification n
-            set n.isDelete = true
-            where n.isDelete = false
-                  and n.forAdmin = true
+            UPDATE Notification n
+            SET n.isDelete = true
+            WHERE n.isDelete = false
+                  AND n.forAdmin = true
             """)
     int clearByAdmin();
 
@@ -104,20 +103,18 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @Modifying
     @Query("""
-            update
-            FROM Notification n
-            set n.readed = true
+            UPDATE Notification n
+            SET n.readed = true
             WHERE n.isDelete = false AND n.forAdmin = true
             """)
     long updateReadAllForAdmin();
 
     @Modifying
     @Query("""
-            update
-            FROM Notification n
-            set n.readed = true
+            UPDATE Notification n
+            SET n.readed = true
             WHERE n.isDelete = false
-                  and n.senderId = :sender_id
+                  AND n.senderId = :sender_id
                   AND n.forAdmin = false
             """)
     long updateReadAllUser(

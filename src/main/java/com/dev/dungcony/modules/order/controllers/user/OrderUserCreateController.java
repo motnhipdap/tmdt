@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/order")
 @Tag(name = "Orders")
-public class OrderCreateController {
+public class OrderUserCreateController {
 
     private final OrderCreateService orderCreateService;
 
@@ -35,7 +35,7 @@ public class OrderCreateController {
             @Valid @RequestBody CreateOrderReq req,
             HttpServletRequest request) {
         String ipAddress = getClientIp(request);
-        OrderRes order = orderCreateService.createOrder(account.requireUserUuid(), req, ipAddress);
+        OrderRes order = orderCreateService.userCreateOrder(account.requireUserUuid(), req, ipAddress);
         return ResponseEntity.ok(ApiRes.success("Order created successfully", order));
     }
 

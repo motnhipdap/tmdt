@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/notifications/update")
 @Tag(name = "Notifications")
-public class UserUpdateController {
+public class NotiUserUpdateController {
     private final NotificationUpdateService notificationUpdateService;
 
     @Operation(summary = "Đánh dấu 1 thông báo đã đọc")

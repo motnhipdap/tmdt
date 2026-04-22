@@ -28,7 +28,7 @@ public class AdminVoucherController {
     }
 
 
-    @PatchMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<ApiRes<Void>> updateVoucherStatus(
             @RequestParam("voucher-code") String code,
             @RequestBody VoucherUpdateReq req) {

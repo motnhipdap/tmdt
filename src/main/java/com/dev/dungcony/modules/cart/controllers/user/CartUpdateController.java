@@ -37,7 +37,7 @@ public class CartUpdateController {
     }
 
     @Operation(summary = "Cập nhật số lượng sản phẩm")
-    @PatchMapping("/update-quantity")
+    @PutMapping("/update-quantity")
     public ResponseEntity<ApiRes<Void>> updateQuantity(
             @AuthenticationPrincipal AccountDetails account,
             @Valid @RequestBody UpdateCartItemReq req) {

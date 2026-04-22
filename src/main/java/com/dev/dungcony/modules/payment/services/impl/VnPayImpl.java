@@ -64,9 +64,7 @@ public class VnPayImpl implements VnPayService {
         Map<String, String> params = createListKeyValue(amountInVnd, orderCode, ipAddress, createDate, expireDate);
 
         String queryString = buildQueryString(params, true);
-        String hashData = buildQueryString(params, false);
-        //Tạo chữ ký
-        String secureHash = hmacSHA512(vnPayProperties.hashSecret(), hashData);
+        String secureHash = hmacSHA512(vnPayProperties.hashSecret(), queryString);
 
         String paymentUrl = vnPayProperties.payUrl() + "?" + queryString
                 + "&vnp_SecureHash=" + secureHash;
@@ -86,7 +84,7 @@ public class VnPayImpl implements VnPayService {
         sortedParams.remove("vnp_SecureHash");
         sortedParams.remove("vnp_SecureHashType");
 
-        String hashData = buildQueryString(sortedParams, false);
+        String hashData = buildQueryString(sortedParams, true);
         String calculatedHash = hmacSHA512(vnPayProperties.hashSecret(), hashData);
 
         //so sánh chữ ký tự tính và chữ ký vnPay trả về
@@ -111,7 +109,7 @@ public class VnPayImpl implements VnPayService {
         }
 
         if ("00".equals(responseCode) && "00".equals(transactionStatus)) {
-            orderUpdateService.paidOrder(order.uid(), orderCode);
+            orderUpdateService.userPaidOrder(order.uid(), orderCode);
             log.info("VNPay payment success for order: {}", orderCode);
             return true;
         }
@@ -150,7 +148,7 @@ public class VnPayImpl implements VnPayService {
                 if (!sb.isEmpty()) sb.append('&');
                 sb.append(entry.getKey()).append('=');
                 sb.append(encode
-                        ? URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII)
+                        ? URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)
                         : entry.getValue());
             }
         }

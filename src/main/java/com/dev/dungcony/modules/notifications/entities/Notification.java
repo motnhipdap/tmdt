@@ -35,11 +35,9 @@ public class Notification extends BaseEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 20)
     @NotNull
     @Column(name = "type", nullable = false, length = 20)
     private NotificationType type;
-
 
     @Column(name = "receiver_id", nullable = false)
     private UUID receiverId;
@@ -50,15 +48,15 @@ public class Notification extends BaseEntity {
     @NotNull
     @ColumnDefault("false")
     @Column(name = "is_delete", nullable = false)
-    private Boolean isDelete;
+    private Boolean isDelete = false;
 
     @NotNull
     @ColumnDefault("true")
     @Column(name = "for_admin", nullable = false)
-    private Boolean forAdmin;
+    private Boolean forAdmin = true;
 
     @NotNull
     @ColumnDefault("false")
     @Column(name = "readed", nullable = false)
-    private Boolean readed;
+    private Boolean readed = false;
 }

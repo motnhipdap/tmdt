@@ -5,7 +5,7 @@ import com.dev.dungcony.modules.product.enums.ProductSize;
 import java.math.BigDecimal;
 
 public record CartItemDto(
-        int productId,
+        Integer productId,
         String productCode,
         ProductSize productSize,
         String categoryCode,

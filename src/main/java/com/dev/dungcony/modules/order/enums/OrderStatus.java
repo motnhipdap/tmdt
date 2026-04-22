@@ -4,9 +4,10 @@ public enum OrderStatus {
     UNPAID,
     PAID,
     PENDING,
+    CANCELLED,
     CONFIRMED,
     SHIPPING,
     DELIVERED,
-    CANCELLED,
+    COMPLETED,
     RETURNED
 }

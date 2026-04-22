@@ -71,7 +71,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 // Actuator health check
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/favicon.ico"
 
                         ).permitAll()
                         .requestMatchers("/v1/api/admin/**").hasRole("ADMIN")

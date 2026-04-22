@@ -1,6 +1,8 @@
 package com.dev.dungcony.modules.order.services.impl;
 
+import com.dev.dungcony.modules.cart.dtos.CartItemDto;
 import com.dev.dungcony.modules.cart.services.interfaces.CartItemGetService;
+import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
 import com.dev.dungcony.modules.notifications.services.interfaces.NotificationCreateService;
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.order.dtos.req.CreateOrderReq;
@@ -8,7 +10,6 @@ import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.entities.Order;
 import com.dev.dungcony.modules.order.entities.OrderItem;
 import com.dev.dungcony.modules.order.entities.OrderItemId;
-import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.enums.PaymentType;
 import com.dev.dungcony.modules.order.exceptions.OrderCannotCreateException;
 import com.dev.dungcony.modules.order.exceptions.OrderConflictException;
@@ -26,7 +27,6 @@ import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherGetServic
 import com.dev.dungcony.modules.voucher.services.interfaces.UserVoucherUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,12 +49,13 @@ public class OrderCreateimpl implements OrderCreateService {
     private final UserVoucherGetService userVoucherService;
     private final UserVoucherUpdateService userVoucherUpdateService;
     private final CartItemGetService cartItemGetService;
+    private final CartUpdateService cartUpdateService;
     private final NotificationCreateService notificationCreateService;
     private final VnPayService vnPayService;
 
     @Override
     @Transactional
-    public OrderRes createOrder(UUID userId, CreateOrderReq req, String ipAddress) {
+    public OrderRes userCreateOrder(UUID userId, CreateOrderReq req, String ipAddress) {
 
         if (req.items() == null || req.items().isEmpty())
             throw new OrderCannotCreateException();
@@ -62,70 +63,32 @@ public class OrderCreateimpl implements OrderCreateService {
         ReceiverRes receiver = recieverGetService.getReceiverById(userId, req.recieverid());
 
         // ----------- set Order -----------//
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setReceiverId(req.recieverid());
-        order.setCode(generateOrderCode());
-        order.setPaymentType(req.paymentType());
-        if (req.paymentType() == PaymentType.ONLINE) {
-            order.setStatus(OrderStatus.UNPAID);
-        } else {
-            order.setStatus(OrderStatus.PENDING);
-        }
-        order.setNote(req.note());
+        Order order = OrderMapper.toEnity(userId, req);
 
-        // ----------- validate ---------/
         List<String> productCodes = req.items().stream()
                 .map(OrderItemDto::productCode)
                 .toList();
 
         if (!cartItemGetService.existsLitProductCode(userId, productCodes)) {
-            throw new OrderCannotCreateException("CONFLICT_PRODUCT_CODE", "prouduct phải thuộc giỏ hàng");
+            throw new OrderCannotCreateException("CONFLICT_PRODUCT_CODE",
+                    "prouduct phải thuộc giỏ hàng");
         }
+
 
         // lấy thông tin chuẩn của từng sản phẩm
         Map<String, ProductDto> products = productGetService.getDtoByCodes(productCodes);
 
-        // tạo chi tiết đơn hanàng
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        List<OrderItemDto> savedItems = new ArrayList<>();
+        // tính chi tiết giá cả
+        OrderItemDetail orderItemDetail = new OrderItemDetail(products, req.items(), order);
+        orderItemDetail.caculFinalPriceAndVoucherDiscount(userId, req.voucherCode(), req);
 
-        for (OrderItemDto itemDto : req.items()) {
-            if (itemDto.quantity() <= 0)
-                throw new OrderCannotCreateException(
-                        "ITEM_QUANTITY_IS_ZERO",
-                        "số lượng sản phẩm phải > 0");
+        // set lại các thông tin cốt lõi
+        orderItemDetail.setOrder(order);
 
-            int sizeId = sizeCacheService.getIdBySize(itemDto.size());
-            ProductDto productDto = products.get(itemDto.productCode());
-
-            OrderItem orderItem = getOrderItem(itemDto, productDto, sizeId);
-
-            order.addItem(orderItem);
-
-            totalPrice = totalPrice.add(orderItem.getTotalPrice());
-
-            savedItems.add(new OrderItemDto(
-                    itemDto.productCode(),
-                    itemDto.size(),
-                    orderItem.getQuantity(),
-                    orderItem.getOriginalPrice(),
-                    orderItem.getFinalPrice()));
-        }
-
-        BigDecimal finalPrice = userVoucherService.applyVoucher(req.voucherCode(), userId, totalPrice);
-
-        BigDecimal voucherDiscount = totalPrice.subtract(finalPrice);
-
-        validateClientTotals(req, totalPrice, voucherDiscount, finalPrice);
-
-        order.setTotalPrice(totalPrice);
-        order.setVoucherCode(req.voucherCode());
-        order.setVoucherDiscount(voucherDiscount);
-        order.setFinalPrice(finalPrice);
         orderRepo.save(order);
-        userVoucherUpdateService.apllyVoucherComplete(userId, req.voucherCode());
 
+
+        cartUpdateService.removeListItem(userId, orderItemDetail.cartItemDtos);
         log.info("Order created: {} for user: {}", order.getCode(), userId);
         notificationCreateService.userCreateOrder(userId);
 
@@ -135,36 +98,15 @@ public class OrderCreateimpl implements OrderCreateService {
             paymentUrl = paymentRes.paymentUrl();
         }
 
-        return OrderMapper.toOrderRes(order, savedItems, receiver, paymentUrl);
+        return OrderMapper.toOrderRes(order, orderItemDetail.orderItemDtos, receiver, paymentUrl);
+    }
+
+    @Override
+    public OrderRes adminCreateOrder(UUID uId, CreateOrderReq req, String ipAddress) {
+        return null;
     }
 
     // -----------------------------PRIVATE-----------------------------------//
-    private String generateOrderCode() {
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-        return "ORD-" + timestamp.substring(timestamp.length() - 8) + "-" + random;
-    }
-
-    private @NonNull OrderItem getOrderItem(OrderItemDto itemDto, ProductDto product, int sizeId) {
-        if (itemDto.finalPrice() == null || itemDto.originalPrice() == null) {
-            throw new OrderCannotCreateException("PRICE_IS_REQUIRE", "giá sản phẩm phải có");
-        }
-
-        if (itemDto.originalPrice().compareTo(product.originalPrice()) != 0 ||
-                itemDto.finalPrice().compareTo(product.finalPrice()) != 0) {
-            throw new OrderCannotCreateException(
-                    "INPUT_ERROR",
-                    "thông tin sản phẩm không đúng");
-        }
-
-        OrderItem orderItem = new OrderItem();
-        orderItem.setId(new OrderItemId(null, product.id(), sizeId));
-        orderItem.setQuantity(itemDto.quantity());
-        orderItem.setOriginalPrice(product.originalPrice());
-        orderItem.setFinalPrice(product.finalPrice());
-        orderItem.setTotalPrice(product.finalPrice().multiply(BigDecimal.valueOf(itemDto.quantity())));
-        return orderItem;
-    }
 
     // kiểm tra lại dữ liệu với dữ liệu client gửi lên
     private void validateClientTotals(
@@ -180,6 +122,105 @@ public class OrderCreateimpl implements OrderCreateService {
 
         if (req.finalPrice() != null && req.finalPrice().compareTo(finalAmount) != 0)
             throw new OrderConflictException("Order final price has changed");
+    }
+
+    // ----------------------------------------------- INNER CLASS
+    // ------------------------------------//
+    private class OrderItemDetail {
+        List<OrderItemDto> orderItemDtos;
+        BigDecimal totalPrice;
+        BigDecimal finalPrice;
+        BigDecimal voucherDiscount;
+
+        List<CartItemDto> cartItemDtos;
+
+        public OrderItemDetail(Map<String, ProductDto> products,
+                               List<OrderItemDto> itemDtos,
+                               Order order) {
+            this.totalPrice = BigDecimal.ZERO;
+            this.voucherDiscount = BigDecimal.ZERO;
+            this.orderItemDtos = new ArrayList<>();
+            this.cartItemDtos = new ArrayList<>();
+
+            for (OrderItemDto itemDto : itemDtos) {
+                if (itemDto.quantity() <= 0)
+                    throw new OrderCannotCreateException(
+                            "ITEM_QUANTITY_IS_ZERO",
+                            "số lượng sản phẩm phải > 0");
+
+                int sizeId = sizeCacheService.getIdBySize(itemDto.size());
+                ProductDto productDto = products.get(itemDto.productCode());
+                OrderItem orderItem = getOrderItem(itemDto, productDto, sizeId);
+
+                order.addItem(orderItem);
+
+                totalPrice = totalPrice.add(orderItem.getTotalPrice());
+                this.orderItemDtos.add(new OrderItemDto(
+                        itemDto.productCode(),
+                        itemDto.size(),
+                        orderItem.getQuantity(),
+                        orderItem.getOriginalPrice(),
+                        orderItem.getFinalPrice()));
+                this.cartItemDtos.add(new CartItemDto(
+                        productDto.id(),
+                        itemDto.productCode(),
+                        itemDto.size(),
+                        null,
+                        null,
+                        null,
+                        null
+                ));
+            }
+        }
+
+        public void caculFinalPriceAndVoucherDiscount(UUID userId, String voucherCode, CreateOrderReq req) {
+            this.finalPrice = this.totalPrice;
+
+            if (voucherCode != null) {
+                this.finalPrice = userVoucherService.applyVoucher(voucherCode, userId, this.totalPrice);
+                userVoucherUpdateService.apllyVoucherComplete(userId, voucherCode);
+                log.info("có voucher: {}", voucherCode);
+            } else {
+                log.info("không có voucher");
+            }
+            this.voucherDiscount = totalPrice.subtract(finalPrice);
+
+            // xác nhận thông tin là đúng
+            validateClientTotals(req, this.totalPrice, this.voucherDiscount, this.finalPrice);
+
+        }
+
+        public void setOrder(Order order) {
+            order.setTotalPrice(this.totalPrice);
+            order.setFinalPrice(this.finalPrice);
+            order.setVoucherDiscount(this.voucherDiscount);
+        }
+
+        // ---------------------- private function ---------------------------------//
+
+        // láy thông tin order Item
+        private OrderItem getOrderItem(OrderItemDto itemDto,
+                                       ProductDto product,
+                                       int sizeId) {
+            if (itemDto.originalPrice() == null) {
+                throw new OrderCannotCreateException("PRICE_IS_REQUIRE", "giá sản phẩm phải có");
+            }
+
+            if (itemDto.originalPrice().compareTo(product.originalPrice()) != 0 ||
+                    itemDto.finalPrice() != null && itemDto.finalPrice().compareTo(product.finalPrice()) != 0) {
+                throw new OrderCannotCreateException(
+                        "INPUT_ERROR",
+                        "thông tin sản phẩm không đúng");
+            }
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setId(new OrderItemId(null, product.id(), sizeId));
+            orderItem.setQuantity(itemDto.quantity());
+            orderItem.setOriginalPrice(product.originalPrice());
+            orderItem.setFinalPrice(product.finalPrice());
+            orderItem.setTotalPrice(product.finalPrice().multiply(BigDecimal.valueOf(itemDto.quantity())));
+            return orderItem;
+        }
 
     }
 }

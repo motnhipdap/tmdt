@@ -51,9 +51,8 @@ public class NotiMapper {
 
     //---------------------------- generate code ---------------------------//
     private static String generateUniqueCode(UUID senderId, UUID receiverId) {
-        // Kết hợp timestamp để đảm bảo unique
         long timestamp = System.currentTimeMillis();
-        String combined = senderId.toString() + receiverId.toString() + timestamp;
+        String combined = String.valueOf(senderId) + String.valueOf(receiverId) + timestamp;
 
         // Tạo hash 16 ký tự để giảm khả năng trùng
         try {

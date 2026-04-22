@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/notifications/get")
 @Tag(name = "Notifications")
-public class UserGetController {
+public class NotiUserGetController {
 
     private final NotificationGetService notificationGetService;
 

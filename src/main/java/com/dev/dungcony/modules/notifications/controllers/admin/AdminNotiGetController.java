@@ -19,7 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/admin/notification/get")
 @Tag(name = "Notifications(Admin)")
-public class AdminGetController {
+public class AdminNotiGetController {
 
     private final NotificationGetService notificationGetService;
 

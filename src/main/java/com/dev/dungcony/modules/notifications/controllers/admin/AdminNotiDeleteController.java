@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/admin/notification")
 @Tag(name = "Notifications(Admin)")
-public class AdminDeleteController {
+public class AdminNotiDeleteController {
 
     private final NotificationDeleteService notificationDeleteService;
 

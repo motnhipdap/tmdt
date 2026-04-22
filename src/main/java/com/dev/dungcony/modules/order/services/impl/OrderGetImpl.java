@@ -33,10 +33,12 @@ public class OrderGetImpl implements OrderGetService {
     private final OrderItemRepository orderItemRepository;
     private final RecieverGetService recieverGetService;
 
+
+    // ----------------------------------------------- USER ----------------------------------------//
     // find order of user
     @Override
     @Transactional(readOnly = true)
-    public OrderRes getOrderByCode(UUID userId, String orderCode) {
+    public OrderRes userGetOrderByCode(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -54,19 +56,20 @@ public class OrderGetImpl implements OrderGetService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getUserOrders(UUID userId, Pageable pageable) {
+    public Page<OrderSummaryRes> userGetOrders(UUID userId, Pageable pageable) {
         return orderRepository.findAllByUserId(userId, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getUserOrdersByStatus(UUID userId, OrderStatus status, Pageable pageable) {
+    public Page<OrderSummaryRes> userGetOrdersByStatus(UUID userId, OrderStatus status, Pageable pageable) {
         return orderRepository.findAllByUserIdAndStatus(userId, status, pageable);
     }
 
+    // ----------------------------------------------- ADMIN ----------------------------------------//
     @Override
     @Transactional(readOnly = true)
-    public OrderRes getOrderByCodeAdmin(String orderCode) {
+    public OrderRes adminGetOrderByCode(String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -79,6 +82,21 @@ public class OrderGetImpl implements OrderGetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryRes> adminGetAllOrders(Pageable pageable) {
+        return orderRepository.findAllOrders(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryRes> adminGetAllOrdersByStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findAllByStatus(status, pageable);
+    }
+
+
+    // ----------------------------------------------- DTO ----------------------------------------//
+
+    @Override
     public OrderDto getDtoByCode(String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
@@ -88,15 +106,4 @@ public class OrderGetImpl implements OrderGetService {
         return OrderMapper.toDto(order, items, "");
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getAllOrders(Pageable pageable) {
-        return orderRepository.findAllOrders(pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<OrderSummaryRes> getAllOrdersByStatus(OrderStatus status, Pageable pageable) {
-        return orderRepository.findAllByStatus(status, pageable);
-    }
 }

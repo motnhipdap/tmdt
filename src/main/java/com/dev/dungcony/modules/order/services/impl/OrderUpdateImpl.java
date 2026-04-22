@@ -27,9 +27,9 @@ public class OrderUpdateImpl implements OrderUpdateService {
     private final ItemUpdateService itemUpdateService;
     private final NotificationCreateService notificationCreateService;
 
-    @Override
     @Transactional
-    public void cancelOrder(UUID userId, String orderCode) {
+    @Override
+    public void userCancelOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -54,9 +54,9 @@ public class OrderUpdateImpl implements OrderUpdateService {
         notificationCreateService.userCancelOrder(userId);
     }
 
-    @Override
     @Transactional
-    public void paidOrder(UUID userId, String orderCode) {
+    @Override
+    public void userPaidOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -73,9 +73,9 @@ public class OrderUpdateImpl implements OrderUpdateService {
         log.info("thanh toán thành công");
     }
 
-    @Override
     @Transactional
-    public void completedOrder(UUID userId, String orderCode) {
+    @Override
+    public void userCompleteOrder(UUID userId, String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -90,26 +90,51 @@ public class OrderUpdateImpl implements OrderUpdateService {
         log.info("giao hàng {} thành công cho  user: {}", orderCode, userId);
     }
 
-    @Override
     @Transactional
-    public void confirmOrder(UUID userId, String orderCode) {
+    @Override
+    public void adminConfirmOrder(String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
-
-        if (!order.getUserId().equals(userId))
-            throw new OrderUnAuthException();
 
         if (order.getStatus() != OrderStatus.SHIPPING) {
             throw new OrderConflictException("đơn hàng phải đang được giao");
         }
 
         order.setStatus(OrderStatus.DELIVERED);
-        log.info("Order confirmed: {} by user: {}", orderCode, userId);
+        log.info("Order confirmed: {}", orderCode);
+    }
+
+    @Transactional
+    @Override
+    public void adminShippingOrder(String orderCode) {
+        Order order = orderRepository.findByCode(orderCode)
+                .orElseThrow(OrderNotFoundException::new);
+
+        if (order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new OrderConflictException("đơn hàng phải được xác nhận");
+        }
+
+        order.setStatus(OrderStatus.DELIVERED);
+        log.info("Order shipping: {}", orderCode);
+    }
+
+    @Transactional
+    @Override
+    public void deliveredOrder(String orderCode) {
+        Order order = orderRepository.findByCode(orderCode)
+                .orElseThrow(OrderNotFoundException::new);
+
+        if (order.getStatus() != OrderStatus.SHIPPING) {
+            throw new OrderConflictException("đơn hàng phải được giao đến nơi");
+        }
+
+        order.setStatus(OrderStatus.DELIVERED);
+        log.info("Order delivered: {}", orderCode);
     }
 
     @Override
     @Transactional
-    public void updateOrderStatus(String orderCode, OrderStatus nextStatus) {
+    public void adminUpdateOrderStatus(String orderCode, OrderStatus nextStatus) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
@@ -131,7 +156,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
             case CONFIRMED -> next == OrderStatus.SHIPPING;
             case SHIPPING -> next == OrderStatus.DELIVERED || next == OrderStatus.RETURNED;
             case DELIVERED -> next == OrderStatus.RETURNED;
-            case CANCELLED, RETURNED -> false;
+            case COMPLETED, CANCELLED, RETURNED -> false;
         };
 
         if (!valid) {
@@ -139,4 +164,5 @@ public class OrderUpdateImpl implements OrderUpdateService {
                     "Cannot transition from " + current + " to " + next);
         }
     }
+
 }

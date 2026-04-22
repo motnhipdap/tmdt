@@ -106,6 +106,9 @@ public class ApiRequestLogFilter extends OncePerRequestFilter {
         prefix("GET /v1/api/public/provider/get-by-name/", "Lấy nhà cung cấp theo tên");
         exact("GET /v1/api/public/provider/gets", "Lấy toàn bộ nhà cung cấp");
 
+        // ==================== PUBLIC — PAYMENT (VNPay) ====================
+        exact("GET /v1/api/public/payment/vnpay/return", "VNPay redirect — kết quả thanh toán");
+
         // ==================== PUBLIC — PROMOTION ====================
         prefix("GET /v1/api/promotions/product/", "Lấy khuyến mãi theo sản phẩm");
         prefix("GET /v1/api/promotions/category/", "Lấy khuyến mãi theo danh mục");

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/notifications")
 @Tag(name = "Notifications")
-public class UserDeleteController {
+public class NotiUserDeleteController {
 
         private final NotificationDeleteService notificationDeleteService;
 

@@ -7,11 +7,14 @@ import com.dev.dungcony.modules.cart.entities.CartItem;
 import com.dev.dungcony.modules.cart.entities.CartItemId;
 import com.dev.dungcony.modules.cart.exceptions.CartItemNotFoundException;
 import com.dev.dungcony.modules.cart.exceptions.CartUnProcessableException;
+import com.dev.dungcony.modules.cart.exceptions.NotAddOutOfStockProduct;
 import com.dev.dungcony.modules.cart.repositories.CartRepository;
 import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
+import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.entities.Product;
 import com.dev.dungcony.modules.product.entities.Size;
 import com.dev.dungcony.modules.product.enums.ProductSize;
+import com.dev.dungcony.modules.product.enums.ProductStatus;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.item.ItemUpdateService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
@@ -40,21 +43,24 @@ public class CartUpdateImpl implements CartUpdateService {
     @Override
     @Transactional
     public void addItemToCart(UUID userId, AddToCartReq req) {
-        Integer productId = productGetService.getIdByCode(req.productCode());
+        ProductDto productDto = productGetService.getDtoByCode(req.productCode());
         Integer sizeId = sizeCacheService.getIdBySize(req.size());
 
+        if (productDto.status() == ProductStatus.OUT_OF_STOCK) {
+            throw new NotAddOutOfStockProduct();
+        }
         CartItem cartItem = cartItemRepository
-                .findById_UserIdAndId_ProductIdAndId_SizeId(userId, productId, sizeId)
+                .findById_UserIdAndId_ProductIdAndId_SizeId(userId, productDto.id(), sizeId)
                 .orElse(null);
 
         // giảm số lượng sản phẩm
-        itemUpdateService.reduce(productId, sizeId, req.quantity());
+        itemUpdateService.reduce(productDto.id(), sizeId, req.quantity());
 
         if (cartItem == null) {
             cartItem = new CartItem();
-            cartItem.setId(new CartItemId(userId, productId, sizeId));
+            cartItem.setId(new CartItemId(userId, productDto.id(), sizeId));
             cartItem.setUser(entityManager.getReference(User.class, userId));
-            cartItem.setProduct(entityManager.getReference(Product.class, productId));
+            cartItem.setProduct(entityManager.getReference(Product.class, productDto.id()));
             cartItem.setSize(entityManager.getReference(Size.class, sizeId));
             cartItem.setQuantity(req.quantity());
         } else {

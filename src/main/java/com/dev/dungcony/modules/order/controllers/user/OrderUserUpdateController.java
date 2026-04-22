@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/order")
 @Tag(name = "Orders")
-public class OrderUpdateController {
+public class OrderUserUpdateController {
 
     private final OrderUpdateService orderUpdateService;
 
@@ -24,18 +24,18 @@ public class OrderUpdateController {
     @PutMapping("/cancel/{order-code}")
     public ResponseEntity<ApiRes<Void>> cancelOrder(
             @AuthenticationPrincipal AccountDetails account,
-            @PathVariable String orderCode) {
-        orderUpdateService.cancelOrder(account.requireUserUuid(), orderCode);
+            @PathVariable("order-code") String orderCode) {
+        orderUpdateService.userCancelOrder(account.requireUserUuid(), orderCode);
         return ResponseEntity.ok(ApiRes.success("Order cancelled"));
     }
 
-    @Operation(summary = "Đánh dấu đã thanh toán", description = "Chỉ đơn hàng ở trạng thái UNPAID — nên dùng VNPay thay vì gọi trực tiếp")
-    @PutMapping("/paid/{order-code}")
-    public ResponseEntity<ApiRes<Void>> paidOrder(
+    @Operation(summary = "xác nhận đã nhận được đơn hàng", description = "")
+    @PutMapping("/complete/{order-code}")
+    public ResponseEntity<ApiRes<Void>> completeOrder(
             @AuthenticationPrincipal AccountDetails account,
             @PathVariable("order-code") String orderCode) {
-        orderUpdateService.paidOrder(account.requireUserUuid(), orderCode);
-        return ResponseEntity.ok(ApiRes.success("Order paid successfully"));
+        orderUpdateService.userCompleteOrder(account.requireUserUuid(), orderCode);
+        return ResponseEntity.ok(ApiRes.success("Order completed"));
     }
 
 }

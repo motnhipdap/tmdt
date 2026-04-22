@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/admin/notification/create")
 @Tag(name = "Notifications(Admin)")
-public class AdminCreateController {
+public class AdminNotiCreateController {
 
     private final NotificationCreateService notificationCreateService;
 

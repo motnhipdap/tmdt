@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/admin/notification/update")
 @Tag(name = "Notifications(Admin)")
-public class AdminUpdateController {
+public class AdminNotiUpdateController {
 
     private final NotificationUpdateService notificationUpdateService;
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/user/notifications/create")
 @Tag(name = "Notifications")
-public class UserCreateController {
+public class NotiUserCreateController {
     private final NotificationCreateService notificationCreateService;
 
     @Operation(summary = "user tạo thông báo", description = "Đơn hàng mới, đơn hủy, v.v.")

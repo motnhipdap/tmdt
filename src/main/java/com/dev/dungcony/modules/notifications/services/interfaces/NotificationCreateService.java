@@ -16,4 +16,8 @@ public interface NotificationCreateService {
     void userPailOrder(UUID uid);
 
     List<String> adminCreate(AdminCreateNotificationReq req);
+
+    List<String> adminComfirmOrders(List<UUID> uids);
+
+    List<String> adminDeliveredOrders(List<UUID> uids);
 }
