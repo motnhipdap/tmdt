@@ -24,11 +24,6 @@ spring:
       ssl:
         enabled: ${SPRING_DATA_REDIS_SSL:true}
 
-jwt:
-    refresh-cookie:
-    secure: true
-    path: /v1/api/public/auth
-
 management:
   endpoints:
     web:
@@ -46,13 +41,6 @@ logging:
 # VNPay: khai VNPAY_RETURN_URL (URL đủ) hoặc PUBLIC_APP_BASE_URL (https://... không dấu / cuối).
 # Trên Railway có thể không cần gán nếu dùng biến RAILWAY_PUBLIC_DOMAIN (tự tạo return URL https).
 
-## ===== Tắt Swagger trên production =====
-#springdoc:
-#  api-docs:
-#    enabled: false
-#  swagger-ui:
-#    enabled: false
-
 # ===== Swagger / OpenAPI =====
 springdoc:
   api-docs:
@@ -61,3 +49,10 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: method
+
+jwt:
+  # Set JWT_SECRET trên server (≥32 ký tự). Default chỉ để bind YAML; JwtConfig từ chối nếu prod còn secret dev.
+  secret: ${JWT_SECRET:00000000000000000000000000000000}
+  refresh-cookie:
+    secure: false
+    path: /v1/api/public/auth

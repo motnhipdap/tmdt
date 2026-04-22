@@ -20,7 +20,7 @@ import java.util.UUID;
 public class User extends BaseEntity implements Persistable<UUID> {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)")
+    @Column(columnDefinition = "uuid")
     private UUID id;
 
     @Transient

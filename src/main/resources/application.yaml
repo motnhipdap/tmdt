@@ -3,7 +3,7 @@ spring:
     name: dungcony
 
   profiles:
-    active: dev
+    active: prod
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -25,16 +25,22 @@ spring:
       enabled: true
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{logType:-SYSTEM}] [%X{reqId:-N/A}] [%thread] [%X{method:-} %X{path:-}] %logger{36} : %msg%n"
   level:
     root: info
-    com.dev.dungcony: debug
+    com.dev.dungcony: info
+    org.springframework: warn
+    org.springframework.security: warn
+    org.springframework.data.redis.repository.config: off
+    org.hibernate: warn
   file:
     name: logs/app.log
 
 jwt:
   # Railway: ưu tiên biến môi trường JWT_SECRET (không cần khai thêm trong application-prod bằng ${JWT_SECRET}).
-  secret: ${JWT_SECRET:00000000000000000000000000000000}
-  expiration: 300 # 5p
+  secret: ${JWT_SECRET}
+  expiration: 100000 # 5p
   refresh-expiration: 604800 # 7 ngày (s)
 
 server:
