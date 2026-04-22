@@ -44,6 +44,9 @@ logging:
     root: warn
     com.dev.dungcony: info
 
+# VNPay: khai VNPAY_RETURN_URL (URL đủ) hoặc PUBLIC_APP_BASE_URL (https://... không dấu / cuối).
+# Trên Railway có thể không cần gán nếu dùng biến RAILWAY_PUBLIC_DOMAIN (tự tạo return URL https).
+
 ## ===== Tắt Swagger trên production =====
 #springdoc:
 #  api-docs:

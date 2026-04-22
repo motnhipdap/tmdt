@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.annotation.PostConstruct;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -39,6 +40,11 @@ public class VnPayImpl implements VnPayService {
     private final VnPayProperties vnPayProperties;
     private final OrderGetService orderGetService;
     private final OrderUpdateService orderUpdateService;
+
+    @PostConstruct
+    void logResolvedVnPayUrls() {
+        log.info("VNPay resolved payUrl={}, returnUrl={}", vnPayProperties.resolvedPayUrl(), vnPayProperties.resolvedReturnUrl());
+    }
 
     @Override
     public PaymentRes createPaymentUrl(UUID userId, String orderCode, String ipAddress) {
@@ -66,7 +72,7 @@ public class VnPayImpl implements VnPayService {
         String queryString = buildQueryString(params, true);
         String secureHash = hmacSHA512(vnPayProperties.hashSecret(), queryString);
 
-        String paymentUrl = vnPayProperties.payUrl() + "?" + queryString
+        String paymentUrl = vnPayProperties.resolvedPayUrl() + "?" + queryString
                 + "&vnp_SecureHash=" + secureHash;
 
         log.info("VNPay payment URL created for order: {}", orderCode);
@@ -132,7 +138,7 @@ public class VnPayImpl implements VnPayService {
         params.put("vnp_OrderInfo", "Thanh toan don hang " + orderCode);
         params.put("vnp_OrderType", vnPayProperties.orderType());
         params.put("vnp_Locale", "vn");
-        params.put("vnp_ReturnUrl", vnPayProperties.returnUrl());
+        params.put("vnp_ReturnUrl", vnPayProperties.resolvedReturnUrl());
         params.put("vnp_IpAddr", ipAddress);
         params.put("vnp_CreateDate", createDate);
         params.put("vnp_ExpireDate", expireDate);
