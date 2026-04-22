@@ -25,8 +25,7 @@ spring:
         enabled: ${SPRING_DATA_REDIS_SSL:true}
 
 jwt:
-  secret: ${JWT_SECRET}
-  refresh-cookie:
+    refresh-cookie:
     secure: true
     path: /v1/api/public/auth
 
