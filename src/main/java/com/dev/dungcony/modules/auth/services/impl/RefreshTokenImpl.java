@@ -3,7 +3,7 @@ package com.dev.dungcony.modules.auth.services.impl;
 import com.dev.dungcony.modules.auth.config.JwtConfig;
 import com.dev.dungcony.modules.auth.dtos.AccDto;
 import com.dev.dungcony.modules.auth.entities.Account;
-import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
+import com.dev.dungcony.modules.auth.exceptions.TokenInvalid;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.RedisService;
 import com.dev.dungcony.modules.auth.services.interfaces.RefreshTokenService;
@@ -71,11 +71,11 @@ public class RefreshTokenImpl implements RefreshTokenService {
         String accId = redis.getValue(refreshKey(refreshToken));
 
         if (accId == null)
-            throw new TokenValidException();
+            throw new TokenInvalid();
 
         Account acc = accountRepository
                 .findById(Integer.parseInt(accId))
-                .orElseThrow(TokenValidException::new);
+                .orElseThrow(TokenInvalid::new);
 
         return new AccDto(
                 acc.getId(),

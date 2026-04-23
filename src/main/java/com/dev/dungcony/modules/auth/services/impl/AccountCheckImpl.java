@@ -1,9 +1,10 @@
 package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.entities.Account;
-import com.dev.dungcony.modules.auth.exceptions.EmailExistException;
-import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
-import com.dev.dungcony.modules.auth.exceptions.TokenExpireException;
+import com.dev.dungcony.modules.auth.exceptions.EmailIsAlredy;
+import com.dev.dungcony.modules.auth.exceptions.IncorrectInput;
+import com.dev.dungcony.modules.auth.exceptions.TokenExpire;
+import com.dev.dungcony.modules.auth.exceptions.UserNameIsAlredy;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountCheckService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class AccountCheckImpl implements AccountCheckService {
             if (!acc.getVerify())
                 accRepo.delete(acc);
             else
-                throw new EmailExistException();
+                throw new EmailIsAlredy();
         }
     }
 
@@ -36,7 +37,7 @@ public class AccountCheckImpl implements AccountCheckService {
             if (!acc.getVerify())
                 accRepo.delete(acc);
             else
-                throw new EmailExistException();
+                throw new UserNameIsAlredy();
         }
     }
 
@@ -45,13 +46,13 @@ public class AccountCheckImpl implements AccountCheckService {
         Account acc = accRepo.findById(accId).orElse(null);
 
         if (acc == null || !acc.getUsername().equals(username) || !acc.getEmail().equals(email))
-            throw new InvalidUsernameOrPassword();
+            throw new IncorrectInput();
     }
 
     @Override
     public void checkPassword(int accId, String password) {
-        Account acc = accRepo.findById(accId).orElseThrow(TokenExpireException::new);
+        Account acc = accRepo.findById(accId).orElseThrow(TokenExpire::new);
         if (!passwordEncoder.matches(password, acc.getPassword()))
-            throw new InvalidUsernameOrPassword();
+            throw new IncorrectInput();
     }
 }

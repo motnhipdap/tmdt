@@ -5,7 +5,7 @@ import com.dev.dungcony.modules.auth.dtos.AccDto;
 import com.dev.dungcony.modules.auth.dtos.req.RegisReq;
 import com.dev.dungcony.modules.auth.dtos.res.AcessTokenRes;
 import com.dev.dungcony.modules.auth.dtos.res.LoginResult;
-import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
+import com.dev.dungcony.modules.auth.exceptions.IncorrectInput;
 import com.dev.dungcony.modules.auth.enums.Status;
 import com.dev.dungcony.modules.auth.services.interfaces.*;
 import com.dev.dungcony.modules.users.exceptions.UserNotFound;
@@ -58,13 +58,13 @@ public class AuthImpl implements AuthService {
         AccDto acc = accGetService.getByUsername(username);
 
         if (!passwordEncoder.matches(password, acc.password()))
-            throw new InvalidUsernameOrPassword();
+            throw new IncorrectInput();
 
         if (!acc.verify())
-            throw new InvalidUsernameOrPassword();
+            throw new IncorrectInput();
 
         if (acc.status() != Status.ACTIVE)
-            throw new InvalidUsernameOrPassword(); // account bị khóa
+            throw new IncorrectInput(); // account bị khóa
 
         log.info("Login successful for account: {}", acc.username());
 

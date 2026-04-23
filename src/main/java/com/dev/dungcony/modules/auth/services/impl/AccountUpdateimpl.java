@@ -2,8 +2,8 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.entities.Account;
 import com.dev.dungcony.modules.auth.enums.Status;
-import com.dev.dungcony.modules.auth.exceptions.InvalidUsernameOrPassword;
-import com.dev.dungcony.modules.auth.exceptions.TokenValidException;
+import com.dev.dungcony.modules.auth.exceptions.IncorrectInput;
+import com.dev.dungcony.modules.auth.exceptions.TokenInvalid;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountUpdateService;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +22,10 @@ public class AccountUpdateimpl implements AccountUpdateService {
 
     @Override
     public void updatePassword(int accId, String oldPassword, String newPassword) {
-        Account acc = accRepo.findById(accId).orElseThrow(TokenValidException::new);
+        Account acc = accRepo.findById(accId).orElseThrow(TokenInvalid::new);
 
         if (!passwordEncoder.matches(oldPassword, acc.getPassword()))
-            throw new InvalidUsernameOrPassword();
+            throw new IncorrectInput();
 
         acc.setPassword(passwordEncoder.encode(newPassword));
         accRepo.save(acc);
@@ -34,7 +34,7 @@ public class AccountUpdateimpl implements AccountUpdateService {
 
     @Override
     public void updatePassword(String email, String newPassword) {
-        Account acc = accRepo.findByEmail(email).orElseThrow(TokenValidException::new);
+        Account acc = accRepo.findByEmail(email).orElseThrow(TokenInvalid::new);
         acc.setPassword(passwordEncoder.encode(newPassword));
         accRepo.save(acc);
         log.info("Password updated for account: {}", acc.getUsername());
@@ -42,7 +42,7 @@ public class AccountUpdateimpl implements AccountUpdateService {
 
     @Override
     public void updateEmail(int accId, String newEmail) {
-        Account acc = accRepo.findById(accId).orElseThrow(TokenValidException::new);
+        Account acc = accRepo.findById(accId).orElseThrow(TokenInvalid::new);
         acc.setEmail(newEmail);
         accRepo.save(acc);
         log.info("Email updated for account: {}", acc.getUsername());

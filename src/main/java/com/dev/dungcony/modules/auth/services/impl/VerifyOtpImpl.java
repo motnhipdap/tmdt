@@ -2,8 +2,8 @@ package com.dev.dungcony.modules.auth.services.impl;
 
 import com.dev.dungcony.modules.auth.dtos.req.VerifyOtpReq;
 import com.dev.dungcony.modules.auth.enums.OtpType;
-import com.dev.dungcony.modules.auth.exceptions.OtpExpireException;
-import com.dev.dungcony.modules.auth.exceptions.OtpInvalidException;
+import com.dev.dungcony.modules.auth.exceptions.OtpExpire;
+import com.dev.dungcony.modules.auth.exceptions.OtpIsIncorrect;
 import com.dev.dungcony.modules.auth.helpers.Generate;
 import com.dev.dungcony.modules.auth.services.interfaces.*;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ public class VerifyOtpImpl implements VerifyOtpService {
         log.info("value regis: {}", value);
 
         if (value == null)
-            throw new OtpExpireException();
+            throw new OtpExpire();
         if (!passwordEncoder.matches(req.otp(), value))
-            throw new OtpInvalidException();
+            throw new OtpIsIncorrect();
 
         log.info("otpregis verify success");
         accountUpdateService.verify(req.email());
@@ -41,9 +41,9 @@ public class VerifyOtpImpl implements VerifyOtpService {
         log.info("value emailchange: {}", value);
 
         if (value == null)
-            throw new OtpExpireException();
+            throw new OtpExpire();
         if (!passwordEncoder.matches(otp, value))
-            throw new OtpInvalidException();
+            throw new OtpIsIncorrect();
 
         log.info("otp emailchange verify success");
 

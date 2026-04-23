@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.dev.dungcony.modules.auth.dtos.res.AccountRes;
 import com.dev.dungcony.modules.auth.entities.Account;
-import com.dev.dungcony.modules.auth.exceptions.AccountNotFoundException;
+import com.dev.dungcony.modules.auth.exceptions.AccountNotFound;
 import com.dev.dungcony.modules.auth.mappers.AccountToAccRes;
 import com.dev.dungcony.modules.auth.repositories.AccountRepository;
 import com.dev.dungcony.modules.auth.services.interfaces.AccountGetService;
@@ -24,7 +24,7 @@ public class AccountGetImpl implements AccountGetService {
     @Override
     public AccountRes getProfileById(int id) {
         Account acc = accRepo.findById(id)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(AccountNotFound::new);
 
         return AccountToAccRes.map(acc);
     }
@@ -32,7 +32,7 @@ public class AccountGetImpl implements AccountGetService {
     @Override
     public AccDto getByUsername(String username) {
         Account acc = accRepo.findByUsername(username)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(AccountNotFound::new);
 
         return AccountToDto.map(acc);
     }
