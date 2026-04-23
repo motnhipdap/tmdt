@@ -8,6 +8,13 @@ spring:
         # PostgreSQL qua PgBouncer (Railway “public” URL): transaction pooling + prepared stmt → lỗi "S_1 already exists"
         prepareThreshold: 0
 
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    from: ${MAIL_FROM}
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,12 +29,11 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST:redis}
-      port: ${SPRING_DATA_REDIS_PORT:6379}
-      password: ${SPRING_DATA_REDIS_PASSWORD:}
-      # Railway Redis nội bộ thường không dùng TLS; bật=true khi dùng Redis với rediss:// (ví dụ Upstash).
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+      password: ${SPRING_DATA_REDIS_PASSWORD}
       ssl:
-        enabled: ${SPRING_DATA_REDIS_SSL:false}
+        enabled: false
 
 management:
   endpoints:
@@ -61,7 +67,7 @@ springdoc:
 
 jwt:
   # Set JWT_SECRET trên server (≥32 ký tự). Default chỉ để bind YAML; JwtConfig từ chối nếu prod còn secret dev.
-  secret: ${JWT_SECRET:00000000000000000000000000000000}
+  secret: ${JWT_SECRET}
   refresh-cookie:
-    secure: false
+    secure: true
     path: /v1/api/public/auth

@@ -42,7 +42,7 @@ public class AuthController {
     @Operation(summary = "Refresh token", description = "Lấy access token mới bằng refresh token")
     @PostMapping("/refresh")
     public ResponseEntity<ApiRes<AcessTokenRes>> refresh(
-            @Parameter(description = "Cookie refresh_token", required = true, example = "<refresh_token_cookie_value>") @CookieValue(value = "refresh_token", required = false) String token) {
+            @CookieValue(value = "refresh_token", required = false) String token) {
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiRes.error("Missing refresh_token cookie"));

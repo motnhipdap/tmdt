@@ -336,3 +336,263 @@ Caused by: org.hibernate.HibernateException: Unable to determine Dialect without
 2026-04-23T17:38:19.937+07:00  INFO 19700 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 21.863 seconds (process running for 22.255)
 2026-04-23T17:38:21.869+07:00  INFO 19700 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-04-23T17:38:23.324+07:00  INFO 19700 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-23T17:49:04.516+07:00  INFO 22856 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 22856 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T17:49:04.518+07:00  INFO 22856 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T17:49:06.437+07:00  INFO 22856 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T17:49:06.437+07:00  INFO 22856 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T17:49:06.480+07:00  INFO 22856 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T17:49:07.104+07:00  INFO 22856 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T17:49:08.758+07:00  INFO 22856 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@449480
+2026-04-23T17:49:08.759+07:00  INFO 22856 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T17:49:13.578+07:00  WARN 22856 --- [dungcony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 42P05
+2026-04-23T17:49:13.579+07:00 ERROR 22856 --- [dungcony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : ERROR: prepared statement "S_1" already exists
+2026-04-23T17:49:13.584+07:00 ERROR 22856 --- [dungcony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.SQLGrammarException: Error accessing table metadata [ERROR: prepared statement "S_1" already exists] [n/a]
+2026-04-23T17:49:13.585+07:00  WARN 22856 --- [dungcony] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.SQLGrammarException: Error accessing table metadata [ERROR: prepared statement "S_1" already exists] [n/a]
+2026-04-23T17:49:13.586+07:00  INFO 22856 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T17:49:14.428+07:00  INFO 22856 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-23T17:49:14.431+07:00  INFO 22856 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-04-23T17:49:14.470+07:00 ERROR 22856 --- [dungcony] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.SQLGrammarException: Error accessing table metadata [ERROR: prepared statement "S_1" already exists] [n/a]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1826) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:974) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.11.jar:3.5.11]
+	at com.dev.dungcony.DungconyApplication.main(DungconyApplication.java:15) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.11.jar:3.5.11]
+Caused by: jakarta.persistence.PersistenceException: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.SQLGrammarException: Error accessing table metadata [ERROR: prepared statement "S_1" already exists] [n/a]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:431) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:364) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822) ~[spring-beans-6.2.16.jar:6.2.16]
+	... 18 common frames omitted
+Caused by: org.hibernate.exception.SQLGrammarException: Error accessing table metadata [ERROR: prepared statement "S_1" already exists] [n/a]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:91) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.convertSQLException(AbstractInformationExtractorImpl.java:124) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.locateTableInNamespace(AbstractInformationExtractorImpl.java:819) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.getTable(AbstractInformationExtractorImpl.java:355) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.getTableInformation(DatabaseInformationImpl.java:113) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.locateTableInformation(DatabaseInformationImpl.java:151) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.lambda$getForeignKeys$9(AbstractInformationExtractorImpl.java:1393) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.InformationExtractorJdbcDatabaseMetaDataImpl.processImportedKeysResultSet(InformationExtractorJdbcDatabaseMetaDataImpl.java:133) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.getForeignKeys(AbstractInformationExtractorImpl.java:1417) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.TableInformationImpl.foreignKeys(TableInformationImpl.java:97) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.TableInformationImpl.getForeignKeys(TableInformationImpl.java:91) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.equivalentForeignKeyExistsInDatabase(AbstractSchemaMigrator.java:485) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.checkForExistingForeignKey(AbstractSchemaMigrator.java:477) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applyForeignKeys(AbstractSchemaMigrator.java:444) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:269) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:112) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:280) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:144) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[na:na]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:141) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:324) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:463) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1517) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:388) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419) ~[spring-orm-6.2.16.jar:6.2.16]
+	... 22 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: prepared statement "S_1" already exists
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:139) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgDatabaseMetaData.executeMetadataStatement(PgDatabaseMetaData.java:3163) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgDatabaseMetaData.getTables(PgDatabaseMetaData.java:1560) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyDatabaseMetaData.getTables(ProxyDatabaseMetaData.java:89) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyDatabaseMetaData.getTables(HikariProxyDatabaseMetaData.java) ~[HikariCP-6.3.3.jar:na]
+	at org.hibernate.tool.schema.extract.internal.InformationExtractorJdbcDatabaseMetaDataImpl.processTableResultSet(InformationExtractorJdbcDatabaseMetaDataImpl.java:65) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.tool.schema.extract.internal.AbstractInformationExtractorImpl.locateTableInNamespace(AbstractInformationExtractorImpl.java:804) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	... 47 common frames omitted
+
+2026-04-23T17:51:06.791+07:00  INFO 15248 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 15248 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T17:51:06.792+07:00  INFO 15248 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T17:51:08.743+07:00  INFO 15248 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T17:51:08.744+07:00  INFO 15248 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T17:51:08.783+07:00  INFO 15248 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T17:51:09.358+07:00  INFO 15248 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T17:51:11.580+07:00  WARN 15248 --- [dungcony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 28P01
+2026-04-23T17:51:11.581+07:00 ERROR 15248 --- [dungcony] [restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : FATAL: password authentication failed for user "postgres.clvklshbsjiidmfvgmjc"
+2026-04-23T17:51:11.581+07:00  WARN 15248 --- [dungcony] [restartedMain] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+
+org.hibernate.exception.GenericJDBCException: unable to obtain isolated JDBC connection [FATAL: password authentication failed for user "postgres.clvklshbsjiidmfvgmjc"] [n/a]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:334) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:129) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:81) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:226) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:194) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1442) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1513) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:388) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:364) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:974) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.11.jar:3.5.11]
+	at com.dev.dungcony.DungconyApplication.main(DungconyApplication.java:15) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.11.jar:3.5.11]
+Caused by: org.postgresql.util.PSQLException: FATAL: password authentication failed for user "postgres.clvklshbsjiidmfvgmjc"
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:778) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:234) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:289) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:57) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.Driver.makeConnection(Driver.java:448) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.Driver.connect(Driver.java:298) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:370) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:207) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111) ~[HikariCP-6.3.3.jar:na]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:126) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:485) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	... 38 common frames omitted
+
+2026-04-23T17:51:11.585+07:00 ERROR 15248 --- [dungcony] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2026-04-23T17:51:11.586+07:00  WARN 15248 --- [dungcony] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2026-04-23T17:51:11.590+07:00  INFO 15248 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-04-23T17:51:11.618+07:00 ERROR 15248 --- [dungcony] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1826) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:974) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.16.jar:6.2.16]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.11.jar:3.5.11]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.11.jar:3.5.11]
+	at com.dev.dungcony.DungconyApplication.main(DungconyApplication.java:15) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.11.jar:3.5.11]
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:226) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:194) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:171) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1442) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1513) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:388) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:364) ~[spring-orm-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873) ~[spring-beans-6.2.16.jar:6.2.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822) ~[spring-beans-6.2.16.jar:6.2.16]
+	... 18 common frames omitted
+Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:191) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:87) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:186) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:410) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:129) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:81) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-6.6.42.Final.jar:6.6.42.Final]
+	... 33 common frames omitted
+
+2026-04-23T17:52:07.515+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 22080 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T17:52:07.516+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T17:52:09.144+07:00  INFO 22080 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T17:52:09.145+07:00  INFO 22080 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T17:52:09.179+07:00  INFO 22080 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T17:52:09.688+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T17:52:11.179+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@c9f5361
+2026-04-23T17:52:11.180+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T17:52:23.074+07:00  INFO 22080 --- [dungcony] [restartedMain] c.d.d.m.payment.services.impl.VnPayImpl  : VNPay resolved payUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html, returnUrl=http://localhost:8080/v1/api/public/payment/vnpay/return
+2026-04-23T17:52:24.150+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 16.996 seconds (process running for 17.328)
+2026-04-23T17:52:29.758+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-23T17:52:30.940+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 783 ms
+2026-04-23T17:52:43.635+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-10] c.d.d.c.config.ApiRequestLogFilter       : >>> POST /v1/api/public/auth/regis — Đăng ký tài khoản
+2026-04-23T17:52:43.689+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-10] c.d.d.m.a.c.user.RegisController         : Register req: RegisReq[email=dungcony070804@gmail.com, username=user, password=12345678]
+2026-04-23T17:52:43.828+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-10] c.d.d.m.auth.services.impl.AuthImpl      : Registering account with email: dungcony070804@gmail.com, username: user
+2026-04-23T17:52:49.491+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-10] c.d.d.m.auth.services.impl.EmailImpl     : Đã gửi email tới: dungcony070804@gmail.com
+2026-04-23T17:52:49.981+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-10] c.d.d.c.config.ApiRequestLogFilter       : <<< POST /v1/api/public/auth/regis — Đăng ký tài khoản — HTTP 200 (6345ms)
+2026-04-23T17:53:00.715+07:00  INFO 22080 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T17:53:00.854+07:00  INFO 22080 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T17:53:53.080+07:00  INFO 22080 --- [dungcony] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T17:53:54.502+07:00  INFO 22080 --- [dungcony] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-23T17:53:54.590+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 22080 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T17:53:54.591+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T17:53:55.133+07:00  INFO 22080 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T17:53:55.133+07:00  INFO 22080 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T17:53:55.149+07:00  INFO 22080 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T17:53:55.260+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-04-23T17:53:56.553+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@75dcbd67
+2026-04-23T17:53:56.553+07:00  INFO 22080 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-04-23T17:54:05.715+07:00  INFO 22080 --- [dungcony] [restartedMain] c.d.d.m.payment.services.impl.VnPayImpl  : VNPay resolved payUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html, returnUrl=http://localhost:8080/v1/api/public/payment/vnpay/return
+2026-04-23T17:54:06.249+07:00  INFO 22080 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 11.685 seconds (process running for 119.428)
+2026-04-23T17:54:36.698+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-23T17:54:36.700+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] c.d.d.c.config.ApiRequestLogFilter       : >>> POST /v1/api/public/auth/regis/verify — Xác thực OTP đăng ký
+2026-04-23T17:54:37.764+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] c.d.d.m.a.services.impl.VerifyOtpImpl    : value regis: $2a$10$2GEH7mztIffg8xRVkoC65OPzk3rO4DJtG3uvXTk.IHxLs7UEteaE.
+2026-04-23T17:54:37.835+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] c.d.d.m.a.services.impl.VerifyOtpImpl    : otpregis verify success
+2026-04-23T17:54:38.498+07:00  INFO 22080 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] c.d.d.c.config.ApiRequestLogFilter       : <<< POST /v1/api/public/auth/regis/verify — Xác thực OTP đăng ký — HTTP 200 (1797ms)
+2026-04-23T17:55:00.961+07:00  INFO 22080 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T17:55:01.100+07:00  INFO 22080 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T17:55:23.940+07:00  INFO 22080 --- [dungcony] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-04-23T17:55:25.354+07:00  INFO 22080 --- [dungcony] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.

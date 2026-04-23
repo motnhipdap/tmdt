@@ -45,7 +45,7 @@ public class VerifyOtpImpl implements VerifyOtpService {
         if (!passwordEncoder.matches(otp, value))
             throw new OtpInvalidException();
 
-        log.info("otpemailchange verify success");
+        log.info("otp emailchange verify success");
 
         accountUpdateService.updateEmail(accid, newEmail);
         redisService.delete(generate.key(username, OtpType.CHANGE_EMAIL.getValue()));
