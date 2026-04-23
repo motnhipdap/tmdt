@@ -117,14 +117,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Cho phép các origin này (frontend URLs)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173", // Vite default
-                "http://localhost:3001", // React default
-                "http://localhost:4200", // Angular default
-                "http://localhost:8080", // Vue default
-                "http://127.0.0.1:5173",
-                "http://127.0.0.1:3001"));
+        // Mọi origin; với credentials, Spring vẫn trả Access-Control-Allow-Origin theo Origin của request.
+        configuration.setAllowedOriginPatterns(List.of("*"));
 
         // Cho phép tất cả HTTP methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

@@ -6,9 +6,12 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
@@ -18,6 +21,8 @@ public class OpenApiConfig {
         final String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
+                // URL tương đối: "Try it out" dùng đúng scheme/host với trang Swagger (tránh gọi http khi mở bằng https).
+                .servers(List.of(new Server().url("/")))
                 .info(new Info()
                         .title("Dungcony E-Commerce API")
                         .version("1.0")

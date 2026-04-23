@@ -38,6 +38,10 @@ logging:
     root: warn
     com.dev.dungcony: info
 
+# Railway: reverse proxy bật X-Forwarded-* để request được coi là https và Swagger dùng đúng URL.
+server:
+  forward-headers-strategy: framework
+
 # VNPay: khai VNPAY_RETURN_URL (URL đủ) hoặc PUBLIC_APP_BASE_URL (https://... không dấu / cuối).
 # Trên Railway có thể không cần gán nếu dùng biến RAILWAY_PUBLIC_DOMAIN (tự tạo return URL https).
 
