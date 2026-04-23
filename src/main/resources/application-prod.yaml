@@ -21,8 +21,9 @@ spring:
       host: ${SPRING_DATA_REDIS_HOST:redis}
       port: ${SPRING_DATA_REDIS_PORT:6379}
       password: ${SPRING_DATA_REDIS_PASSWORD:}
+      # Railway Redis nội bộ thường không dùng TLS; bật=true khi dùng Redis với rediss:// (ví dụ Upstash).
       ssl:
-        enabled: ${SPRING_DATA_REDIS_SSL:true}
+        enabled: ${SPRING_DATA_REDIS_SSL:false}
 
 management:
   endpoints:
