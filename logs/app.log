@@ -596,3 +596,27 @@ Caused by: org.hibernate.HibernateException: Unable to determine Dialect without
 2026-04-23T17:55:01.100+07:00  INFO 22080 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
 2026-04-23T17:55:23.940+07:00  INFO 22080 --- [dungcony] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
 2026-04-23T17:55:25.354+07:00  INFO 22080 --- [dungcony] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-04-23T19:00:23.686+07:00  INFO 19656 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 19656 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T19:00:23.688+07:00  INFO 19656 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T19:00:25.594+07:00  INFO 19656 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T19:00:25.595+07:00  INFO 19656 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T19:00:25.634+07:00  INFO 19656 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T19:00:26.241+07:00  INFO 19656 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T19:00:27.868+07:00  INFO 19656 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@45653b13
+2026-04-23T19:00:27.870+07:00  INFO 19656 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T19:00:40.227+07:00  INFO 19656 --- [dungcony] [restartedMain] c.d.d.m.payment.services.impl.VnPayImpl  : VNPay resolved payUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html, returnUrl=http://localhost:8080/v1/api/public/payment/vnpay/return
+2026-04-23T19:00:41.318+07:00  INFO 19656 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 18.028 seconds (process running for 18.413)
+2026-04-23T19:00:49.140+07:00  INFO 19656 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T19:00:50.544+07:00  INFO 19656 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-23T19:02:37.542+07:00  INFO 5500 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 5500 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T19:02:37.544+07:00  INFO 5500 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T19:02:39.555+07:00  INFO 5500 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T19:02:39.556+07:00  INFO 5500 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T19:02:39.605+07:00  INFO 5500 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T19:02:40.287+07:00  INFO 5500 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T19:02:41.903+07:00  INFO 5500 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3cf58431
+2026-04-23T19:02:41.905+07:00  INFO 5500 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T19:02:55.178+07:00  INFO 5500 --- [dungcony] [restartedMain] c.d.d.m.payment.services.impl.VnPayImpl  : VNPay resolved payUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html, returnUrl=http://localhost:8080/v1/api/public/payment/vnpay/return
+2026-04-23T19:02:56.434+07:00  INFO 5500 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 19.309 seconds (process running for 19.712)
+2026-04-23T19:02:57.179+07:00  INFO 5500 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T19:02:58.581+07:00  INFO 5500 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

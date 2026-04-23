@@ -43,6 +43,7 @@ server:
   port: ${PORT:8080}
   address: 0.0.0.0
 
+
 # ===== VNPay =====
 # - pay-url: để trống + không set VNPAY_URL → dùng URL sandbox mặc định
 # - return-url: VNPAY_RETURN_URL (URL đầy đủ) hoặc để trống và dùng public-app-base-url / RAILWAY_PUBLIC_DOMAIN (Railway)

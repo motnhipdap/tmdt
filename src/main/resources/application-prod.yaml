@@ -71,3 +71,8 @@ jwt:
   refresh-cookie:
     secure: true
     path: /v1/api/public/auth
+    
+# Gửi mail: nếu có SENDGRID_API_KEY thì dùng SendGrid API (HTTPS), không cần mở SMTP 587 (Railway hay chặn).
+app:
+  email:
+    sendgrid-api-key: ${SENDGRID_API_KEY:}

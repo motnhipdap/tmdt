@@ -3,22 +3,40 @@ package com.dev.dungcony.modules.auth.services.impl;
 import com.dev.dungcony.modules.auth.config.MailProperties;
 import com.dev.dungcony.modules.auth.exceptions.SendEmailException;
 import com.dev.dungcony.modules.auth.services.interfaces.EmailService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 public class EmailImpl implements EmailService {
 
+    private static final RestClient SENDGRID = RestClient.builder()
+            .baseUrl("https://api.sendgrid.com")
+            .build();
+
+    private static final Pattern FROM_NAME_EMAIL = Pattern.compile("^(.+?)\\s*<([^>]+)>\\s*$");
+
     private final JavaMailSender mailSender;
     private final MailProperties mailProperties;
+    private final ObjectMapper objectMapper;
 
     @Value("${spring.mail.host:unknown}")
     private String mailHost;
@@ -28,6 +46,10 @@ public class EmailImpl implements EmailService {
 
     @Value("${spring.mail.username:}")
     private String mailUsername;
+
+    /** Khi có (Railway: SENDGRID_API_KEY), gửi qua HTTPS :443 — tránh chặn outbound SMTP 587. */
+    @Value("${app.email.sendgrid-api-key:}")
+    private String sendgridApiKey;
 
     @Override
     public void sendNewPassword(String email, String newPassword) {
@@ -45,8 +67,20 @@ public class EmailImpl implements EmailService {
     }
 
     private void send(String email, String subject, String body) {
+        if (sendgridApiKey != null && !sendgridApiKey.isBlank()) {
+            try {
+                log.info("Bắt đầu gửi email (SendGrid API HTTPS) tới: {} | from: {}", email, mailProperties.getFrom());
+                sendViaSendGridApi(email, subject, body);
+                log.info("Đã gửi email tới: {}", email);
+                return;
+            } catch (Exception e) {
+                log.error("Lỗi SendGrid API tới: {} | {}", email, buildCauseChainForLog(e), e);
+                throw new SendEmailException();
+            }
+        }
+
         try {
-            log.info("Gửi email tới: {} | SMTP {}:{} | from: {} | user: {} (mật khẩu không ghi log)",
+            log.info("Bắt đầu gửi email (SMTP) — tới: {} | SMTP {}:{} | from: {} | user: {} (mật khẩu không ghi log)",
                     email, mailHost, mailPort, mailProperties.getFrom(), maskUsername(mailUsername));
             mailSender.send(getMail(
                     email,
@@ -61,6 +95,49 @@ public class EmailImpl implements EmailService {
                     email, hint, chain, mailHost, mailPort, maskUsername(mailUsername), e);
             throw new SendEmailException();
         }
+    }
+
+    private void sendViaSendGridApi(String toEmail, String subject, String textBody) throws JsonProcessingException {
+        ParsedFrom from = parseFromHeader(mailProperties.getFrom());
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("personalizations", List.of(Map.of("to", List.of(Map.of("email", toEmail)))));
+        Map<String, String> fromMap = new LinkedHashMap<>();
+        fromMap.put("email", from.email());
+        if (from.name() != null && !from.name().isBlank()) {
+            fromMap.put("name", from.name());
+        }
+        payload.put("from", fromMap);
+        payload.put("subject", subject);
+        payload.put("content", List.of(Map.of("type", "text/plain", "value", textBody)));
+
+        String json = objectMapper.writeValueAsString(payload);
+
+        try {
+            SENDGRID.post()
+                    .uri("/v3/mail/send")
+                    .header("Authorization", "Bearer " + sendgridApiKey.trim())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(json)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException ex) {
+            log.error("SendGrid HTTP {} — body: {}", ex.getStatusCode(), ex.getResponseBodyAsString());
+            throw ex;
+        }
+    }
+
+    private record ParsedFrom(String email, String name) {}
+
+    private static ParsedFrom parseFromHeader(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return new ParsedFrom("", "");
+        }
+        String s = raw.trim();
+        Matcher m = FROM_NAME_EMAIL.matcher(s);
+        if (m.matches()) {
+            return new ParsedFrom(m.group(2).trim(), m.group(1).trim());
+        }
+        return new ParsedFrom(s, "");
     }
 
     /** Che bớt username SMTP để log an toàn (vẫn nhận ra có set env hay chưa). */
@@ -91,35 +168,35 @@ public class EmailImpl implements EmailService {
         return sb.toString();
     }
 
-    /**
-     * Gợi ý nhanh từ log (Gmail: 535, 534, “Application-specific password”, bảo mật 2 bước, v.v.).
-     */
-    private static String diagnoseSmtpError(String allMessagesLower) {
-        String s = allMessagesLower.toLowerCase();
+    private static String diagnoseSmtpError(String chain) {
+        String s = chain.toLowerCase();
         if (s.contains("authenticat")
-                || s.contains("password")
                 || s.contains("535")
                 || s.contains("534")
                 || s.contains("530 5.5.1")
                 || s.contains("username and password not accepted")
                 || s.contains("application-specific password")
                 || s.contains("less secure app")) {
-            return "SMTP_ĐĂNG_NHẬP_HOẶC_GMAIL_CHÍNH_SÁCH (mật khẩu ứng dụng / 2FA / tài khoản bị chặn bot)";
+            return "SMTP_ĐĂNG_NHẬP_HOẶC_CHÍNH_SÁCH (mật khẩu API key / 2FA / nhà cung cấp chặn)";
         }
         if (s.contains("could not connect")
+                || s.contains("couldn't connect to host")
+                || s.contains("mailconnectexception")
+                || s.contains("mail server connection failed")
                 || s.contains("connection refused")
                 || s.contains("connection timed out")
+                || s.contains("operation timed out")
                 || s.contains("unknown host")
                 || s.contains("network is unreachable")
                 || s.contains("i/o error")) {
-            return "MẠNG_HOẶC_HOST_SAI (firewall, SMTP host/port, Railway chặn port 25?)";
+            return "MẠNG_KHÔNG_TỚI_SMTP (timeout — PaaS như Railway thường chặn outbound 25/465/587; đặt SENDGRID_API_KEY để gửi qua API HTTPS)";
         }
         if (s.contains("starttls")
                 || s.contains("ssl")
                 || s.contains("handshake")
                 || s.contains("certificate")
                 || s.contains("pkix")) {
-            return "TLS_SSL (cấu hình starttls/ssl trên thiết bị hoặc proxy)";
+            return "TLS_SSL (cấu hình starttls/ssl)";
         }
         return "KHÁC (xem nội dung exception phía dưới)";
     }
@@ -127,13 +204,13 @@ public class EmailImpl implements EmailService {
     private String buildOtpContent(String otp) {
         return """
                 Xin chào,
-                
+
                 Mã OTP của bạn là: %s
-                
+
                 Mã này sẽ hết hạn sau 5 phút.
-                
+
                 Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(otp);
@@ -142,11 +219,11 @@ public class EmailImpl implements EmailService {
     private String buildResetPassContent(String newPas) {
         return """
                 Xin chào,
-                
+
                 Pass mới của bạn là: %s
-                
+
                 Hãy đổi mật khẩu khi nhận được tin nhắn này
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(newPas);
@@ -155,13 +232,13 @@ public class EmailImpl implements EmailService {
     private String buildEmailChangeContent(String otp) {
         return """
                 Xin chào,
-                
+
                 Nếu đây là yêu cầu của bạn, mã OTP để xác nhận thay đổi email là: %s
-                
+
                 Mã này sẽ hết hạn sau 5 phút.
-                
+
                 Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
-                
+
                 Trân trọng,
                 DungCony Team
                 """.formatted(otp);
