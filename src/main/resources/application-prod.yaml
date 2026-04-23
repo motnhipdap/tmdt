@@ -3,6 +3,10 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      data-source-properties:
+        # PostgreSQL qua PgBouncer (Railway “public” URL): transaction pooling + prepared stmt → lỗi "S_1 already exists"
+        prepareThreshold: 0
   
   mail:
     host: ${MAIL_HOST}
