@@ -620,3 +620,25 @@ Caused by: org.hibernate.HibernateException: Unable to determine Dialect without
 2026-04-23T19:02:56.434+07:00  INFO 5500 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 19.309 seconds (process running for 19.712)
 2026-04-23T19:02:57.179+07:00  INFO 5500 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-04-23T19:02:58.581+07:00  INFO 5500 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-23T21:58:26.167+07:00  INFO 3252 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 3252 (D:\private\backend_tmdt\target\classes started by dung0 in D:\private\backend_tmdt)
+2026-04-23T21:58:26.168+07:00  INFO 3252 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-04-23T21:58:27.882+07:00  INFO 3252 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T21:58:27.883+07:00  INFO 3252 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-23T21:58:27.924+07:00  INFO 3252 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-23T21:58:28.485+07:00  INFO 3252 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T21:58:30.112+07:00  INFO 3252 --- [dungcony] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72579bca
+2026-04-23T21:58:30.113+07:00  INFO 3252 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T21:58:42.069+07:00  INFO 3252 --- [dungcony] [restartedMain] c.d.d.m.payment.services.impl.VnPayImpl  : VNPay resolved payUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html, returnUrl=http://localhost:8080/v1/api/public/payment/vnpay/return
+2026-04-23T21:58:43.057+07:00  INFO 3252 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 17.243 seconds (process running for 17.595)
+2026-04-23T21:59:00.596+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T21:59:00.737+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T22:00:00.975+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T22:00:01.113+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T22:00:42.624+07:00  INFO 3252 --- [dungcony] [http-nio-0.0.0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-23T22:00:43.933+07:00  INFO 3252 --- [dungcony] [http-nio-0.0.0.0-8080-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 912 ms
+2026-04-23T22:01:00.548+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T22:01:00.682+07:00  INFO 3252 --- [dungcony] [scheduling-1] c.d.d.m.v.services.impl.ScheduleImpl     : Deactivated 0 expired vouchers.
+2026-04-23T22:01:06.388+07:00  INFO 3252 --- [dungcony] [http-nio-0.0.0.0-8080-exec-8] c.d.d.c.config.ApiRequestLogFilter       : >>> POST /v1/api/public/auth/create-admin?username=admin&password=admin — Tạo tài khoản admin
+2026-04-23T22:01:06.935+07:00  INFO 3252 --- [dungcony] [http-nio-0.0.0.0-8080-exec-8] c.d.d.c.config.ApiRequestLogFilter       : <<< POST /v1/api/public/auth/create-admin?username=admin&password=admin — Tạo tài khoản admin — HTTP 201 (546ms)
+2026-04-23T22:01:24.459+07:00  INFO 3252 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T22:01:25.826+07:00  INFO 3252 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
