@@ -112,6 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Skip filter cho các public endpoints
         return path.startsWith("/v1/api/public/auth/") ||
+                path.startsWith("/vqr/") ||
                 path.startsWith("/v1/api/account/check/exists-email") ||
                 path.startsWith("/v1/api/account/check/exists-username") ||
                 path.startsWith("/v1/api/test/") ||

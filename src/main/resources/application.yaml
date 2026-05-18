@@ -35,7 +35,7 @@ logging:
 jwt:
   # Railway: ưu tiên biến môi trường JWT_SECRET (không cần khai thêm trong application-prod bằng ${JWT_SECRET}).
   secret: ${JWT_SECRET}
-  expiration: 100000 # 5p
+  expiration: 100000 #  
   refresh-expiration: 604800 # 7 ngày (s)
 
 server:
@@ -69,6 +69,10 @@ vietqr:
   content-prefix: ${VIETQR_CONTENT_PREFIX:}
   image-base-url: ${VIETQR_IMAGE_BASE_URL:https://img.vietqr.io/image}
   service-code: ${VIETQR_SERVICE_CODE:QRIBFTTA}
+  callback-username: ${VIETQR_CALLBACK_USERNAME:vietqr}
+  callback-password: ${VIETQR_CALLBACK_PASSWORD:vietqr}
+  callback-token-secret: ${VIETQR_CALLBACK_TOKEN_SECRET:vietqr-callback-secret-change-me-in-production-2026-05-19-hs512-key}
+  callback-token-ttl-seconds: ${VIETQR_CALLBACK_TOKEN_TTL_SECONDS:300}
 
 # ===== Swagger / OpenAPI =====
 springdoc:
