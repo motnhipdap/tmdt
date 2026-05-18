@@ -181,6 +181,7 @@ CREATE TABLE IF NOT EXISTS tbl_orders
     voucher_discount NUMERIC,
     final_price      NUMERIC     NOT NULL,
     note             VARCHAR(500),
+    payment_type     VARCHAR(30),
     version          BIGINT      NOT NULL DEFAULT 0,
     user_id          UUID        NOT NULL,
     receiver_id      INT         NOT NULL,
@@ -188,7 +189,10 @@ CREATE TABLE IF NOT EXISTS tbl_orders
     updated_at       TIMESTAMPTZ          DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_order_status CHECK (status IN
-                                       ('PENDING', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'CANCELLED', 'RETURNED'))
+                                       ('UNPAID', 'PAID', 'PENDING', 'CONFIRMED',
+                                        'SHIPPING', 'DELIVERED', 'COMPLETED', 'CANCELLED', 'RETURNED')),
+    CONSTRAINT chk_order_payment_type CHECK (payment_type IN
+                                             ('PAYMENT_UPON_DELIVER', 'ONLINE'))
 );
 
 CREATE TABLE IF NOT EXISTS tbl_order_items
@@ -197,7 +201,8 @@ CREATE TABLE IF NOT EXISTS tbl_order_items
     product_id  INT     NOT NULL,
     size_id     INT     NOT NULL,
     quantity    INT     NOT NULL,
-    price       NUMERIC NOT NULL,
+    original_price NUMERIC NOT NULL,
+    final_price    NUMERIC NOT NULL,
     total_price NUMERIC NOT NULL,
 
     PRIMARY KEY (order_id, product_id, size_id),
@@ -281,8 +286,8 @@ create table if not exists tbl_notifications
 (
     id          serial primary key,
     code        varchar(30) unique,
-    sender_id   uuid        not null,
-    receiver_id uuid        not null,
+    sender_id   uuid,
+    receiver_id uuid,
     type        varchar(20) not null,
     title       varchar(100),
     message     text

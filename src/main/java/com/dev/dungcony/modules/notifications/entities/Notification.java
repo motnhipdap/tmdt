@@ -39,10 +39,10 @@ public class Notification extends BaseEntity {
     @Column(name = "type", nullable = false, length = 20)
     private NotificationType type;
 
-    @Column(name = "receiver_id", nullable = false)
+    @Column(name = "receiver_id")
     private UUID receiverId;
 
-    @Column(name = "sender_id", nullable = false)
+    @Column(name = "sender_id")
     private UUID senderId;
 
     @NotNull

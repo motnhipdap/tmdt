@@ -17,6 +17,7 @@ import com.dev.dungcony.modules.order.mappers.OrderMapper;
 import com.dev.dungcony.modules.order.repositories.OrderRepository;
 import com.dev.dungcony.modules.order.services.interfaces.OrderCreateService;
 import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
+import com.dev.dungcony.modules.payment.dtos.res.PaymentQrRes;
 import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
@@ -93,12 +94,14 @@ public class OrderCreateimpl implements OrderCreateService {
         notificationCreateService.userCreateOrder(userId);
 
         String paymentUrl = null;
+        PaymentQrRes bankTransferQr = null;
         if (req.paymentType() == PaymentType.ONLINE) {
             PaymentRes paymentRes = vnPayService.createPaymentUrl(userId, order.getCode(), ipAddress);
             paymentUrl = paymentRes.paymentUrl();
+            bankTransferQr = paymentRes.bankTransferQr();
         }
 
-        return OrderMapper.toOrderRes(order, orderItemDetail.orderItemDtos, receiver, paymentUrl);
+        return OrderMapper.toOrderRes(order, orderItemDetail.orderItemDtos, receiver, paymentUrl, bankTransferQr);
     }
 
     @Override

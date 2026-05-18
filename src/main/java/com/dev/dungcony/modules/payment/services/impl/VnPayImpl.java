@@ -8,9 +8,11 @@ import com.dev.dungcony.modules.order.services.interfaces.OrderGetService;
 import com.dev.dungcony.modules.order.services.interfaces.OrderUpdateService;
 import com.dev.dungcony.modules.payment.config.VnPayProperties;
 import com.dev.dungcony.modules.payment.dtos.res.PaymentRes;
+import com.dev.dungcony.modules.payment.dtos.res.PaymentQrRes;
 import com.dev.dungcony.modules.payment.exceptions.PaymentException;
 import com.dev.dungcony.modules.payment.exceptions.PaymentInvalidException;
 import com.dev.dungcony.modules.payment.exceptions.PaymentUserIsIncorrectException;
+import com.dev.dungcony.modules.payment.services.interfaces.VietQrService;
 import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class VnPayImpl implements VnPayService {
     private final VnPayProperties vnPayProperties;
     private final OrderGetService orderGetService;
     private final OrderUpdateService orderUpdateService;
+    private final VietQrService vietQrService;
 
     @PostConstruct
     void logResolvedVnPayUrls() {
@@ -50,7 +53,7 @@ public class VnPayImpl implements VnPayService {
     public PaymentRes createPaymentUrl(UUID userId, String orderCode, String ipAddress) {
         OrderDto order = orderGetService.getDtoByCode(orderCode);
 
-        if (order.uid() != userId)
+        if (!order.uid().equals(userId))
             throw new PaymentUserIsIncorrectException();
 
         if (order.paymentType() != PaymentType.ONLINE)
@@ -74,9 +77,10 @@ public class VnPayImpl implements VnPayService {
 
         String paymentUrl = vnPayProperties.resolvedPayUrl() + "?" + queryString
                 + "&vnp_SecureHash=" + secureHash;
+        PaymentQrRes bankTransferQr = vietQrService.createOrderQr(order);
 
         log.info("VNPay payment URL created for order: {}", orderCode);
-        return new PaymentRes(orderCode, paymentUrl);
+        return new PaymentRes(orderCode, paymentUrl, bankTransferQr);
     }
 
     //Xác thực và xử lý kết quả thanh toán từ VNPay gửi về

@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -99,14 +100,33 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiRes<Void>> handleDuplicateKey(DataIntegrityViolationException ex,
-                                                           HttpServletRequest request) {
+    public ResponseEntity<ApiRes<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex,
+                                                                     HttpServletRequest request) {
         log.warn("Data integrity violation", ex);
-        captureApiError(request, HttpStatus.CONFLICT, ex, "Email hoặc username đã tồn tại");
+
+        if (isDuplicateKeyError(ex)) {
+            captureApiError(request, HttpStatus.CONFLICT, ex, "Email hoặc username đã tồn tại");
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(ApiRes.error("Email hoặc username đã tồn tại"));
+        }
+
+        String message = "Dữ liệu không hợp lệ hoặc không khớp ràng buộc trong database";
+        captureApiError(request, HttpStatus.CONFLICT, ex, message);
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(ApiRes.error("Email hoặc username đã tồn tại"));
+                .body(ApiRes.error(message));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiRes<Void>> handleInvalidJson(HttpMessageNotReadableException ex,
+                                                          HttpServletRequest request) {
+        String message = "JSON request không hợp lệ";
+        captureApiError(request, HttpStatus.BAD_REQUEST, ex, message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiRes.error(message));
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
@@ -129,10 +149,6 @@ public class GlobalExceptionHandler {
     }
 
     private boolean isDuplicateKeyError(DataAccessException ex) {
-        if (ex instanceof DataIntegrityViolationException) {
-            return true;
-        }
-
         String message = ex.getMostSpecificCause() != null
                 ? ex.getMostSpecificCause().getMessage()
                 : ex.getMessage();

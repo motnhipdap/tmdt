@@ -57,6 +57,19 @@ vnpay:
   command: pay
   order-type: other
 
+# ===== VietQR / Bank transfer QR =====
+# bank-id: BIN hoặc mã ngân hàng theo VietQR (vd: 970422, VCB, MB...)
+# account-name và content-prefix nên dùng không dấu để app ngân hàng hiển thị ổn định.
+vietqr:
+  enabled: ${VIETQR_ENABLED:true}
+  bank-id: ${VIETQR_BANK_ID:970422}
+  account-no: ${VIETQR_ACCOUNT_NO:0345883926}
+  account-name: ${VIETQR_ACCOUNT_NAME:LUONG TIEN DUNG}
+  template: ${VIETQR_TEMPLATE:compact2}
+  content-prefix: ${VIETQR_CONTENT_PREFIX:}
+  image-base-url: ${VIETQR_IMAGE_BASE_URL:https://img.vietqr.io/image}
+  service-code: ${VIETQR_SERVICE_CODE:QRIBFTTA}
+
 # ===== Swagger / OpenAPI =====
 springdoc:
   api-docs:
