@@ -67,7 +67,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
             throw new OrderConflictException("chỉ đơn hàng chưa thanh toán");
         }
 
-        order.setStatus(OrderStatus.PAID);
+        order.setStatus(OrderStatus.PENDING);
         notificationCreateService.userPailOrder(userId);
 
         log.info("thanh toán thành công");
@@ -150,8 +150,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
     // ---PRIVATE---//
     private void validateStatusTransition(OrderStatus current, OrderStatus next) {
         boolean valid = switch (current) {
-            case UNPAID -> next == OrderStatus.PAID;
-            case PAID -> next == OrderStatus.PENDING;
+            case UNPAID -> next == OrderStatus.PENDING;
             case PENDING -> next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELLED;
             case CONFIRMED -> next == OrderStatus.SHIPPING;
             case SHIPPING -> next == OrderStatus.DELIVERED || next == OrderStatus.RETURNED;
