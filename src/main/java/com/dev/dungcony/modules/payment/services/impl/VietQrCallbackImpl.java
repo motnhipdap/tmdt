@@ -75,6 +75,7 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
 
     @Override
     public boolean validateBearerToken(String authorizationHeader) {
+        log.info("author {}", authorizationHeader);
         if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
             return false;
         }
