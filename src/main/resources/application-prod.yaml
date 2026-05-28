@@ -5,9 +5,8 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       data-source-properties:
-        # PostgreSQL qua PgBouncer (Railway “public” URL): transaction pooling + prepared stmt → lỗi "S_1 already exists"
         prepareThreshold: 0
-  
+
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
@@ -49,14 +48,11 @@ logging:
     root: warn
     com.dev.dungcony: info
 
-# Railway: reverse proxy bật X-Forwarded-* để request được coi là https và Swagger dùng đúng URL.
 server:
   forward-headers-strategy: framework
 
-# VNPay: khai VNPAY_RETURN_URL (URL đủ) hoặc PUBLIC_APP_BASE_URL (https://... không dấu / cuối).
-# Trên Railway có thể không cần gán nếu dùng biến RAILWAY_PUBLIC_DOMAIN (tự tạo return URL https).
+# payOS: set PUBLIC_APP_BASE_URL or PAYOS_RETURN_URL/PAYOS_CANCEL_URL in production if needed.
 
-# ===== Swagger / OpenAPI =====
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -66,13 +62,11 @@ springdoc:
     operations-sorter: method
 
 jwt:
-  # Set JWT_SECRET trên server (≥32 ký tự). Default chỉ để bind YAML; JwtConfig từ chối nếu prod còn secret dev.
   secret: ${JWT_SECRET}
   refresh-cookie:
     secure: true
     path: /v1/api/public/auth
-    
-# Gửi mail: nếu có SENDGRID_API_KEY thì dùng SendGrid API (HTTPS), không cần mở SMTP 587 (Railway hay chặn).
+
 app:
   email:
     sendgrid-api-key: ${SENDGRID_API_KEY:}

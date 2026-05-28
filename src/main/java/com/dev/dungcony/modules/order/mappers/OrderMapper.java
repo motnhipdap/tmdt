@@ -7,7 +7,6 @@ import com.dev.dungcony.modules.order.dtos.res.OrderRes;
 import com.dev.dungcony.modules.order.entities.Order;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.enums.PaymentType;
-import com.dev.dungcony.modules.payment.dtos.res.PaymentQrRes;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 
 import java.util.List;
@@ -20,10 +19,6 @@ public class OrderMapper {
     }
 
     public static OrderRes toOrderRes(Order order, List<OrderItemDto> items, ReceiverRes reciever, String paymentUrl) {
-        return toOrderRes(order, items, reciever, paymentUrl, null);
-    }
-
-    public static OrderRes toOrderRes(Order order, List<OrderItemDto> items, ReceiverRes reciever, String paymentUrl, PaymentQrRes bankTransferQr) {
         return new OrderRes(
                 order.getCode(),
                 order.getStatus(),
@@ -36,7 +31,6 @@ public class OrderMapper {
                 order.getVoucherDiscount(),
                 order.getFinalPrice(),
                 paymentUrl,
-                bankTransferQr,
                 order.getCreatedAt(),
                 order.getUpdatedAt());
     }

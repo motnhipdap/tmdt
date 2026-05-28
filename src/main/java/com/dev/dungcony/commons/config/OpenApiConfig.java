@@ -59,7 +59,7 @@ public class OpenApiConfig {
                 .addTagsItem(new Tag().name("Carts")
                         .description("Thông tin Giỏ hàng — 🔒 Yêu cầu đăng nhập"))
                 .addTagsItem(new Tag().name("Payment")
-                        .description("Thanh toán VNPay — 🔒 Yêu cầu đăng nhập (trừ callback)"))
+                        .description("Thanh toán payOS — yêu cầu đăng nhập, trừ return/cancel/webhook"))
                 .addTagsItem(new Tag().name("Notifications")
                         .description("Thông báo cho user và admin — 🔒 Yêu cầu đăng nhập"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))

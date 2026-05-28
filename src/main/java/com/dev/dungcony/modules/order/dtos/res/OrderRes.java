@@ -7,7 +7,6 @@ import java.util.List;
 import com.dev.dungcony.modules.order.dtos.OrderItemDto;
 import com.dev.dungcony.modules.order.enums.OrderStatus;
 import com.dev.dungcony.modules.order.enums.PaymentType;
-import com.dev.dungcony.modules.payment.dtos.res.PaymentQrRes;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 
 public record OrderRes(
@@ -22,7 +21,6 @@ public record OrderRes(
         BigDecimal voucherDiscount,
         BigDecimal finalPrice,
         String paymentUrl,
-        PaymentQrRes bankTransferQr,
         Instant createdAt,
         Instant updatedAt) {
 }

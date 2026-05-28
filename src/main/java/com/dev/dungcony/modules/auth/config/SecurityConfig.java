@@ -60,7 +60,6 @@ public class SecurityConfig {
                                 "/v1/api/public/provider/**",
                                 "/v1/api/promotions/**",
                                 "/v1/api/public/payment/**",
-                                "/vqr/**",
                                 "/v1/api/account/check/exists-email",
                                 "/v1/api/account/check/exists-username",
                                 "/v1/api/test/**",
