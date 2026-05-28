@@ -75,15 +75,12 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
 
     @Override
     public boolean validateBearerToken(String authorizationHeader) {
-        log.info("author {}", authorizationHeader);
-        if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+        Optional<String> tokenOpt = extractBearerToken(authorizationHeader);
+        if (tokenOpt.isEmpty()) {
             return false;
         }
 
-        String token = authorizationHeader.substring(BEARER_PREFIX.length()).trim();
-        if (token.isBlank()) {
-            return false;
-        }
+        String token = tokenOpt.get();
 
         try {
             String subject = Jwts.parserBuilder()
@@ -92,7 +89,11 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-            return TOKEN_SUBJECT.equals(subject);
+            if (!TOKEN_SUBJECT.equals(subject)) {
+                log.warn("VietQR callback token rejected: unexpected subject");
+                return false;
+            }
+            return true;
         } catch (JwtException | IllegalArgumentException ex) {
             log.warn("VietQR callback token invalid: {}", ex.getMessage());
             return false;
@@ -190,17 +191,35 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
     }
 
     private String[] parseBasicCredentials(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith(BASIC_PREFIX)) {
+        String value = trimToEmpty(authorizationHeader);
+        if (!startsWithAuthScheme(value, BASIC_PREFIX)) {
             return null;
         }
 
         try {
-            String raw = authorizationHeader.substring(BASIC_PREFIX.length()).trim();
+            String raw = value.substring(BASIC_PREFIX.length()).trim();
             String decoded = new String(Base64.getDecoder().decode(raw), StandardCharsets.UTF_8);
             return decoded.split(":", 2);
         } catch (IllegalArgumentException ex) {
             return null;
         }
+    }
+
+    private Optional<String> extractBearerToken(String authorizationHeader) {
+        String value = trimToEmpty(authorizationHeader);
+        if (value.isBlank()) {
+            return Optional.empty();
+        }
+
+        while (startsWithAuthScheme(value, BEARER_PREFIX)) {
+            value = value.substring(BEARER_PREFIX.length()).trim();
+        }
+
+        return value.isBlank() ? Optional.empty() : Optional.of(value);
+    }
+
+    private boolean startsWithAuthScheme(String value, String schemePrefix) {
+        return value.regionMatches(true, 0, schemePrefix, 0, schemePrefix.length());
     }
 
     private Key signingKey() {

@@ -5,6 +5,8 @@ import com.dev.dungcony.modules.payment.dtos.res.VietQrTokenErrorRes;
 import com.dev.dungcony.modules.payment.dtos.res.VietQrTransactionSyncRes;
 import com.dev.dungcony.modules.payment.services.interfaces.VietQrCallbackService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +26,10 @@ public class VietQrCallbackController {
     private final VietQrCallbackService vietQrCallbackService;
 
     @Operation(summary = "VietQR get token", description = "Endpoint cấp Bearer token cho VietQR callback")
+    @SecurityRequirements
     @PostMapping("/vqr/api/token_generate")
     public ResponseEntity<?> generateToken(
+            @Parameter(description = "Basic base64(username:password) for VietQR callback token, not app JWT")
             @RequestHeader(value = "Authorization", required = false) String authorization) {
 
         return vietQrCallbackService.createToken(authorization)
@@ -36,8 +40,10 @@ public class VietQrCallbackController {
     }
 
     @Operation(summary = "VietQR transaction sync", description = "Endpoint nhận biến động số dư từ VietQR")
+    @SecurityRequirements
     @PostMapping("/vqr/bank/api/transaction-sync")
     public ResponseEntity<VietQrTransactionSyncRes> syncTransaction(
+            @Parameter(description = "Bearer token returned by /vqr/api/token_generate. Do not use the normal user login JWT.")
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody VietQrTransactionSyncReq req) {
 
@@ -46,7 +52,7 @@ public class VietQrCallbackController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(VietQrTransactionSyncRes.failure(
                             "INVALID_TOKEN",
-                            "Invalid or expired token"));
+                            "Invalid, expired, or non-VietQR callback token"));
         }
 
         try {
