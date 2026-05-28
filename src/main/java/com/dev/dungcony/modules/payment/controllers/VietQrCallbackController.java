@@ -6,7 +6,7 @@ import com.dev.dungcony.modules.payment.dtos.res.VietQrTransactionSyncRes;
 import com.dev.dungcony.modules.payment.services.interfaces.VietQrCallbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "VietQR Callback")
 public class VietQrCallbackController {
 
-    private static final String VIETQR_BASIC_AUTH = "vietQrBasicAuth";
-    private static final String VIETQR_CALLBACK_AUTH = "vietQrCallbackAuth";
+    private static final String VIETQR_AUTH_HEADER = "X-VietQR-Authorization";
 
     private final VietQrCallbackService vietQrCallbackService;
 
     @Operation(summary = "VietQR get token", description = "Endpoint cấp Bearer token cho VietQR callback")
-    @SecurityRequirement(name = VIETQR_BASIC_AUTH)
+    @SecurityRequirements
     @PostMapping("/vqr/api/token_generate")
     public ResponseEntity<?> generateToken(
             @Parameter(hidden = true)
-            @RequestHeader(value = "Authorization", required = false) String authorization) {
+            @RequestHeader(value = "Authorization", required = false) String authorization,
+            @Parameter(description = "Swagger test only. Use Basic base64(username:password), for example: Basic ZHVuZ2Nvbnk6ZHVuZ2Nvbnk=")
+            @RequestHeader(value = VIETQR_AUTH_HEADER, required = false) String vietQrAuthorization) {
 
-        return vietQrCallbackService.createToken(authorization)
+        return vietQrCallbackService.createToken(resolveVietQrAuthorization(vietQrAuthorization, authorization))
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)
@@ -43,14 +44,16 @@ public class VietQrCallbackController {
     }
 
     @Operation(summary = "VietQR transaction sync", description = "Endpoint nhận biến động số dư từ VietQR")
-    @SecurityRequirement(name = VIETQR_CALLBACK_AUTH)
+    @SecurityRequirements
     @PostMapping("/vqr/bank/api/transaction-sync")
     public ResponseEntity<VietQrTransactionSyncRes> syncTransaction(
             @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorization,
+            @Parameter(description = "Swagger test only. Use Bearer access_token from /vqr/api/token_generate. Keep the normal user bearerAuth unchanged.")
+            @RequestHeader(value = VIETQR_AUTH_HEADER, required = false) String vietQrAuthorization,
             @RequestBody VietQrTransactionSyncReq req) {
 
-        if (!vietQrCallbackService.validateBearerToken(authorization)) {
+        if (!vietQrCallbackService.validateBearerToken(resolveVietQrAuthorization(vietQrAuthorization, authorization))) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(VietQrTransactionSyncRes.failure(
@@ -69,5 +72,12 @@ public class VietQrCallbackController {
                             "TRANSACTION_FAILED",
                             ex.getMessage()));
         }
+    }
+
+    private String resolveVietQrAuthorization(String vietQrAuthorization, String authorization) {
+        if (vietQrAuthorization != null && !vietQrAuthorization.isBlank()) {
+            return vietQrAuthorization;
+        }
+        return authorization;
     }
 }
