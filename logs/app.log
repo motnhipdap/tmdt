@@ -612,3 +612,16 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
 2026-05-29T01:51:41.426+07:00  INFO 18260 --- [dungcony] [http-nio-0.0.0.0-8080-exec-7] c.d.d.c.config.ApiRequestLogFilter       : <<< GET /v1/api/public/payment/payos/return?code=00&id=158ef1e53fc6403eaec42808da3520a2&cancel=false&status=PAID&orderCode=9 — API không xác định — HTTP 200 (99ms)
 2026-05-29T01:51:55.481+07:00  INFO 18260 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-05-29T01:51:55.482+07:00  INFO 18260 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-05-29T02:32:42.152+07:00  INFO 34112 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Starting DungconyApplication using Java 21.0.9 with PID 34112 (D:\me\backend_tmdt\target\classes started by dung0 in D:\me\backend_tmdt)
+2026-05-29T02:32:42.154+07:00  INFO 34112 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : The following 1 profile is active: "dev"
+2026-05-29T02:32:44.231+07:00  INFO 34112 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-29T02:32:44.231+07:00  INFO 34112 --- [dungcony] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-05-29T02:32:44.275+07:00  INFO 34112 --- [dungcony] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-29T02:32:44.861+07:00  INFO 34112 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-29T02:32:45.013+07:00  INFO 34112 --- [dungcony] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-29T02:32:49.976+07:00  INFO 34112 --- [dungcony] [restartedMain] com.dev.dungcony.DungconyApplication     : Started DungconyApplication in 8.211 seconds (process running for 8.605)
+2026-05-29T02:32:50.073+07:00  INFO 34112 --- [dungcony] [scheduling-1] c.d.d.m.o.s.i.OrderPaymentTimeoutService : Expired unpaid order auto-cancelled: ORD-26826125-BC2A
+2026-05-29T02:32:50.117+07:00  INFO 34112 --- [dungcony] [scheduling-1] c.d.d.m.o.s.i.OrderPaymentTimeoutService : Expired unpaid order auto-cancelled: ORD-27191402-D53A
+2026-05-29T02:32:50.123+07:00  INFO 34112 --- [dungcony] [scheduling-1] d.d.m.o.s.i.OrderPaymentTimeoutScheduler : Expired unpaid order scan completed: found=2, cancelled=2
+2026-05-29T02:32:57.516+07:00  INFO 34112 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-29T02:32:57.518+07:00  INFO 34112 --- [dungcony] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
