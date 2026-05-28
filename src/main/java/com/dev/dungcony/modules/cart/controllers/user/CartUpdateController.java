@@ -49,7 +49,7 @@ public class CartUpdateController {
     @DeleteMapping("/remove/{product-code}/{size}")
     public ResponseEntity<ApiRes<Void>> removeItem(
             @AuthenticationPrincipal AccountDetails account,
-            @PathVariable String productCode,
+            @PathVariable("product-code") String productCode,
             @PathVariable ProductSize size) {
         cartUpdateService.removeItemFromCart(account.requireUserUuid(), productCode, size);
         return ResponseEntity.ok(ApiRes.success("Item removed from cart"));

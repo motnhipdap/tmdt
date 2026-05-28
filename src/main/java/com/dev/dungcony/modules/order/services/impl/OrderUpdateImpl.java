@@ -86,8 +86,8 @@ public class OrderUpdateImpl implements OrderUpdateService {
             throw new OrderConflictException("chỉ đơn hàng đang chờ xác nhận");
         }
 
-        order.setStatus(OrderStatus.CONFIRMED);
-        log.info("giao hàng {} thành công cho  user: {}", orderCode, userId);
+        order.setStatus(OrderStatus.COMPLETED);
+        log.info("user {} đã nhận đơn hàng: {}", userId, orderCode);
     }
 
     @Transactional
@@ -96,11 +96,17 @@ public class OrderUpdateImpl implements OrderUpdateService {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
-        if (order.getStatus() != OrderStatus.SHIPPING) {
-            throw new OrderConflictException("đơn hàng phải đang được giao");
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new OrderConflictException("đơn hàng phải được thanh toán");
         }
 
-        order.setStatus(OrderStatus.DELIVERED);
+        order.setStatus(OrderStatus.CONFIRMED);
+
+        List<UUID> uid = List.of(order.getUserId());
+
+        log.info("gửi thông báo cho user ..... {}", uid);
+        notificationCreateService.adminComfirmOrders(uid);
+
         log.info("Order confirmed: {}", orderCode);
     }
 
@@ -114,19 +120,23 @@ public class OrderUpdateImpl implements OrderUpdateService {
             throw new OrderConflictException("đơn hàng phải được xác nhận");
         }
 
-        order.setStatus(OrderStatus.DELIVERED);
+        order.setStatus(OrderStatus.SHIPPING);
         log.info("Order shipping: {}", orderCode);
     }
 
     @Transactional
     @Override
-    public void deliveredOrder(String orderCode) {
+    public void adminDeliveredOrder(String orderCode) {
         Order order = orderRepository.findByCode(orderCode)
                 .orElseThrow(OrderNotFoundException::new);
 
         if (order.getStatus() != OrderStatus.SHIPPING) {
             throw new OrderConflictException("đơn hàng phải được giao đến nơi");
         }
+
+        List<UUID> uid = List.of(order.getUserId());
+
+        notificationCreateService.adminDeliveredOrders(uid);
 
         order.setStatus(OrderStatus.DELIVERED);
         log.info("Order delivered: {}", orderCode);
@@ -145,6 +155,7 @@ public class OrderUpdateImpl implements OrderUpdateService {
 
         validateStatusTransition(currentStatus, nextStatus);
         order.setStatus(nextStatus);
+        notifyUserWhenAdminUpdatesStatus(order, nextStatus);
     }
 
     // ---PRIVATE---//
@@ -161,6 +172,17 @@ public class OrderUpdateImpl implements OrderUpdateService {
         if (!valid) {
             throw new OrderConflictException(
                     "Cannot transition from " + current + " to " + next);
+        }
+    }
+
+    private void notifyUserWhenAdminUpdatesStatus(Order order, OrderStatus nextStatus) {
+        List<UUID> uid = List.of(order.getUserId());
+
+        switch (nextStatus) {
+            case CONFIRMED -> notificationCreateService.adminComfirmOrders(uid);
+            case DELIVERED -> notificationCreateService.adminDeliveredOrders(uid);
+            default -> {
+            }
         }
     }
 

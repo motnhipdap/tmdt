@@ -25,7 +25,7 @@ public class NotificationUpdateImpl implements NotificationUpdateService {
         Notification noti = notificationRepo.findByCode(code)
                 .orElseThrow(NotiNotFoundByCodeException::new);
 
-        if (noti.getSenderId().equals(uid))
+        if (!Boolean.FALSE.equals(noti.getForAdmin()) || !uid.equals(noti.getReceiverId()))
             throw new NotiUnAuthException();
 
         noti.setReaded(true);
@@ -43,6 +43,10 @@ public class NotificationUpdateImpl implements NotificationUpdateService {
     public void adminReaded(String code) {
         Notification noti = notificationRepo.findByCode(code)
                 .orElseThrow(NotiNotFoundByCodeException::new);
+
+        if (!Boolean.TRUE.equals(noti.getForAdmin())) {
+            throw new NotiUnAuthException();
+        }
 
         noti.setReaded(true);
         notificationRepo.save(noti);

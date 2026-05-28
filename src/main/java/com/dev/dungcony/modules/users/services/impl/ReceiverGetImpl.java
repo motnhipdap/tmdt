@@ -52,6 +52,7 @@ public class ReceiverGetImpl implements RecieverGetService {
 
     @Override
     public List<ReceiverRes> getAllByUser(UUID userId) {
+        log.info("lấy toàn bộ receiver ....");
         User u = new User();
         u.setId(userId);
 

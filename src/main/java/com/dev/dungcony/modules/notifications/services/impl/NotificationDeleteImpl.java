@@ -25,7 +25,7 @@ public class NotificationDeleteImpl implements NotificationDeleteService {
     public void deleteByCode(UUID uid, String code) {
         Notification noti = notificationRepository.findByCode(code).orElseThrow(NotiNotFoundByCodeException::new);
 
-        if (!noti.getSenderId().equals(uid))
+        if (!Boolean.FALSE.equals(noti.getForAdmin()) || !uid.equals(noti.getReceiverId()))
             throw new NotiUnAuthException();
 
         noti.setIsDelete(true);
@@ -35,7 +35,7 @@ public class NotificationDeleteImpl implements NotificationDeleteService {
     @Transactional
     @Override
     public int deleteListByCode(UUID uid, List<String> codes) {
-        int cnt = notificationRepository.deleteByListCodesAndSender(codes, uid);
+        int cnt = notificationRepository.deleteByListCodesAndReceiver(codes, uid);
         if (cnt != codes.size())
             throw new NotiUnAuthException();
 
@@ -44,11 +44,12 @@ public class NotificationDeleteImpl implements NotificationDeleteService {
 
     @Override
     public int clear(UUID uid) {
-        return notificationRepository.clearBySender(uid);
+        return notificationRepository.clearByReceiver(uid);
     }
 
     @Override
     public void adminDeleteByCode(String code) {
+
         Notification noti = notificationRepository.findByCode(code)
                 .orElseThrow(NotiNotFoundByCodeException::new);
 
@@ -58,6 +59,8 @@ public class NotificationDeleteImpl implements NotificationDeleteService {
 
         noti.setIsDelete(true);
         notificationRepository.save(noti);
+
+        log.info("Admin đã xóa noti code = {}", code);
     }
 
     @Override

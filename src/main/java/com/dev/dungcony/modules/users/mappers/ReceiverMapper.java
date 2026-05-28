@@ -17,6 +17,7 @@ public class ReceiverMapper {
 
     public static ReceiverRes toRes(Receiver receiver) {
         return new ReceiverRes(
+                receiver.getId(),
                 AddressMapper.toDto(receiver.getAddress()),
                 receiver.getFirstName(),
                 receiver.getLastName(),

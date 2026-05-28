@@ -30,7 +30,7 @@ public class NotiUserGetController {
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok().body(ApiRes.success(
                 "OK",
-                PageRes.from(notificationGetService.getAllBySender(pageable, user.getUserUuid()))));
+                PageRes.from(notificationGetService.getAllByReceiver(pageable, user.getUserUuid()))));
     }
 
     @Operation(summary = "Đếm thông báo chưa đọc")
@@ -41,4 +41,23 @@ public class NotiUserGetController {
         return ResponseEntity.ok(ApiRes.success("unread", count));
     }
 
+    @Operation(summary = "Lấy thông báo chưa đọc ")
+    @GetMapping("/urnead")
+    public ResponseEntity<ApiRes<?>> getNotificationUnread(
+            @AuthenticationPrincipal AccountDetails user,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok().body(ApiRes.success(
+                "OK",
+                PageRes.from(notificationGetService.getAllUnreadByForReceiver(pageable, user.getUserUuid()))));
+    }
+
+    @Operation(summary = "Lấy thông báo đã đọc")
+    @GetMapping("/read")
+    public ResponseEntity<ApiRes<?>> getNotificationRead(
+            @AuthenticationPrincipal AccountDetails user,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok().body(ApiRes.success(
+                "OK",
+                PageRes.from(notificationGetService.getAllReadByForReceiver(pageable, user.getUserUuid()))));
+    }
 }

@@ -48,7 +48,7 @@ public class AdminUpdateOrderController {
     @PutMapping("/delivered/{code}")
     public ResponseEntity<ApiRes<Void>> deliveryOrder(
             @PathVariable String code) {
-        orderUpdateService.deliveredOrder(code);
+        orderUpdateService.adminDeliveredOrder(code);
         return ResponseEntity.ok(ApiRes.success("Order delivered success"));
     }
 

@@ -40,17 +40,17 @@ public class ItemCreateImpl implements ItemCreateService {
             Integer sizeId = sizeCacheService.getIdBySize(item.size());
             ItemId itemId = new ItemId(productId, sizeId);
 
-            if (itemRepository.existsById(itemId)) {
-                throw new IllegalArgumentException(
-                        "Item đã tồn tại: productCode=" + items.productCode() + ", size=" + item.size());
+            Item entity = itemRepository.findById(itemId).orElse(null);
+            if (entity == null) {
+                entity = new Item();
+                entity.setId(itemId);
+                entity.setProduct(productRepository.getReferenceById(productId));
+                entity.setSize(sizeRepository.getReferenceById(sizeId));
+                entity.setQuantity(item.quantity());
+                entity.setStatus(item.status());
+            } else {
+                entity.setQuantity(item.quantity() + entity.getQuantity());
             }
-
-            Item entity = new Item();
-            entity.setId(itemId);
-            entity.setProduct(productRepository.getReferenceById(productId));
-            entity.setSize(sizeRepository.getReferenceById(sizeId));
-            entity.setQuantity(item.quantity());
-            entity.setStatus(item.status());
 
             tmp.add(entity);
         }

@@ -1,11 +1,13 @@
 package com.dev.dungcony.modules.product.services.impl.item;
 
 import com.dev.dungcony.modules.product.dtos.req.ItemUpdateReq;
+import com.dev.dungcony.modules.product.dtos.res.ItemRes;
 import com.dev.dungcony.modules.product.entities.Item;
 import com.dev.dungcony.modules.product.entities.ItemId;
 import com.dev.dungcony.modules.product.enums.ItemStatus;
 import com.dev.dungcony.modules.product.exceptions.ItemNotFoundException;
 import com.dev.dungcony.modules.product.exceptions.ItemQuantityUnLimit;
+import com.dev.dungcony.modules.product.mappers.ItemMapper;
 import com.dev.dungcony.modules.product.repositories.ItemRepository;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
 import com.dev.dungcony.modules.product.services.interfaces.item.ItemUpdateService;
@@ -21,13 +23,15 @@ public class ItemUpdateimpl implements ItemUpdateService {
     private final SizeCacheService sizeCacheService;
 
     @Override
-    public void updateQuantity(ItemUpdateReq req) {
+    public ItemRes updateQuantity(ItemUpdateReq req) {
         Item item = get(req.productCode(), sizeCacheService.getIdBySize(req.size()));
 
         item.setQuantity(req.quantity());
         item.setStatus(req.status());
 
         itemRepository.save(item);
+
+        return ItemMapper.toRes(item);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ItemUpdateimpl implements ItemUpdateService {
             item.setStatus(ItemStatus.AVAILABLE);
 
         itemRepository.save(item);
-        
+
     }
 
     // ------------------------------ PRIVATE --------------------------------//
@@ -67,6 +71,5 @@ public class ItemUpdateimpl implements ItemUpdateService {
     private Item get(int pId, int sId) {
         return itemRepository.findById(new ItemId(pId, sId))
                 .orElseThrow(ItemNotFoundException::new);
-
     }
 }

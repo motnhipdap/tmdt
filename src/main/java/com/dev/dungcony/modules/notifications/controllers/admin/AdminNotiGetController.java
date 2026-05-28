@@ -39,4 +39,23 @@ public class AdminNotiGetController {
         return ResponseEntity.ok(ApiRes.success("OK", Map.of("unread", count)));
     }
 
+    @Operation(summary = "Lấy thông báo chưa đọc (admin)")
+    @GetMapping("/unread")
+    public ResponseEntity<ApiRes<?>> unread(
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(ApiRes.success(
+                "OK",
+                PageRes.from(notificationGetService.getAllUnreadByForAdmin(pageable))));
+    }
+
+    @Operation(summary = "Lấy thông báo đã đọc (admin)")
+    @GetMapping("/read")
+    public ResponseEntity<ApiRes<?>> read(
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(ApiRes.success(
+                "OK",
+                PageRes.from(notificationGetService.getAllUnreadByForAdmin(pageable))));
+    }
 }

@@ -7,11 +7,19 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface NotificationGetService {
-    Page<NotificationRes> getAllBySender(Pageable pageable, UUID senderId);
+    Page<NotificationRes> getAllByReceiver(Pageable pageable, UUID receiverId);
+
+    Page<NotificationRes> getAllUnreadByForReceiver(Pageable pageable, UUID receiverId);
+
+    Page<NotificationRes> getAllReadByForReceiver(Pageable pageable, UUID receiverId);
 
     Page<NotificationRes> getAllForAdmin(Pageable pageable);
 
-    long countUnRead(UUID senderId);
+    Page<NotificationRes> getAllUnreadByForAdmin(Pageable pageable);
+
+    Page<NotificationRes> getAllReadByForAdmin(Pageable pageable);
+    
+    long countUnRead(UUID receiverId);
 
     long countUnRead();
 }

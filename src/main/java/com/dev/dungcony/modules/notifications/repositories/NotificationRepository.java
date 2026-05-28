@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,26 +18,30 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Optional<Notification> findByCode(String code);
 
-    long countAllBySenderIdAndReaded(UUID senderId, boolean readed);
+    long countByReceiverIdAndForAdminFalseAndReadedFalseAndIsDeleteFalse(UUID receiverId);
 
-    long countAllByForAdminAndReaded(boolean forAdmin, boolean readed);
+    long countByForAdminTrueAndReadedFalseAndIsDeleteFalse();
 
     // ==================================== QUERY =================================//
+
     @Modifying
+    @Transactional
     @Query(
             """
                     UPDATE Notification n
                     SET n.isDelete = true
                     WHERE n.isDelete = false
-                          AND n.senderId = :sender_id
+                          AND n.forAdmin = false
+                          AND n.receiverId = :receiver_id
                           AND n.code IN (:codes)
                     """
     )
-    int deleteByListCodesAndSender(
+    int deleteByListCodesAndReceiver(
             @Param("codes") List<String> codes,
-            @Param("sender_id") UUID senderId);
+            @Param("receiver_id") UUID receiverId);
 
     @Modifying
+    @Transactional
     @Query(
             """
                     UPDATE Notification n
@@ -50,14 +55,18 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             @Param("codes") List<String> codes);
 
     @Modifying
+    @Transactional
     @Query("""
             UPDATE Notification n
             SET n.isDelete = true
-            WHERE n.senderId = :sender_id
+            WHERE n.isDelete = false
+                  AND n.forAdmin = false
+                  AND n.receiverId = :receiver_id
             """)
-    int clearBySender(@Param("sender_id") UUID senderId);
+    int clearByReceiver(@Param("receiver_id") UUID receiverId);
 
     @Modifying
+    @Transactional
     @Query("""
             UPDATE Notification n
             SET n.isDelete = true
@@ -76,13 +85,16 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             )
             FROM Notification n
             LEFT JOIN User u ON u.id = n.senderId
-            WHERE n.isDelete = false AND n.senderId = :sender_id
+            WHERE n.isDelete = false
+                  AND n.receiverId = :receiver_id
+                  AND n.forAdmin = false
             ORDER BY n.createdAt DESC
             """)
-    Page<NotificationRes> findAllBySender(
-            @Param("sender_id") UUID senderId,
+    Page<NotificationRes> findAllByReceiver(
+            @Param("receiver_id") UUID receiverId,
             Pageable pageable
     );
+
 
     @Query("""
             SELECT new com.dev.dungcony.modules.notifications.dtos.res.NotificationRes(
@@ -101,7 +113,83 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             Pageable pageable
     );
 
+    @Query("""
+            SELECT new com.dev.dungcony.modules.notifications.dtos.res.NotificationRes(
+                n.code,
+                u.firstName,
+                null,
+                n.title,
+                n.message
+            )
+            FROM Notification n
+            left join User u on u.id = n.senderId
+            WHERE n.isDelete = false AND n.forAdmin = true and n.readed = false
+            ORDER BY n.createdAt DESC
+            """)
+    Page<NotificationRes> findAllForAdminUnread(
+            Pageable pageable
+    );
+
+    @Query("""
+            SELECT new com.dev.dungcony.modules.notifications.dtos.res.NotificationRes(
+                n.code,
+                u.firstName,
+                null,
+                n.title,
+                n.message
+            )
+            FROM Notification n
+            left join User u on u.id = n.senderId
+            WHERE n.isDelete = false AND n.forAdmin = true and n.readed = true
+            ORDER BY n.createdAt DESC
+            """)
+    Page<NotificationRes> findAllForAdminReaded(
+            Pageable pageable
+    );
+
+    @Query("""
+            SELECT new com.dev.dungcony.modules.notifications.dtos.res.NotificationRes(
+                n.code,
+                u.firstName,
+                null,
+                n.title,
+                n.message
+            )
+            FROM Notification n
+            left join User u on u.id = n.senderId
+            WHERE n.isDelete = false AND n.forAdmin = false 
+                        and n.readed = false
+                        and n.receiverId = :receiver_id
+            ORDER BY n.createdAt DESC
+            """)
+    Page<NotificationRes> findAllForReciverUnread(
+            @Param("receiver_id") UUID receiverId,
+            Pageable pageable
+    );
+
+    @Query("""
+            SELECT new com.dev.dungcony.modules.notifications.dtos.res.NotificationRes(
+                n.code,
+                u.firstName,
+                null,
+                n.title,
+                n.message
+            )
+            FROM Notification n
+            left join User u on u.id = n.senderId
+            WHERE n.isDelete = false
+                        AND n.forAdmin = false
+                        and n.readed = true
+                        and n.receiverId = :receiver_id
+            ORDER BY n.createdAt DESC
+            """)
+    Page<NotificationRes> findAllForReceiverReaded(
+            @Param("receiver_id") UUID receiverId,
+            Pageable pageable
+    );
+
     @Modifying
+    @Transactional
     @Query("""
             UPDATE Notification n
             SET n.readed = true
@@ -110,14 +198,15 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     long updateReadAllForAdmin();
 
     @Modifying
+    @Transactional
     @Query("""
             UPDATE Notification n
             SET n.readed = true
             WHERE n.isDelete = false
-                  AND n.senderId = :sender_id
                   AND n.forAdmin = false
+                  AND n.receiverId = :receiver_id
             """)
     long updateReadAllUser(
-            @Param("sender_id") UUID senderId
+            @Param("receiver_id") UUID receiverId
     );
 }

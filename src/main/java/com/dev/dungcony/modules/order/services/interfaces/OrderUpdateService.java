@@ -20,8 +20,8 @@ public interface OrderUpdateService {
     // admin cập nhật trạng thái đơn hàng thành đang giao hàng
     void adminShippingOrder(String orderCode);
 
-    // xác nhận đơn hàng đã được giao
-    void deliveredOrder(String orderCode);
+    // admin xác nhận đơn hàng đã được giao
+    void adminDeliveredOrder(String orderCode);
 
     //admin cập nhật trạng thái đơn hàng
     void adminUpdateOrderStatus(String orderCode, OrderStatus nextStatus);

@@ -19,8 +19,18 @@ public class NotificationGetImpl implements NotificationGetService {
     private final NotificationRepository notificationRepo;
 
     @Override
-    public Page<NotificationRes> getAllBySender(Pageable pageable, UUID senderId) {
-        return notificationRepo.findAllBySender(senderId, pageable);
+    public Page<NotificationRes> getAllByReceiver(Pageable pageable, UUID receiverId) {
+        return notificationRepo.findAllByReceiver(receiverId, pageable);
+    }
+
+    @Override
+    public Page<NotificationRes> getAllUnreadByForReceiver(Pageable pageable, UUID receiverId) {
+        return notificationRepo.findAllForReciverUnread(receiverId, pageable);
+    }
+
+    @Override
+    public Page<NotificationRes> getAllReadByForReceiver(Pageable pageable, UUID receiverId) {
+        return notificationRepo.findAllForReceiverReaded(receiverId, pageable);
     }
 
     @Override
@@ -29,12 +39,23 @@ public class NotificationGetImpl implements NotificationGetService {
     }
 
     @Override
-    public long countUnRead(UUID senderId) {
-        return notificationRepo.countAllBySenderIdAndReaded(senderId, false);
+    public Page<NotificationRes> getAllUnreadByForAdmin(Pageable pageable) {
+        return notificationRepo.findAllForAdminUnread(pageable);
     }
 
     @Override
+    public Page<NotificationRes> getAllReadByForAdmin(Pageable pageable) {
+        return notificationRepo.findAllForAdminReaded(pageable);
+    }
+
+    @Override
+    public long countUnRead(UUID receiverId) {
+        return notificationRepo.countByReceiverIdAndForAdminFalseAndReadedFalseAndIsDeleteFalse(receiverId);
+    }
+
+
+    @Override
     public long countUnRead() {
-        return notificationRepo.countAllByForAdminAndReaded(true, false);
+        return notificationRepo.countByForAdminTrueAndReadedFalseAndIsDeleteFalse();
     }
 }
