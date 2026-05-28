@@ -90,7 +90,7 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
                     .getBody()
                     .getSubject();
             if (!TOKEN_SUBJECT.equals(subject)) {
-                log.warn("VietQR callback token rejected: unexpected subject");
+                log.warn("VietQR callback token rejected: unexpected subject={}", subject);
                 return false;
             }
             return true;

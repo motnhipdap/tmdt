@@ -6,7 +6,7 @@ import com.dev.dungcony.modules.payment.dtos.res.VietQrTransactionSyncRes;
 import com.dev.dungcony.modules.payment.services.interfaces.VietQrCallbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "VietQR Callback")
 public class VietQrCallbackController {
 
+    private static final String VIETQR_BASIC_AUTH = "vietQrBasicAuth";
+    private static final String VIETQR_CALLBACK_AUTH = "vietQrCallbackAuth";
+
     private final VietQrCallbackService vietQrCallbackService;
 
     @Operation(summary = "VietQR get token", description = "Endpoint cấp Bearer token cho VietQR callback")
-    @SecurityRequirements
+    @SecurityRequirement(name = VIETQR_BASIC_AUTH)
     @PostMapping("/vqr/api/token_generate")
     public ResponseEntity<?> generateToken(
-            @Parameter(description = "Basic base64(username:password) for VietQR callback token, not app JWT")
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorization) {
 
         return vietQrCallbackService.createToken(authorization)
@@ -40,10 +43,10 @@ public class VietQrCallbackController {
     }
 
     @Operation(summary = "VietQR transaction sync", description = "Endpoint nhận biến động số dư từ VietQR")
-    @SecurityRequirements
+    @SecurityRequirement(name = VIETQR_CALLBACK_AUTH)
     @PostMapping("/vqr/bank/api/transaction-sync")
     public ResponseEntity<VietQrTransactionSyncRes> syncTransaction(
-            @Parameter(description = "Bearer token returned by /vqr/api/token_generate. Do not use the normal user login JWT.")
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody VietQrTransactionSyncReq req) {
 

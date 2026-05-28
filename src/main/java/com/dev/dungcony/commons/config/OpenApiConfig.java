@@ -19,6 +19,8 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
+        final String vietQrBasicAuthSchemeName = "vietQrBasicAuth";
+        final String vietQrCallbackAuthSchemeName = "vietQrCallbackAuth";
 
         return new OpenAPI()
                 // URL tương đối: "Try it out" dùng đúng scheme/host với trang Swagger (tránh gọi http khi mở bằng https).
@@ -71,6 +73,21 @@ public class OpenApiConfig {
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
                                         .description("Nhập JWT token (không cần prefix 'Bearer ')")
+                        )
+                        .addSecuritySchemes(vietQrBasicAuthSchemeName,
+                                new SecurityScheme()
+                                        .name(vietQrBasicAuthSchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("basic")
+                                        .description("VietQR callback username/password, only for /vqr/api/token_generate")
+                        )
+                        .addSecuritySchemes(vietQrCallbackAuthSchemeName,
+                                new SecurityScheme()
+                                        .name(vietQrCallbackAuthSchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("VietQR callback token")
+                                        .description("Paste access_token from /vqr/api/token_generate, not the normal user login JWT")
                         ));
     }
 }
