@@ -12,8 +12,8 @@ public record VietQrTransactionSyncReq(
         String transactionid,
         Long transactiontime,
         String referencenumber,
-        @JsonAlias({"orderid", "order_id"})
-        String orderId,
+        @JsonAlias({"orderId", "orderid", "order_id", "order_code"})
+        String orderCode,
         String terminalCode,
         String subTerminalCode,
         String serviceCode,

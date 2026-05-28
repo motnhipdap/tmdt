@@ -45,7 +45,10 @@ public class VietQrCallbackController {
 
     @Operation(summary = "VietQR transaction sync", description = "Endpoint nhận biến động số dư từ VietQR")
     @SecurityRequirements
-    @PostMapping("/vqr/bank/api/transaction-sync")
+    @PostMapping({
+            "/vqr/bank/api/transaction-sync",
+            "/vqr/bank/api/test/transaction-callback"
+    })
     public ResponseEntity<VietQrTransactionSyncRes> syncTransaction(
             @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorization,

@@ -160,7 +160,7 @@ public class VietQrCallbackImpl implements VietQrCallbackService {
     }
 
     private String resolveOrderCode(VietQrTransactionSyncReq req) {
-        String orderCode = extractOrderCode(req.orderId());
+        String orderCode = extractOrderCode(req.orderCode());
         if (orderCode == null) {
             orderCode = extractOrderCode(req.content());
         }
