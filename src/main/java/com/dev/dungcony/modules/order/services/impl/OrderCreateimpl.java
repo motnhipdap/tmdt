@@ -1,6 +1,6 @@
 package com.dev.dungcony.modules.order.services.impl;
 
-import com.dev.dungcony.modules.cart.dtos.CartItemDto;
+import com.dev.dungcony.modules.cart.dtos.CartItemConsumeDto;
 import com.dev.dungcony.modules.cart.services.interfaces.CartItemGetService;
 import com.dev.dungcony.modules.cart.services.interfaces.CartUpdateService;
 import com.dev.dungcony.modules.notifications.services.interfaces.NotificationCreateService;
@@ -21,6 +21,7 @@ import com.dev.dungcony.modules.payment.dtos.res.PaymentQrRes;
 import com.dev.dungcony.modules.payment.services.interfaces.VnPayService;
 import com.dev.dungcony.modules.product.dtos.ProductDto;
 import com.dev.dungcony.modules.product.services.interfaces.SizeCacheService;
+import com.dev.dungcony.modules.product.services.interfaces.item.ItemUpdateService;
 import com.dev.dungcony.modules.product.services.interfaces.product.ProductGetService;
 import com.dev.dungcony.modules.users.dtos.res.ReceiverRes;
 import com.dev.dungcony.modules.users.services.interfaces.RecieverGetService;
@@ -47,10 +48,14 @@ public class OrderCreateimpl implements OrderCreateService {
     private final ProductGetService productGetService;
     private final SizeCacheService sizeCacheService;
     private final RecieverGetService recieverGetService;
+    //USER
     private final UserVoucherGetService userVoucherService;
     private final UserVoucherUpdateService userVoucherUpdateService;
+    //CART
     private final CartItemGetService cartItemGetService;
     private final CartUpdateService cartUpdateService;
+    private final ItemUpdateService itemUpdateService;
+
     private final NotificationCreateService notificationCreateService;
     private final VnPayService vnPayService;
 
@@ -68,6 +73,7 @@ public class OrderCreateimpl implements OrderCreateService {
 
         List<String> productCodes = req.items().stream()
                 .map(OrderItemDto::productCode)
+                .distinct()
                 .toList();
 
         if (!cartItemGetService.existsLitProductCode(userId, productCodes)) {
@@ -89,7 +95,7 @@ public class OrderCreateimpl implements OrderCreateService {
         orderRepo.save(order);
 
 
-        cartUpdateService.removeListItem(userId, orderItemDetail.cartItemDtos);
+        cartUpdateService.consumeListItem(userId, orderItemDetail.cartItemDtos);
         log.info("Order created: {} for user: {}", order.getCode(), userId);
         notificationCreateService.userCreateOrder(userId);
 
@@ -135,7 +141,7 @@ public class OrderCreateimpl implements OrderCreateService {
         BigDecimal finalPrice;
         BigDecimal voucherDiscount;
 
-        List<CartItemDto> cartItemDtos;
+        List<CartItemConsumeDto> cartItemDtos;
 
         public OrderItemDetail(Map<String, ProductDto> products,
                                List<OrderItemDto> itemDtos,
@@ -164,14 +170,10 @@ public class OrderCreateimpl implements OrderCreateService {
                         orderItem.getQuantity(),
                         orderItem.getOriginalPrice(),
                         orderItem.getFinalPrice()));
-                this.cartItemDtos.add(new CartItemDto(
+                this.cartItemDtos.add(new CartItemConsumeDto(
                         productDto.id(),
-                        itemDto.productCode(),
                         itemDto.size(),
-                        null,
-                        null,
-                        null,
-                        null
+                        itemDto.quantity()
                 ));
             }
         }

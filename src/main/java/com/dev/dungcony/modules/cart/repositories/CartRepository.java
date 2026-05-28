@@ -18,8 +18,6 @@ public interface CartRepository extends JpaRepository<CartItem, CartItemId> {
 
         void deleteAllById_UserId(UUID userId);
 
-        int deleteAllByIdIn(List<CartItemId> ids);
-
         // ------------------------------ QUERY ------------------------------------//
         @Query("SELECT COUNT(DISTINCT ci.product.code) FROM CartItem ci WHERE ci.id.userId = :userId AND ci.product.code IN :productCodes")
         long countDistinctProductCodesByUserIdAndCodes(UUID userId, List<String> productCodes);

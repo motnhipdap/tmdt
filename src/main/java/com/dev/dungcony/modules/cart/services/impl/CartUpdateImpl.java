@@ -1,6 +1,7 @@
 package com.dev.dungcony.modules.cart.services.impl;
 
 import com.dev.dungcony.modules.cart.dtos.CartItemDto;
+import com.dev.dungcony.modules.cart.dtos.CartItemConsumeDto;
 import com.dev.dungcony.modules.cart.dtos.req.AddToCartReq;
 import com.dev.dungcony.modules.cart.dtos.req.UpdateCartItemReq;
 import com.dev.dungcony.modules.cart.entities.CartItem;
@@ -35,9 +36,9 @@ import java.util.UUID;
 public class CartUpdateImpl implements CartUpdateService {
 
     private final CartRepository cartItemRepository;
-    private final ItemUpdateService itemUpdateService;
     private final SizeCacheService sizeCacheService;
     private final ProductGetService productGetService;
+    private final ItemUpdateService itemUpdateService;
     private final EntityManager entityManager;
 
     @Override
@@ -52,9 +53,6 @@ public class CartUpdateImpl implements CartUpdateService {
         CartItem cartItem = cartItemRepository
                 .findById_UserIdAndId_ProductIdAndId_SizeId(userId, productDto.id(), sizeId)
                 .orElse(null);
-
-        // giảm số lượng sản phẩm
-        itemUpdateService.reduce(productDto.id(), sizeId, req.quantity());
 
         if (cartItem == null) {
             cartItem = new CartItem();
@@ -79,7 +77,6 @@ public class CartUpdateImpl implements CartUpdateService {
         CartItem item = cartItemRepository.findById(new CartItemId(userId, productId, sizeId))
                 .orElseThrow(CartItemNotFoundException::new);
 
-        itemUpdateService.increase(productId, sizeId, item.getQuantity());
         cartItemRepository.delete(item);
     }
 
@@ -92,38 +89,54 @@ public class CartUpdateImpl implements CartUpdateService {
         CartItem cartItem = cartItemRepository.findById(new CartItemId(userId, productId, sizeId))
                 .orElseThrow(CartItemNotFoundException::new);
 
-        int delta = req.quantity() - cartItem.getQuantity();
-        if (delta > 0) {
-            itemUpdateService.reduce(productId, sizeId, delta);
-        } else if (delta < 0) {
-            itemUpdateService.increase(productId, sizeId, Math.abs(delta));
-        }
-
         cartItem.setQuantity(req.quantity());
         cartItemRepository.save(cartItem);
     }
 
     @Override
+    @Transactional
     public void removeListItem(UUID uid, List<CartItemDto> cartItemDtos) {
-        List<CartItemId> ids = cartItemDtos.stream()
-                .map(id -> new CartItemId(uid, id.productId(), sizeCacheService.getIdBySize(id.productSize())))
-                .toList();
+        for (CartItemDto cartItemDto : cartItemDtos) {
+            int sizeId = sizeCacheService.getIdBySize(cartItemDto.productSize());
+            int productId = cartItemDto.productId();
+            CartItem item = cartItemRepository.findById(new CartItemId(uid, productId, sizeId))
+                    .orElseThrow(CartItemNotFoundException::new);
 
-        if (ids.size() != cartItemRepository.deleteAllByIdIn(ids))
-            throw new CartUnProcessableException();
+            cartItemRepository.delete(item);
+        }
+    }
 
+    @Override
+    @Transactional
+    public void consumeListItem(UUID uid, List<CartItemConsumeDto> cartItemDtos) {
+        for (CartItemConsumeDto cartItemDto : cartItemDtos) {
+            if (cartItemDto.quantity() <= 0) {
+                throw new CartUnProcessableException();
+            }
+
+            int sizeId = sizeCacheService.getIdBySize(cartItemDto.productSize());
+            CartItem item = cartItemRepository.findById(new CartItemId(uid, cartItemDto.productId(), sizeId))
+                    .orElseThrow(CartItemNotFoundException::new);
+
+            if (item.getQuantity() < cartItemDto.quantity()) {
+                throw new CartUnProcessableException();
+            }
+
+            int remainingQuantity = item.getQuantity() - cartItemDto.quantity();
+            if (remainingQuantity == 0) {
+                cartItemRepository.delete(item);
+            } else {
+                item.setQuantity(remainingQuantity);
+                cartItemRepository.save(item);
+            }
+            itemUpdateService.reduce(cartItemDto.productId(), sizeId, cartItemDto.quantity());
+        }
     }
 
     @Override
     @Transactional
     public void clearCart(UUID userId) {
         List<CartItem> items = cartItemRepository.findAllByUserId(userId);
-        for (CartItem item : items) {
-            itemUpdateService.increase(
-                    item.getId().getProductId(),
-                    item.getId().getSizeId(),
-                    item.getQuantity());
-        }
         cartItemRepository.deleteAllById_UserId(userId);
     }
 }
