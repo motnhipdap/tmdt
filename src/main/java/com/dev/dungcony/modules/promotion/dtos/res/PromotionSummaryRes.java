@@ -6,6 +6,7 @@ import java.time.Instant;
 import com.dev.dungcony.modules.promotion.enums.PromotionType;
 
 public record PromotionSummaryRes(
+        Integer id,
         int value,
         Instant startAt,
         Instant endAt) {

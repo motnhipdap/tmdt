@@ -125,6 +125,7 @@ public class PromotionImpl implements PromotionService {
     public Optional<PromotionDetailRes> getById(Integer id) {
         return promotionRepository.findById(id)
                 .map(p -> new PromotionDetailRes(
+                        p.getId(),
                         p.getValue(),
                         p.getScope(),
                         p.getStartAt(),

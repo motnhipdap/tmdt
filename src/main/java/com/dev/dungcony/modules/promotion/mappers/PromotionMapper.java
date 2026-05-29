@@ -14,6 +14,7 @@ public class PromotionMapper {
      */
     public static PromotionDetailRes toDetailRes(Promotion p) {
         return new PromotionDetailRes(
+                p.getId(),
                 p.getValue(),
                 p.getScope(),
                 p.getStartAt(),
@@ -28,6 +29,7 @@ public class PromotionMapper {
      */
     public static PromotionSummaryRes toSummaryRes(Promotion p) {
         return new PromotionSummaryRes(
+                p.getId(),
                 p.getValue(),
                 p.getStartAt(),
                 p.getEndAt());

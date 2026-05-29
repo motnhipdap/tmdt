@@ -6,6 +6,7 @@ import com.dev.dungcony.modules.promotion.enums.PromotionScope;
 import com.dev.dungcony.modules.promotion.enums.PromotionStatus;
 
 public record PromotionDetailRes(
+        Integer id,
         int value,
         PromotionScope scope,
         Instant startAt,
